@@ -249,11 +249,14 @@ const topics = collection({
         },
       },
     }),
-    assessments: fields.array(
-      fields.blocks(
+    assessments: fields.blocks(
         {
           mcq: {
             label: 'Multiple Choice',
+            itemLabel: (props) => {
+              const p = props.fields.prompt.value ?? '';
+              return p ? `MCQ: ${p.slice(0, 60)}${p.length > 60 ? '…' : ''}` : 'MCQ';
+            },
             schema: fields.object({
               id: fields.text({
                 label: 'Question ID',
@@ -300,6 +303,10 @@ const topics = collection({
           },
           nei: {
             label: 'Extended Answer (N-E-I)',
+            itemLabel: (props) => {
+              const q = props.fields.question.value ?? '';
+              return q ? `NEI: ${q.slice(0, 60)}${q.length > 60 ? '…' : ''}` : 'NEI';
+            },
             schema: fields.object({
               id: fields.text({
                 label: 'Question ID',
@@ -353,22 +360,11 @@ const topics = collection({
             }),
           },
         },
-        { label: 'Assessment Item' }
+        {
+          label: 'Assessments',
+          description: 'Order shown here is the order rendered.',
+        }
       ),
-      {
-        label: 'Assessments',
-        description: 'Order shown here is the order rendered.',
-        itemLabel: (props) => {
-          const v = props.value;
-          if (v.discriminant === 'mcq') {
-            const p = v.value.prompt ?? '';
-            return `MCQ: ${p.slice(0, 60)}${p.length > 60 ? '…' : ''}`;
-          }
-          const q = v.value.question ?? '';
-          return `NEI: ${q.slice(0, 60)}${q.length > 60 ? '…' : ''}`;
-        },
-      }
-    ),
   },
 });
 

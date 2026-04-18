@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
-  "description": "Signal — Astro + Keystatic + Markdoc starter",
+  "description": "Signal \u2014 Astro + Keystatic + Markdoc starter",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -13,17 +13,19 @@
     "typecheck": "astro check"
   },
   "dependencies": {
-    "@astrojs/markdoc": "^0.15.0",
-    "@astrojs/react": "^4.4.0",
-    "@keystatic/astro": "^5.0.9",
-    "@keystatic/core": "^0.5.48",
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/markdoc": "^0.15.11",
+    "@astrojs/react": "^4.4.2",
+    "@keystatic/astro": "^5.0.6",
+    "@keystatic/core": "^0.5.50",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "astro": "^5.16.2",
+    "astro": "^5.18.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@types/node": "^20.17.0",
     "typescript": "^5.7.2"
   }
 }

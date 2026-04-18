@@ -13,7 +13,7 @@ const { authorIds } = Astro.props;
 const authors = await Promise.all(
   authorIds.map(async (id) => {
     const entry = await getEntry('authors', id);
-    return entry?.data ?? { display_name: id, role: 'teacher' as const };
+    return entry?.data ?? { display_name: id, role: 'teacher' as const, institution: undefined };
   })
 );
 ---
