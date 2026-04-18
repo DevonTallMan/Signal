@@ -6,10 +6,11 @@ on:
     paths:
       - 'src/content/topics/**'
       - 'scripts/check-assessment-ids.mjs'
+      - 'scripts/check-status-lifecycle.mjs'
       - '.github/workflows/content-integrity.yml'
+      - 'package.json'
   workflow_dispatch:
 
-# Cancel any in-flight run for the same PR when a new commit is pushed.
 concurrency:
   group: content-integrity-${{ github.ref }}
   cancel-in-progress: true
@@ -26,12 +27,10 @@ jobs:
       - name: Checkout PR
         uses: actions/checkout@v4
         with:
-          # Full history so we can compare against origin/main.
           fetch-depth: 0
 
-      # This workflow does not push, so the usual "merge origin/main --ff-only"
-      # pattern does not apply. A plain fetch is enough to guarantee the
-      # base ref is current, which is what this check needs.
+      # This workflow does not push. A plain fetch is enough to guarantee
+      # the base ref is current, which is all these checks need.
       - name: Fetch latest main
         run: git fetch origin main
 
@@ -42,11 +41,37 @@ jobs:
 
       - name: Install dependencies
         # Using `npm install` rather than `npm ci` because package-lock.json
-        # does not yet exist in the repo. Switch to `npm ci` once a lock file
-        # lands on main.
+        # does not yet exist in the repo. Switch to `npm ci` once a lock
+        # file lands on main.
         run: npm install --no-audit --no-fund
 
       - name: Check assessment ID stability
         env:
           BASE_REF: origin/main
         run: node scripts/check-assessment-ids.mjs
+
+  status-lifecycle:
+    name: Status lifecycle
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch latest main
+        run: git fetch origin main
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Check status lifecycle
+        env:
+          BASE_REF: origin/main
+        run: node scripts/check-status-lifecycle.mjs
