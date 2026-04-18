@@ -5,11 +5,12 @@
   "private": true,
   "description": "Signal \u2014 Astro + Keystatic + Markdoc starter",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
     "astro": "astro",
+    "build": "astro build",
+    "check:content": "node scripts/check-assessment-ids.mjs",
+    "dev": "astro dev",
+    "preview": "astro preview",
+    "start": "astro dev",
     "typecheck": "astro check"
   },
   "dependencies": {
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.17.0",
+    "gray-matter": "^4.0.3",
     "typescript": "^5.7.2"
   }
 }
