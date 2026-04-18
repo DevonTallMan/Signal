@@ -1,0 +1,158 @@
+---
+title: "Worked Examples: Data Structures Question"
+section_id: "M.1.1"
+content_area: method
+paper: method
+status: published
+spec_version: "2024-01"
+authors:
+  - chris-morris
+reviewers:
+  - chris-morris
+learning_outcomes:
+  - Identify the three components of the Answer Arc in a real answer
+  - Recognise the most common failure mode (missing Impact)
+  - Distinguish between describing a concept and naming it
+prerequisites: []
+estimated_minutes: 15
+last_reviewed: 2026-04-19
+revision_notes: |
+  2026-04-19: Initial worked example topic for the Method section.
+assessments: []
+---
+
+## The question you're answering
+
+A stock management system needs to store the product code, name, price,
+and quantity for every item in a warehouse of 10,000 SKUs. Name one
+data structure suitable for this task and explain your choice. (4 marks)
+
+Before we look at anyone's answer, tell me what the question is actually
+asking. It's not "name a data structure." It's "name one, and explain
+why it's the right one for this specific job." The scenario is doing
+work. Ten thousand items. Four different fields per item. The question
+is testing whether you can see both halves: many items, each with
+structure.
+
+If you miss that the scenario matters, you'll write a textbook
+definition of an array and wonder why you got two marks instead of four.
+
+## Answer One: the one that leaves marks on the table
+
+> A list could be used to store the data because lists can hold lots of
+> items and you can add and remove things from them easily. Lists are
+> useful in programming and most languages support them.
+
+Let me tell you what a marker sees when they read this.
+
+**Name.** You said "list." Fine. That's a data structure, mark earned.
+Not the best name for what the question wants, but it's a name.
+
+**Explain.** "Lists can hold lots of items and you can add and remove
+things from them easily." That's a description of a list in general.
+It's not an explanation of why a list fits *this* problem. The fact
+that lists are mutable is irrelevant to the scenario. Nobody asked
+about adding and removing. The question is about storing 10,000 items
+each of which has four fields.
+
+**Impact.** There isn't one. The answer ends on "most languages support
+them" which is about the programming ecosystem, not about the stock
+management system.
+
+This is the classic pattern I see from students who know the content
+but haven't trained the structure. You knew what a list was. You did
+not answer the question that was asked. You gave me a textbook entry
+on lists. The marker cannot award you marks for the textbook entry;
+they can only award marks for your answer to the scenario in front of
+you.
+
+Marks this would earn: 1 out of 4.
+
+## Answer Two: the one that gets close and stops
+
+> An array of records would be suitable. An array is a structure that
+> stores many items of the same type indexed by position, and a record
+> stores several fields together under one name. So you would have
+> 10,000 records in the array, each record holding the code, name,
+> price, and quantity for one item.
+
+Better. Much better. Let's see what it's doing.
+
+**Name.** "An array of records." That's the answer. You've identified
+that the scenario needs both multiplicity (many items) and structure
+(four fields per item), and you've named the combination. Full marks
+for Name.
+
+**Explain.** You've defined both pieces. An array indexes by position;
+a record groups fields by name. You've then applied that to the
+scenario: 10,000 records in the array, each holding the four fields.
+This is a proper explanation. It's not just defining the terms in
+isolation; it's showing me how they compose to fit the problem.
+
+**Impact.** This is where it stops. The answer ends with the
+composition and doesn't tell me *what the stock management system can
+now do* that it couldn't do otherwise.
+
+This is the mark that gets left on the table more than any other, and
+it's the reason the Answer Arc framework was built the way it was. You
+named it right. You explained it right. You stopped before the
+consequence.
+
+Marks this would earn: 3 out of 4.
+
+## Answer Three: the full four marks
+
+> An array of records is suitable. An array holds many values indexed
+> by position, and a record groups several fields of different types
+> under one name, so you would have 10,000 records in the array with
+> each record holding the four fields (code, name, price, quantity)
+> for one SKU. This means the stock management system can iterate over
+> all items in a single loop to perform bulk operations like stock
+> valuation, low-stock detection, or reorder triggers, which would be
+> impossible to manage with 40,000 separate variables and would
+> require changing the source code every time a new SKU was added.
+
+Walk through it with me.
+
+**Name.** Same as Answer Two. "Array of records." Clean.
+
+**Explain.** Same structure, slightly more efficient phrasing. "Many
+values indexed by position," "fields of different types under one
+name," then the composition: 10,000 records, each holding four fields,
+one per SKU. The scenario detail is back in the answer, which is where
+it should be.
+
+**Impact.** Here's where the mark is won. The answer does three things
+that the middling answer didn't.
+
+It says what the system can do. "Iterate over all items in a single
+loop." That's a concrete technical capability.
+
+It gives examples of what that capability enables. "Stock valuation,
+low-stock detection, reorder triggers." These are business operations.
+The answer has crossed from computer science into the domain the
+scenario set up.
+
+It says what the alternative would cost. "Impossible to manage with
+40,000 separate variables and would require changing the source code
+every time a new SKU was added." The negative case sharpens the
+positive case. Without the array of records, you don't have a stock
+management system, you have a maintenance nightmare.
+
+Marks this would earn: 4 out of 4.
+
+## What to take from all three
+
+The gap between one mark and three marks is whether you paid attention
+to the scenario when you wrote the answer. The gap between three marks
+and four marks is whether you wrote the Impact. If you only remember
+one thing from this exercise, let it be this: the Impact is not
+optional padding at the end of your answer. It is the mark most
+students don't write, and it is the mark that separates a merit from
+a distinction across the whole paper.
+
+When you sit down to write an extended answer in the exam, write NAME,
+EXPLAIN, and IMPACT in the margin of your rough paper before you
+start the answer. Cross them off as you hit them. If you hit the end
+of your answer and you haven't crossed off Impact, you're not
+finished.

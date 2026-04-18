@@ -6,7 +6,7 @@ const allAreas = await getCollection('contentAreas');
 const allTopics = await getCollection('topics');
 
 // Group areas by paper, sorted by order
-const areasByPaper = (paper: '1' | '2') =>
+const areasByPaper = (paper: '1' | '2' | 'method') =>
   allAreas
     .filter((a) => a.data.paper === paper)
     .sort((a, b) => a.data.order - b.data.order);
@@ -26,15 +26,16 @@ const topicCount = (areaCode: string) =>
     <div class="eyebrow">T-Level Digital Study Platform</div>
     <h1>Content Areas</h1>
     <p class="prose" style="color: var(--dim);">
-      Browse content areas across both core papers. Topics are authored by
-      practising teachers and examiners. Each topic includes an explanation
-      and structured assessments.
+      Browse content areas across both core papers, plus the Method section
+      on how to structure your answers. Topics are authored by practising
+      teachers. Each topic includes an explanation and structured
+      assessments.
     </p>
 
     {
-      (['1', '2'] as const).map((paper) => (
+      (['1', '2', 'method'] as const).map((paper) => (
         <section style="margin-top: var(--space-5);">
-          <h2>Paper {paper}</h2>
+          <h2>{paper === 'method' ? 'Method' : `Paper ${paper}`}</h2>
           {areasByPaper(paper).length === 0 && (
             <p style="color: var(--muted);">No content areas seeded yet.</p>
           )}

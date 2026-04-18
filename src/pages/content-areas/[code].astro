@@ -23,11 +23,11 @@ const topics = (await getCollection('topics'))
 
 <BaseLayout
   title={`${area.data.display_code} ${area.data.title}`}
-  description={`Paper ${area.data.paper}, Content Area ${area.data.display_code}`}
+  description={`${area.data.paper === 'method' ? 'Method' : `Paper ${area.data.paper}`}, Content Area ${area.data.display_code}`}
 >
   <main class="container">
     <div class="eyebrow">
-      Paper {area.data.paper} · Area {area.data.display_code}
+      {area.data.paper === 'method' ? 'Method' : `Paper ${area.data.paper}`} · Area {area.data.display_code}
     </div>
     <h1>{area.data.title}</h1>
 
