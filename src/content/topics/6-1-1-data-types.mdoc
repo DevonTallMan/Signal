@@ -1,0 +1,105 @@
+---
+title: Data Types and Structures
+section_id: "6.1.1"
+content_area: 6-1
+paper: "1"
+status: published
+spec_version: "2024-01"
+authors:
+  - chris-morris
+reviewers:
+  - chris-morris
+learning_outcomes:
+  - Identify appropriate primitive data types for a given scenario
+  - Distinguish between primitive and compound data types
+  - Construct simple arrays and records in pseudocode or a named language
+prerequisites: []
+estimated_minutes: 25
+last_reviewed: 2026-04-18
+revision_notes: |
+  2026-04-18: Initial seed topic for the Astro starter.
+assessments:
+  - discriminant: mcq
+    value:
+      id: 611-mcq-01
+      prompt: Which of the following is NOT a primitive data type in most programming languages?
+      options:
+        - integer
+        - list
+        - boolean
+        - float
+      correct_index: 1
+      feedback_correct: |
+        Correct. A list holds multiple values and is a compound data structure,
+        not a primitive.
+      feedback_incorrect: |
+        The answer is "list". Primitives hold a single value; lists hold many
+        values under one name and are therefore compound, not primitive.
+      difficulty: foundation
+  - discriminant: nei
+    value:
+      id: 611-nei-01
+      stimulus: |
+        A stock management system needs to store the product code, name, price,
+        and quantity for every item in a warehouse of 10,000 SKUs.
+      question: |
+        Name one data structure suitable for this task and explain your choice.
+      max_marks: 4
+      mark_scheme:
+        name_expected: |
+          An array of records (or equivalent: a list of dictionaries, an array
+          of structs, or a list of objects in an object-oriented language).
+        explain_expected: |
+          A record groups related fields of different types under one name.
+          An array holds many records indexed by position, allowing the system
+          to store all 10,000 items in a single structure that can be
+          iterated over in a loop.
+        impact_expected: |
+          This enables efficient iteration, lookup by index, and bulk
+          operations across all stock items, which would be impractical with
+          40,000 separate variables and makes routine tasks such as stock
+          valuation or reorder detection a single pass over the array.
+      exemplar_answer: |
+        An array of records is suitable. Each record groups the four related
+        fields (code, name, price, quantity) under one name, and the array
+        indexes 10,000 such records by position. This enables the system to
+        iterate through all stock in a single loop and perform bulk updates,
+        which would be impossible to manage with 40,000 individual variables.
+---
+
+## Primitive Data Types
+
+A **primitive** data type holds a single value. Languages differ slightly in
+which primitives they provide, but the common four you will be expected to
+recognise are integer, floating-point, boolean, and character.
+
+Choosing the right primitive matters because it affects memory, precision,
+and what operations are valid. Storing a price as an integer number of pence
+avoids the rounding errors that come with floating-point arithmetic, which
+is why financial systems almost never store money as a float.
+
+## Compound Data Types
+
+A **compound** type groups multiple values under one name. The two patterns
+you need to recognise are arrays and records.
+
+An **array** holds many values of the same type, indexed by position. Think
+of a shelf of identical boxes numbered from zero. You can access any box by
+its number and you can iterate through all of them in order.
+
+A **record** (sometimes called a struct, dictionary, or object depending on
+the language) holds several related values of different types under named
+fields. A customer record might have a `name` string, an `email` string, a
+`joined_date`, and a boolean flag for whether they have verified their email.
+
+## Why the Distinction Matters
+
+Most real-world data uses both at once. A list of customers is an array of
+records. A shopping basket is an array of records, where each record holds a
+product reference and a quantity. A weather forecast is an array of records,
+where each record holds a date, a temperature, and a description.
+
+The examiner cue to reach for when you see "store many items, each with
+several fields" is an array of records. If you name only an array, you miss
+the point that each item has internal structure. If you name only a record,
+you miss the point that there are many of them.

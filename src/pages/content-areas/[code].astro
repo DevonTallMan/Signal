@@ -1,0 +1,64 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const areas = await getCollection('contentAreas');
+  return areas.map((area) => ({
+    params: { code: area.id },
+    props: { area },
+  }));
+}
+
+const { area } = Astro.props;
+const { Content } = await render(area);
+
+const topics = (await getCollection('topics'))
+  .filter(
+    (t) =>
+      t.data.content_area === area.id && t.data.status === 'published'
+  )
+  .sort((a, b) => a.data.section_id.localeCompare(b.data.section_id));
+---
+
+<BaseLayout
+  title={`${area.data.display_code} ${area.data.title}`}
+  description={`Paper ${area.data.paper}, Content Area ${area.data.display_code}`}
+>
+  <main class="container">
+    <div class="eyebrow">
+      Paper {area.data.paper} · Area {area.data.display_code}
+    </div>
+    <h1>{area.data.title}</h1>
+
+    <div class="prose" style="color: var(--dim); margin-bottom: var(--space-5);">
+      <Content />
+    </div>
+
+    <h2>Topics</h2>
+
+    {
+      topics.length === 0 ? (
+        <p style="color: var(--muted);">No published topics in this area yet.</p>
+      ) : (
+        topics.map((topic) => (
+          <a
+            href={`/topics/${topic.id}`}
+            class="card"
+            style="display: block;"
+          >
+            <div class="eyebrow">Section {topic.data.section_id}</div>
+            <h3 style="margin: 0;">{topic.data.title}</h3>
+            <p class="meta" style="margin-top: var(--space-2);">
+              {topic.data.estimated_minutes} min
+            </p>
+          </a>
+        ))
+      )
+    }
+
+    <p style="margin-top: var(--space-5);">
+      <a href="/">← Back to home</a>
+    </p>
+  </main>
+</BaseLayout>

@@ -1,0 +1,63 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import TopicMeta from '~/components/TopicMeta.astro';
+import AssessmentPlaceholder from '~/components/AssessmentPlaceholder.astro';
+
+export async function getStaticPaths() {
+  const topics = await getCollection(
+    'topics',
+    (t) => t.data.status === 'published'
+  );
+  return topics.map((topic) => ({
+    params: { slug: topic.id },
+    props: { topic },
+  }));
+}
+
+const { topic } = Astro.props;
+const { Content } = await render(topic);
+const area = await getEntry('contentAreas', topic.data.content_area);
+---
+
+<BaseLayout
+  title={topic.data.title}
+  description={`Section ${topic.data.section_id}. Paper ${topic.data.paper}.`}
+>
+  <main class="container">
+    <div class="eyebrow">
+      Paper {topic.data.paper}
+      {area && ` · ${area.data.display_code} ${area.data.title}`}
+    </div>
+    <h1>{topic.data.title}</h1>
+
+    <AuthorByline authorIds={topic.data.authors} />
+
+    <TopicMeta
+      estimated_minutes={topic.data.estimated_minutes}
+      learning_outcomes={topic.data.learning_outcomes}
+      prerequisites={topic.data.prerequisites}
+      section_id={topic.data.section_id}
+      spec_version={topic.data.spec_version}
+    />
+
+    <article class="prose">
+      <Content />
+    </article>
+
+    <AssessmentPlaceholder assessments={topic.data.assessments} />
+
+    <p style="margin-top: var(--space-5);">
+      {
+        area ? (
+          <a href={`/content-areas/${area.id}`}>
+            ← Back to {area.data.display_code} {area.data.title}
+          </a>
+        ) : (
+          <a href="/">← Back to home</a>
+        )
+      }
+    </p>
+  </main>
+</BaseLayout>

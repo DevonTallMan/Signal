@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+
+const allAreas = await getCollection('contentAreas');
+const allTopics = await getCollection('topics');
+
+// Group areas by paper, sorted by order
+const areasByPaper = (paper: '1' | '2') =>
+  allAreas
+    .filter((a) => a.data.paper === paper)
+    .sort((a, b) => a.data.order - b.data.order);
+
+// Published topic count per content area
+const topicCount = (areaCode: string) =>
+  allTopics.filter(
+    (t) => t.data.content_area === areaCode && t.data.status === 'published'
+  ).length;
+---
+
+<BaseLayout
+  title="Home"
+  description="T-Level Digital study platform. Teacher-authored content aligned to IfATE topic areas."
+>
+  <main class="container">
+    <div class="eyebrow">T-Level Digital Study Platform</div>
+    <h1>Content Areas</h1>
+    <p class="prose" style="color: var(--dim);">
+      Browse content areas across both core papers. Topics are authored by
+      practising teachers and examiners. Each topic includes an explanation
+      and structured assessments.
+    </p>
+
+    {
+      (['1', '2'] as const).map((paper) => (
+        <section style="margin-top: var(--space-5);">
+          <h2>Paper {paper}</h2>
+          {areasByPaper(paper).length === 0 && (
+            <p style="color: var(--muted);">No content areas seeded yet.</p>
+          )}
+          {areasByPaper(paper).map((area) => (
+            <a
+              href={`/content-areas/${area.id}`}
+              class="card"
+              style="display: block; border-bottom: 1px solid var(--border);"
+            >
+              <div class="eyebrow">Area {area.data.display_code}</div>
+              <h3 style="margin: 0;">{area.data.title}</h3>
+              <p class="meta" style="margin-top: var(--space-2);">
+                {topicCount(area.id)} published{' '}
+                {topicCount(area.id) === 1 ? 'topic' : 'topics'}
+              </p>
+            </a>
+          ))}
+        </section>
+      ))
+    }
+  </main>
+</BaseLayout>

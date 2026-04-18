@@ -1,0 +1,29 @@
+{
+  "name": "signal-starter",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Signal — Astro + Keystatic + Markdoc starter",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/markdoc": "^0.15.0",
+    "@astrojs/react": "^4.4.0",
+    "@keystatic/astro": "^5.0.9",
+    "@keystatic/core": "^0.5.48",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "astro": "^5.16.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

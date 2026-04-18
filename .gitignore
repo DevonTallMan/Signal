@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+.env
+.env.local
+.env.*.local
+*.log
+
+# Keystatic auth (local dev only)
+keystatic-cloud-auth/

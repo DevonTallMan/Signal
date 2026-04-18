@@ -1,0 +1,64 @@
+---
+import { getEntry } from 'astro:content';
+
+interface Props {
+  estimated_minutes: number;
+  learning_outcomes: string[];
+  prerequisites: string[];
+  section_id: string;
+  spec_version?: string;
+}
+
+const {
+  estimated_minutes,
+  learning_outcomes,
+  prerequisites,
+  section_id,
+  spec_version,
+} = Astro.props;
+
+// Resolve prerequisite topic titles
+const prereqEntries = await Promise.all(
+  prerequisites.map(async (slug) => {
+    const entry = await getEntry('topics', slug);
+    return entry
+      ? { slug, title: entry.data.title }
+      : { slug, title: slug };
+  })
+);
+---
+
+<aside class="card" style="margin-bottom: var(--space-5);">
+  <div class="eyebrow">Section {section_id}{spec_version ? ` · Spec ${spec_version}` : ''}</div>
+  <div class="meta" style="margin-bottom: var(--space-3);">
+    Estimated time: {estimated_minutes} min
+  </div>
+
+  {
+    learning_outcomes.length > 0 && (
+      <>
+        <h3 style="margin-top: 0;">Learning Outcomes</h3>
+        <ul class="prose">
+          {learning_outcomes.map((o) => (
+            <li>{o}</li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+
+  {
+    prereqEntries.length > 0 && (
+      <>
+        <h3>Prerequisites</h3>
+        <ul class="prose">
+          {prereqEntries.map((p) => (
+            <li>
+              <a href={`/topics/${p.slug}`}>{p.title}</a>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+</aside>
