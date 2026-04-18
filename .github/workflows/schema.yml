@@ -1,0 +1,58 @@
+name: Schema
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'keystatic.config.ts'
+      - 'astro.config.mjs'
+      - 'tsconfig.json'
+      - 'package.json'
+      - '.github/workflows/schema.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'keystatic.config.ts'
+      - 'astro.config.mjs'
+      - 'tsconfig.json'
+      - 'package.json'
+  workflow_dispatch:
+
+concurrency:
+  group: schema-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  astro-check:
+    name: Astro schema check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        # Using `npm install` rather than `npm ci` because package-lock.json
+        # does not yet exist in the repo. Switch to `npm ci` once a lock
+        # file lands on main.
+        run: npm install --no-audit --no-fund
+
+      # `astro check` runs content collection schema validation plus
+      # TypeScript type checking without building. This catches:
+      #   - Frontmatter that doesn't match the Zod schema
+      #   - Broken references to non-existent entries
+      #   - Duplicate slugs within a collection
+      #   - Type errors in .astro components
+      #   - Bad imports, missing files
+      - name: Run astro check
+        run: npm run typecheck
