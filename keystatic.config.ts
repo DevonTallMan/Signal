@@ -106,6 +106,7 @@ const contentAreas = collection({
       options: [
         { label: 'Paper 1', value: '1' },
         { label: 'Paper 2', value: '2' },
+        { label: 'Method', value: 'method' },
       ],
       defaultValue: '1',
     }),
@@ -161,6 +162,7 @@ const topics = collection({
       options: [
         { label: 'Paper 1', value: '1' },
         { label: 'Paper 2', value: '2' },
+        { label: 'Method', value: 'method' },
       ],
       defaultValue: '1',
     }),

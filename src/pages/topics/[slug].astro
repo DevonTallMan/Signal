@@ -23,11 +23,11 @@ const area = await getEntry('contentAreas', topic.data.content_area);
 
 <BaseLayout
   title={topic.data.title}
-  description={`Section ${topic.data.section_id}. Paper ${topic.data.paper}.`}
+  description={`Section ${topic.data.section_id}. ${topic.data.paper === 'method' ? 'Method.' : `Paper ${topic.data.paper}.`}`}
 >
   <main class="container">
     <div class="eyebrow">
-      Paper {topic.data.paper}
+      {topic.data.paper === 'method' ? 'Method' : `Paper ${topic.data.paper}`}
       {area && ` · ${area.data.display_code} ${area.data.title}`}
     </div>
     <h1>{topic.data.title}</h1>

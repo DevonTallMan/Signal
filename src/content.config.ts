@@ -24,7 +24,7 @@ const contentAreas = defineCollection({
   schema: z.object({
     display_code: z.string(),
     title: z.string(),
-    paper: z.enum(['1', '2']),
+    paper: z.enum(['1', '2', 'method']),
     order: z.number().default(0),
   }),
 });
@@ -68,7 +68,7 @@ const topics = defineCollection({
     title: z.string(),
     section_id: z.string(),
     content_area: z.string(), // slug reference
-    paper: z.enum(['1', '2']),
+    paper: z.enum(['1', '2', 'method']),
     status: z.enum(['draft', 'review', 'published', 'archived']),
     spec_version: z.string().optional(),
     authors: z.array(z.string()).min(1),
