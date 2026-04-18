@@ -15,7 +15,7 @@ import keystatic from '@keystatic/astro';
 const SKIP_KEYSTATIC = process.env.SKIP_KEYSTATIC === 'true';
 
 export default defineConfig({
-  site: 'https://signal.example.com', // update when domain is known
+  site: 'https://signal-dev.pages.dev', // preview URL; swap to production domain at launch
   integrations: [
     react(),
     markdoc(),

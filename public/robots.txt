@@ -1,0 +1,4 @@
+# signal-dev.pages.dev is a preview environment, not production.
+# When the site moves to its production URL, replace this file.
+User-agent: *
+Disallow: /
