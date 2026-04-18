@@ -8,6 +8,7 @@
     "astro": "astro",
     "build": "astro build",
     "check:content": "node scripts/check-assessment-ids.mjs",
+    "check:lifecycle": "node scripts/check-status-lifecycle.mjs",
     "dev": "astro dev",
     "preview": "astro preview",
     "start": "astro dev",
