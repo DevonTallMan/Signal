@@ -1,0 +1,180 @@
+---
+title: "Worked Examples: Naming versus Describing"
+section_id: "M.2.1"
+content_area: method
+paper: method
+status: published
+spec_version: "2024-01"
+authors:
+  - chris-morris
+reviewers:
+  - chris-morris
+learning_outcomes:
+  - Recognise the difference between naming a concept and describing it
+  - Spot an answer that explains a concept without ever naming it
+  - Understand why markers cannot award the Name mark for a description
+prerequisites:
+  - m-1-1-worked-examples-data-structures
+estimated_minutes: 15
+last_reviewed: 2026-04-19
+revision_notes: |
+  2026-04-19: Initial worked example topic for Method section 2
+  (Naming versus Describing).
+assessments: []
+---
+
+## The question you're answering
+
+A growing e-commerce business finds that customer complaints are taking
+too long to resolve, and different staff are often unaware of previous
+contact with the same customer. Suggest one system the business could
+implement to address this, and explain how it would help. (4 marks)
+
+This is a Paper 2 business environment question and it's testing
+something different to the data structures one we worked through in
+M.1.1. There, the failure was missing Impact. Here, the failure is more
+subtle. Students can write a fluent paragraph about *exactly the right
+system* and lose the Name mark anyway, because they never actually
+name it.
+
+Read the question again. "Suggest one system" is not a hint. It is the
+thing being tested. The question is asking you to put a label on what
+you're proposing. If you describe the system perfectly but never
+attach a name to it, the marker cannot award you the mark for naming a
+system you did not name.
+
+## Answer One: the one that describes without naming
+
+> The business could put in place a computer system that stores all the
+> details about each customer and every time staff talk to them, so that
+> anyone answering the phone can see what has happened before. This
+> would help because staff would not have to ask the customer to repeat
+> themselves and they would know what had already been said. The
+> business would look more professional and customers would be happier.
+
+Stop. Read that answer again. What did the student actually name?
+
+Nothing. Not one technical term. They described a CRM, in plain
+English, and they described it reasonably well. A marker reading this
+sees a student who clearly understands the concept. But the mark
+scheme says "Name one system." The student did not name one.
+
+Let me walk through what a marker sees when this lands on their desk.
+
+**Name.** No system has been named. "A computer system that stores
+details" is a description, not a name. "Customer database" would be a
+name. "CRM" or "Customer Relationship Management system" would be a
+name. The student has dodged the naming and I cannot award this mark.
+
+**Explain.** The mechanism described is roughly correct. Shared access
+to customer contact history. Staff can see what has happened before.
+That's half of what a CRM does, described in the student's own words.
+Partial mark available here because the explanation is correct in
+substance, even if the thing being explained has not been named.
+
+**Impact.** "Customers would be happier. The business would look more
+professional." These are generic business-good outcomes that could
+apply to almost anything. There is no concrete consequence tied to
+the specific problem the scenario described. The scenario said
+resolution time was a problem. The answer does not say the system
+reduces resolution time. The scenario said staff were unaware of
+previous contact. The answer gestures at this but does not impact it
+clearly.
+
+What went wrong here is not that the student didn't know the content.
+They did. They described a CRM from first principles. What went wrong
+is that they wrote around the word rather than pinning it down. This
+is the habit I see most in students who are strong at explaining
+concepts in class discussion but weak at deploying them in writing
+under pressure.
+
+Marks this would earn: 1 out of 4.
+
+## Answer Two: the one that names and stops
+
+> The business should use a CRM system. A CRM stores customer data and
+> allows staff to share information. This would help the business.
+
+This is the opposite pattern to Answer One. Where Answer One described
+without naming, this answer names without describing. Both fail, for
+opposite reasons.
+
+**Name.** "A CRM system." There it is. One mark.
+
+**Explain.** "Stores customer data and allows staff to share
+information." This is a definition, not an explanation. It does not
+engage with the scenario. It does not say how a CRM's mechanism
+addresses the specific problems the question set up. Remember from
+M.1.1: a definition floating free of the scenario does not earn the
+Explain mark.
+
+**Impact.** "This would help the business." You know this doesn't
+earn anything by now. Same generic padding, same missing specificity.
+
+Marks this would earn: 1 out of 4.
+
+Same mark as Answer One, from the opposite failure. This is worth
+sitting with. Students sometimes think a short answer is at least a
+safe answer. It isn't. A short answer that names but does not engage
+with the scenario scores the same as a long answer that engages but
+does not name.
+
+## Answer Three: the full four marks
+
+> The business should implement a Customer Relationship Management
+> (CRM) system. A CRM holds a single shared record for each customer
+> with every previous contact logged against it, so any member of
+> staff picking up a complaint can see the full history of prior
+> conversations without having to ask the customer to repeat
+> themselves. This means resolution times drop because staff start
+> each call with the context they need rather than gathering it, and
+> customers are not forced to re-explain problems they have already
+> reported, which directly addresses the two failure modes the
+> scenario identifies.
+
+Walk through it.
+
+**Name.** "A Customer Relationship Management (CRM) system." Named.
+Full name given once, abbreviation available for later reference.
+Mark earned cleanly.
+
+**Explain.** "A CRM holds a single shared record for each customer
+with every previous contact logged against it, so any member of staff
+picking up a complaint can see the full history of prior
+conversations." This explains the mechanism (shared record, logged
+contact history) and ties it to the scenario (any member of staff
+picking up a complaint). The explanation is not a generic textbook
+entry; it is a targeted answer to the question asked. Mark earned.
+
+**Impact.** This is where the answer separates from a 3/4. It does
+two things. First, it gives a concrete technical consequence:
+"resolution times drop because staff start each call with the context
+they need rather than gathering it." Second, it closes the loop
+against the specific language of the question: "directly addresses
+the two failure modes the scenario identifies." The student has
+pointed at the question's own wording to show they answered what was
+asked. Markers notice this. It is the cleanest signal a candidate
+can send that they engaged with the specific scenario rather than
+delivering a pre-cached answer.
+
+Marks this would earn: 4 out of 4.
+
+## What to take from all three
+
+The lesson here is a different one to M.1.1. That topic taught you
+to write the Impact. This one teaches you to write the Name.
+
+When you sit down to write a suggested-system answer, do this
+explicitly. Before you write a single sentence, write the name of
+the system in capital letters at the top of your rough paper. CRM.
+ERP. SCM. MIS. Whatever it is. Then write your answer with the
+name used in the first sentence. No dancing around it. No
+describing it into existence. Name it, then explain how it works,
+then impact the specific problems the scenario gave you.
+
+The test you can run on your own answer before you submit it is
+simple. If you removed every noun phrase from your answer and
+replaced them with "the system" or "this thing," would the answer
+still mean anything? If the answer reads almost the same with
+generic placeholders, you have described without naming. Go back
+and put the proper names in.
