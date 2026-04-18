@@ -4,6 +4,8 @@ import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
 import keystatic from '@keystatic/astro';
 
+import cloudflare from "@astrojs/cloudflare";
+
 // Keystatic mounts server routes for its /keystatic admin UI, which needs
 // an adapter. For production builds we don't want the admin UI shipping
 // to students, so we skip the keystatic integration entirely when
@@ -15,11 +17,15 @@ import keystatic from '@keystatic/astro';
 const SKIP_KEYSTATIC = process.env.SKIP_KEYSTATIC === 'true';
 
 export default defineConfig({
-  site: 'https://signal-dev.pages.dev', // preview URL; swap to production domain at launch
+  // preview URL; swap to production domain at launch
+  site: 'https://signal-dev.pages.dev',
+
   integrations: [
     react(),
     markdoc(),
     ...(SKIP_KEYSTATIC ? [] : [keystatic()]),
   ],
+
   output: 'static',
+  adapter: cloudflare()
 });
