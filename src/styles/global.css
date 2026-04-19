@@ -166,3 +166,136 @@ samp {
   font-weight: 700;
   border: 0;
 }
+
+/* Auth nav (right-aligned on the top nav) */
+
+.nav__spacer {
+  flex: 1;
+}
+
+.auth-nav {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.auth-nav--loading {
+  min-width: 4rem;
+}
+
+.auth-nav--signin {
+  color: var(--green);
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(57, 255, 20, 0.35);
+}
+
+.auth-nav--signin:hover {
+  border-bottom-color: var(--green);
+}
+
+.auth-nav__user {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.auth-nav__signout {
+  background: transparent;
+  color: var(--dim);
+  border: 1px solid var(--border);
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.auth-nav__signout:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+/* Sign-in form */
+
+.signin-wrap {
+  max-width: 28rem;
+}
+
+.signin-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: var(--space-4);
+}
+
+.signin-label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.signin-label > span {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.signin-form input {
+  background: var(--void);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+
+.signin-form input:focus {
+  outline: none;
+  border-color: var(--green);
+}
+
+.signin-form input:disabled {
+  opacity: 0.5;
+}
+
+.signin-error {
+  color: #ff6b6b;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.signin-submit {
+  background: var(--green);
+  color: var(--void);
+  border: 0;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  font-weight: 700;
+  margin-top: var(--space-2);
+}
+
+.signin-submit:disabled {
+  background: var(--dim);
+  cursor: not-allowed;
+}
+
+.signin-submit:hover:not(:disabled) {
+  background: #2ed60f;
+}
