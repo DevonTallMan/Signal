@@ -1,0 +1,20 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import SignInForm from '~/components/SignInForm';
+---
+
+<BaseLayout title="Sign In" description="Sign in to Signal">
+  <main class="container">
+    <div class="eyebrow">Access</div>
+    <h1>Sign In</h1>
+
+    <p class="prose" style="color: var(--dim); margin-bottom: var(--space-5);">
+      Sign in with your existing account from the study platform.
+      If you do not yet have an account, your teacher can create one for you.
+    </p>
+
+    <div class="signin-wrap">
+      <SignInForm client:load />
+    </div>
+  </main>
+</BaseLayout>
