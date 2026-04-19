@@ -1,60 +1,232 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseLayout from '~/layouts/BaseLayout.astro';
+// src/pages/index.astro
+//
+// Signal's home/landing page. Ported from the legacy Edtech marketing
+// landing (devontallman.github.io/Edtech/) with links rewired to
+// Signal's actual content routes.
+//
+// This PR contains Path B only: hero + two paper tiles.
+// Follow-up PRs will add:
+//   - Interactive Answer Arc demo (as a proper React island reusing
+//     Signal's existing NEISubmission infrastructure)
+//   - "How it works" section
+//   - Page animations (particles, glitch, count-up)
+//
+// The nav for this page is inline (not the shared Signal nav from
+// BaseLayout.astro). The landing uses its own cyberpunk nav. The
+// rest of Signal continues to use BaseLayout.astro.
 
-const allAreas = await getCollection('contentAreas');
-const allTopics = await getCollection('topics');
-
-// Group areas by paper, sorted by order
-const areasByPaper = (paper: '1' | '2' | 'method') =>
-  allAreas
-    .filter((a) => a.data.paper === paper)
-    .sort((a, b) => a.data.order - b.data.order);
-
-// Published topic count per content area
-const topicCount = (areaCode: string) =>
-  allTopics.filter(
-    (t) => t.data.content_area === areaCode && t.data.status === 'published'
-  ).length;
+import LandingLayout from '~/layouts/LandingLayout.astro';
+import '~/styles/landing.css';
 ---
 
-<BaseLayout
-  title="Home"
-  description="T-Level Digital study platform. Teacher-authored content aligned to IfATE topic areas."
+<LandingLayout
+  title="Signal — T-Level Digital Study Platform"
+  description="Teacher-created content and structured answer training for T-Level Digital core papers. Built by the people delivering it."
 >
-  <main class="container">
-    <div class="eyebrow">T-Level Digital Study Platform</div>
-    <h1>Content Areas</h1>
-    <p class="prose" style="color: var(--dim);">
-      Browse content areas across both core papers, plus the Method section
-      on how to structure your answers. Topics are authored by practising
-      teachers. Each topic includes an explanation and structured
-      assessments.
-    </p>
+  <header role="banner">
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+      <div class="nav-left">
+        <div class="nav-logo">SIGNAL<span>.</span></div>
+        <div class="nav-sub">T-LEVEL DIGITAL</div>
+      </div>
+      <div class="nav-links">
+        <a href="#papers" class="nav-link">CONTENT AREAS</a>
+        <a href="/signin" class="nav-cta">SIGN IN</a>
+      </div>
+    </nav>
+  </header>
 
-    {
-      (['1', '2', 'method'] as const).map((paper) => (
-        <section style="margin-top: var(--space-5);">
-          <h2>{paper === 'method' ? 'Method' : `Paper ${paper}`}</h2>
-          {areasByPaper(paper).length === 0 && (
-            <p style="color: var(--muted);">No content areas seeded yet.</p>
-          )}
-          {areasByPaper(paper).map((area) => (
-            <a
-              href={`/content-areas/${area.id}`}
-              class="card"
-              style="display: block; border-bottom: 1px solid var(--border);"
-            >
-              <div class="eyebrow">Area {area.data.display_code}</div>
-              <h3 style="margin: 0;">{area.data.title}</h3>
-              <p class="meta" style="margin-top: var(--space-2);">
-                {topicCount(area.id)} published{' '}
-                {topicCount(area.id) === 1 ? 'topic' : 'topics'}
-              </p>
-            </a>
-          ))}
-        </section>
-      ))
-    }
+  <main id="main-content">
+    <section class="hero">
+      <div class="hero-glow"></div>
+      <div class="hero-glow hero-glow-gold"></div>
+      <div class="hero-glow hero-glow-cyan"></div>
+      <div class="hero-vignette"></div>
+      <div class="hero-grid-fine"></div>
+      <div class="hero-hline hero-hline-1"></div>
+      <div class="hero-hline hero-hline-2"></div>
+      <div class="hero-hline hero-hline-3"></div>
+      <div class="hero-corner hero-corner-tl"></div>
+      <div class="hero-corner hero-corner-tr"></div>
+      <div class="hero-corner hero-corner-bl"></div>
+      <div class="hero-corner hero-corner-br"></div>
+      <svg
+        class="hero-circuits"
+        viewBox="0 0 1200 700"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M0,200 L120,200 L160,240 L400,240"
+          stroke="rgba(57,255,20,0.08)"
+          stroke-width="1"
+          fill="none"></path>
+        <path
+          d="M0,350 L80,350 L120,310 L300,310 L340,350 L500,350"
+          stroke="rgba(57,255,20,0.06)"
+          stroke-width="1"
+          fill="none"></path>
+        <path
+          d="M1200,150 L1080,150 L1040,190 L820,190"
+          stroke="rgba(255,215,0,0.07)"
+          stroke-width="1"
+          fill="none"></path>
+        <circle cx="400" cy="240" r="3" fill="rgba(57,255,20,0.2)"></circle>
+        <circle cx="820" cy="190" r="3" fill="rgba(255,215,0,0.2)"></circle>
+      </svg>
+
+      <div class="hero-eyebrow">
+        <span class="eyebrow-tag">TEACHER-CREATED</span>
+        <span class="eyebrow-dot"></span>
+        <span class="eyebrow-tag2">BOTH CORE PAPERS</span>
+      </div>
+
+      <h1>
+        Learn the content.<br />
+        Then learn to <span class="green">answer</span> the
+        <span class="gold">question.</span>
+      </h1>
+
+      <p class="hero-sub">
+        Knowing your subject and being able to
+        <strong>turn that knowledge into marks</strong> are two different skills.
+        Signal teaches both, whether you're just starting out or preparing to sit
+        the exam.
+      </p>
+
+      <p class="hero-detail">
+        COVERING BOTH CORE PAPERS &nbsp;·&nbsp; BUSINESS &amp; PROFESSIONAL CONTEXT
+        &nbsp;·&nbsp; THE DIGITAL ENVIRONMENT
+      </p>
+
+      <div class="hero-btns">
+        <a href="/signin" class="btn-primary">ACCESS THE PLATFORM →</a>
+        <a href="#papers" class="btn-secondary">SEE CONTENT AREAS</a>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="section" id="papers">
+      <div class="section-inner">
+        <div class="s-eyebrow fade-up">CONTENT AREAS</div>
+        <h2 class="s-title fade-up">
+          Two papers.<br />All topic areas covered.
+        </h2>
+        <p class="s-sub fade-up">
+          Each topic area contains teacher-written content and a knowledge check.
+          Work through them in order or go straight to your weak areas.
+        </p>
+        <div class="papers-grid fade-up">
+          <a href="/content-areas/6-1" class="paper-card p1">
+            <div class="paper-num">// CORE PAPER ONE</div>
+            <div class="paper-title">Business &amp; Professional Context</div>
+            <div class="paper-topics">
+              <div class="topic-item">
+                <div class="topic-dot"></div>
+                Business types, structures and functions
+              </div>
+              <div class="topic-item">
+                <div class="topic-dot"></div>
+                Project management principles
+              </div>
+              <div class="topic-item">
+                <div class="topic-dot"></div>
+                Professional responsibilities and ethics
+              </div>
+              <div class="topic-item">
+                <div class="topic-dot"></div>
+                Working practices and legislation
+              </div>
+              <div class="topic-item">
+                <div class="topic-dot"></div>
+                Security in a business context
+              </div>
+              <div class="topic-item">
+                <div class="topic-dot"></div>
+                Sustainability and emerging trends
+              </div>
+            </div>
+            <div class="paper-cta">EXPLORE PAPER ONE →</div>
+          </a>
+
+          <a href="/content-areas/7-2" class="paper-card p2">
+            <div class="paper-num">// CORE PAPER TWO</div>
+            <div class="paper-title">The Digital Environment</div>
+            <div class="paper-topics">
+              <div class="topic-item">
+                <div class="topic-dot"></div>
+                Hardware, software and operating systems
+              </div>
+              <div class="topic-item">
+                <div class="topic-dot"></div>
+                Networking and connectivity
+              </div>
+              <div class="topic-item">
+                <div class="topic-dot"></div>
+                Data and information management
+              </div>
+              <div class="topic-item">
+                <div class="topic-dot"></div>
+                Cybersecurity threats and countermeasures
+              </div>
+              <div class="topic-item">
+                <div class="topic-dot"></div>
+                Emerging technologies
+              </div>
+              <div class="topic-item">
+                <div class="topic-dot"></div>
+                Digital systems and infrastructure
+              </div>
+            </div>
+            <div class="paper-cta">EXPLORE PAPER TWO →</div>
+          </a>
+        </div>
+      </div>
+    </section>
   </main>
-</BaseLayout>
+</LandingLayout>
+
+<script>
+  // Smooth-scroll anchor clicks. Lifted from the Edtech source.
+  document.querySelectorAll('a[href^="#"]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const hrefAttr = a.getAttribute('href');
+      if (!hrefAttr) return;
+      const target = document.querySelector(hrefAttr);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // Fade-up on scroll using IntersectionObserver.
+  // Add .visible to .fade-up elements as they enter the viewport.
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12 },
+  );
+  document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+
+  // Nav shrink on scroll (matches legacy behaviour).
+  const nav = document.querySelector<HTMLElement>('.nav');
+  if (nav) {
+    window.addEventListener(
+      'scroll',
+      () => {
+        nav.style.height = window.scrollY > 60 ? '48px' : '60px';
+        nav.style.transition = 'height 0.3s ease';
+      },
+      { passive: true },
+    );
+  }
+</script>
