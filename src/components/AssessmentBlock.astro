@@ -1,0 +1,100 @@
+---
+// src/components/AssessmentBlock.astro
+//
+// Replaces the old AssessmentPlaceholder. Iterates the topic's
+// assessments array and renders each one appropriately:
+//   - MCQ: still placeholder (interactive runner coming later)
+//   - NEI: mounts an NEISubmission React island with the full
+//          question + mark scheme serialised from frontmatter
+
+import NEISubmission from './NEISubmission';
+
+type MCQValue = {
+  id: string;
+  prompt: string;
+  options: string[];
+  correct_index: number;
+  feedback_correct?: string;
+  feedback_incorrect?: string;
+  difficulty?: string;
+};
+
+type NEIValue = {
+  id: string;
+  stimulus?: string;
+  question: string;
+  max_marks: number;
+  mark_scheme: {
+    name_expected?: string;
+    explain_expected?: string;
+    impact_expected?: string;
+  };
+  exemplar_answer?: string;
+};
+
+type Assessment =
+  | { discriminant: 'mcq'; value: MCQValue }
+  | { discriminant: 'nei'; value: NEIValue };
+
+interface Props {
+  topicId: string;
+  assessments: Assessment[];
+}
+
+const { topicId, assessments } = Astro.props;
+
+const mcqCount = assessments.filter((a) => a.discriminant === 'mcq').length;
+const neiCount = assessments.filter((a) => a.discriminant === 'nei').length;
+---
+
+<section class="card" style="margin-top: var(--space-5);">
+  <div class="eyebrow">Assessment</div>
+  <h2 style="margin-top: 0;">Check your understanding</h2>
+
+  {
+    assessments.length === 0 ? (
+      <p style="color: var(--dim);">No assessments authored yet.</p>
+    ) : (
+      <>
+        <p class="meta" style="margin-bottom: var(--space-4);">
+          <span class="tag tag--green">{mcqCount} MCQ</span>
+          <span class="tag tag--gold">{neiCount} NEI</span>
+        </p>
+
+        {assessments.map((a) => {
+          if (a.discriminant === 'mcq') {
+            return (
+              <div class="assessment-slot assessment-slot--mcq">
+                <div class="eyebrow">MCQ · {a.value.id}</div>
+                <p><strong>{a.value.prompt}</strong></p>
+                <p class="meta" style="color: var(--dim);">
+                  Interactive multiple-choice runner coming in a later release.
+                </p>
+              </div>
+            );
+          }
+
+          return (
+            <div class="assessment-slot assessment-slot--nei">
+              <div class="eyebrow">NEI · {a.value.id}</div>
+              <NEISubmission
+                client:load
+                topicId={topicId}
+                questionId={a.value.id}
+                scenario={a.value.stimulus}
+                question={a.value.question}
+                maxMarks={a.value.max_marks}
+                markScheme={{
+                  nameExpected: a.value.mark_scheme.name_expected ?? '',
+                  explainExpected: a.value.mark_scheme.explain_expected ?? '',
+                  impactExpected: a.value.mark_scheme.impact_expected ?? '',
+                }}
+                exemplarAnswer={a.value.exemplar_answer}
+              />
+            </div>
+          );
+        })}
+      </>
+    )
+  }
+</section>

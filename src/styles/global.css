@@ -299,3 +299,312 @@ samp {
 .signin-submit:hover:not(:disabled) {
   background: #2ed60f;
 }
+
+/* Assessment slots (wrappers around each question on a topic) */
+
+.assessment-slot {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.assessment-slot:first-of-type {
+  border-top: 0;
+  margin-top: var(--space-4);
+  padding-top: 0;
+}
+
+/* NEI submission form */
+
+.nei-submission {
+  margin-top: var(--space-3);
+}
+
+.nei-scenario {
+  margin: 0 0 var(--space-3) 0;
+  padding: var(--space-3);
+  background: var(--void);
+  border-left: 2px solid var(--gold);
+  color: var(--ink);
+  font-style: italic;
+}
+
+.nei-question {
+  margin: 0 0 var(--space-3) 0;
+  color: var(--ink);
+}
+
+.nei-max {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--dim);
+}
+
+.nei-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.nei-label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.nei-label > span {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.nei-label textarea {
+  background: var(--void);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: var(--space-3);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.nei-label textarea:focus {
+  outline: none;
+  border-color: var(--green);
+}
+
+.nei-label textarea:disabled {
+  opacity: 0.5;
+}
+
+.nei-error {
+  color: #ff6b6b;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.nei-submit {
+  align-self: flex-start;
+  background: var(--green);
+  color: var(--void);
+  border: 0;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  font-weight: 700;
+}
+
+.nei-submit:disabled {
+  background: var(--dim);
+  cursor: not-allowed;
+}
+
+.nei-submit:hover:not(:disabled) {
+  background: #2ed60f;
+}
+
+.nei-signin-cta {
+  padding: var(--space-4);
+  background: var(--void);
+  border: 1px dashed var(--border);
+  border-radius: 2px;
+  text-align: center;
+}
+
+.nei-signin-link {
+  display: inline-block;
+  margin-top: var(--space-2);
+  color: var(--green);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-bottom: 1px dotted rgba(57, 255, 20, 0.35);
+}
+
+.nei-signin-link:hover {
+  border-bottom-color: var(--green);
+}
+
+/* NEI marking result */
+
+.nei-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.nei-submitted {
+  padding: var(--space-3);
+  background: var(--void);
+  border-left: 2px solid var(--border);
+}
+
+.nei-answer-shown {
+  margin: var(--space-2) 0 0 0;
+  color: var(--ink);
+  font-style: italic;
+}
+
+.nei-marks {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+}
+
+.nei-marks-awarded {
+  font-size: 3rem;
+  color: var(--green);
+  font-weight: 700;
+}
+
+.nei-marks-divider {
+  font-size: 2rem;
+  color: var(--muted);
+}
+
+.nei-marks-max {
+  font-size: 2rem;
+  color: var(--dim);
+}
+
+.nei-ribbon {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+.nei-pill {
+  padding: var(--space-3);
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  background: var(--void);
+}
+
+.nei-pill__label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: var(--space-1);
+}
+
+.nei-pill__state {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.nei-pill__comment {
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.nei-pill--hit {
+  border-color: rgba(57, 255, 20, 0.35);
+}
+.nei-pill--hit .nei-pill__state {
+  color: var(--green);
+}
+
+.nei-pill--partial {
+  border-color: rgba(255, 215, 0, 0.35);
+}
+.nei-pill--partial .nei-pill__state {
+  color: var(--gold);
+}
+
+.nei-pill--miss {
+  border-color: rgba(255, 107, 107, 0.35);
+}
+.nei-pill--miss .nei-pill__state {
+  color: #ff6b6b;
+}
+
+.nei-verdict {
+  padding: var(--space-3);
+  background: var(--void);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+.nei-verdict p {
+  margin: var(--space-2) 0 0 0;
+  color: var(--ink);
+}
+
+.nei-exemplar {
+  padding: var(--space-3);
+  background: var(--void);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+.nei-exemplar-text {
+  color: var(--ink);
+  margin: var(--space-2) 0;
+  font-style: italic;
+}
+
+.nei-link {
+  background: transparent;
+  color: var(--green);
+  border: 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  border-bottom: 1px dotted rgba(57, 255, 20, 0.35);
+}
+
+.nei-link:hover {
+  border-bottom-color: var(--green);
+}
+
+.nei-save-warning {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.85rem;
+  color: var(--gold);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  border-radius: 2px;
+}
+
+.nei-try-again {
+  align-self: flex-start;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.nei-try-again:hover {
+  border-color: var(--ink);
+}
+
+@media (max-width: 600px) {
+  .nei-ribbon {
+    grid-template-columns: 1fr;
+  }
+}
