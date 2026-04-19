@@ -338,3 +338,283 @@ a:focus-visible {
   0%   { background-position: 0 0; }
   100% { background-position: 56px 56px; }
 }
+
+/* ==========================================================
+   ANSWER ARC DEMO (public landing, not the signed-in flow)
+   Lifted from legacy Edtech landing, with C->N rename applied
+   so the demo's letter coding matches Signal's N/E/I framework.
+   All classes prefixed .aarc- so no collision with Signal's
+   .nei- classes from the signed-in submission flow.
+   ========================================================== */
+
+.aarc-root { display: block; }
+
+.aarc-prog {
+  display: flex; gap: 6px; margin: 0 0 1rem;
+}
+.aarc-dot {
+  flex: 1; height: 2px;
+  background: rgba(255,255,255,0.07);
+  transition: all .3s;
+}
+.aarc-dot.on {
+  background: var(--green);
+  box-shadow: 0 0 10px rgba(57,255,20,.5);
+}
+
+.aarc-scn {
+  background: var(--panel);
+  border: .5px solid var(--border);
+  border-left: 2px solid var(--gold);
+  border-radius: 6px;
+  padding: .875rem 1rem;
+  margin: 0 0 1rem;
+}
+.aarc-scn-l {
+  font-family: 'Share Tech Mono', ui-monospace, monospace;
+  font-size: 9px; color: var(--gold); letter-spacing: 2.5px;
+  margin: 0 0 6px;
+}
+.aarc-scn-t {
+  font-size: 13.5px; color: var(--ink); line-height: 1.55; margin: 0;
+}
+
+.aarc-step {
+  background: var(--panel);
+  border: .5px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.125rem;
+  margin: 0 0 .625rem;
+  backdrop-filter: blur(6px);
+}
+.aarc-step.stN { border-left: 2px solid var(--green); }
+.aarc-step.stE { border-left: 2px solid var(--gold); }
+.aarc-step.stI { border-left: 2px solid #FF9500; }
+
+.aarc-sh { display: flex; align-items: center; gap: 10px; margin: 0 0 6px; }
+.aarc-ltr {
+  font-family: 'Orbitron', 'Segoe UI', Impact, sans-serif;
+  font-weight: 900; font-size: 22px; line-height: 1;
+  width: 28px; text-align: center;
+}
+.aarc-ltr.n { color: var(--green); text-shadow: 0 0 14px rgba(57,255,20,.55); }
+.aarc-ltr.e { color: var(--gold); text-shadow: 0 0 14px rgba(255,215,0,.45); }
+.aarc-ltr.i { color: #FF9500; text-shadow: 0 0 14px rgba(255,149,0,.55); }
+
+.aarc-sm { flex: 1; }
+.aarc-sl {
+  font-family: 'Share Tech Mono', ui-monospace, monospace;
+  font-size: 9px; color: var(--dim); letter-spacing: 2.2px; margin: 0;
+}
+
+.aarc-pill {
+  font-family: 'Share Tech Mono', ui-monospace, monospace;
+  font-size: 9px; letter-spacing: 2px;
+  padding: 3px 8px; border-radius: 3px;
+  background: rgba(57,255,20,.08);
+  border: .5px solid rgba(57,255,20,.25);
+  color: var(--green);
+}
+.aarc-pill.pe {
+  background: rgba(255,215,0,.08);
+  border-color: rgba(255,215,0,.25);
+  color: var(--gold);
+}
+.aarc-pill.pi {
+  background: rgba(255,149,0,.08);
+  border-color: rgba(255,149,0,.25);
+  color: #FF9500;
+}
+
+.aarc-pmt {
+  font-size: 14px; font-weight: 500; color: var(--ink);
+  margin: 4px 0 4px;
+}
+.aarc-hnt {
+  font-size: 12px; color: var(--dim);
+  margin: 0 0 10px; line-height: 1.55;
+}
+
+.aarc-ta {
+  width: 100%; min-height: 58px;
+  padding: 10px 12px;
+  background: rgba(0,0,0,.35);
+  border: .5px solid rgba(255,255,255,.14);
+  border-radius: 4px;
+  font-family: 'Share Tech Mono', ui-monospace, monospace;
+  font-size: 13px; color: var(--ink);
+  line-height: 1.55; resize: vertical;
+  outline: none; box-sizing: border-box;
+}
+.aarc-ta::placeholder { color: rgba(232,237,243,.32); }
+.aarc-ta:focus {
+  border-color: rgba(57,255,20,.55);
+  box-shadow: 0 0 0 3px rgba(57,255,20,.1);
+}
+.aarc-ta.bad {
+  border-color: rgba(255,149,0,.7);
+  box-shadow: 0 0 0 3px rgba(255,149,0,.12);
+}
+
+.aarc-act {
+  display: flex; align-items: center; gap: 14px;
+  margin: 10px 0 0; flex-wrap: wrap;
+}
+.aarc-btn {
+  font-family: 'Share Tech Mono', ui-monospace, monospace;
+  font-size: 10px; letter-spacing: 2.5px;
+  padding: 8px 16px;
+  background: rgba(57,255,20,.1);
+  border: .5px solid rgba(57,255,20,.4);
+  color: var(--green);
+  border-radius: 4px; cursor: pointer;
+  text-transform: uppercase;
+}
+.aarc-btn:hover {
+  background: rgba(57,255,20,.18);
+  border-color: rgba(57,255,20,.7);
+  box-shadow: 0 0 16px rgba(57,255,20,.2);
+}
+.aarc-btn.pri {
+  background: var(--green); color: var(--void);
+  font-weight: 700; border-color: var(--green);
+  box-shadow: 0 0 18px rgba(57,255,20,.25);
+}
+.aarc-btn.pri:hover {
+  background: #50FF30;
+  box-shadow: 0 0 26px rgba(57,255,20,.5);
+}
+.aarc-cta-link { text-decoration: none; }
+
+.aarc-lnk {
+  font-family: 'Share Tech Mono', ui-monospace, monospace;
+  font-size: 10px; letter-spacing: 1.5px;
+  color: var(--dim);
+  background: none; border: none; cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 4px 0;
+}
+.aarc-lnk:hover { color: var(--gold); }
+
+.aarc-res {
+  background: var(--panel);
+  border: .5px solid rgba(57,255,20,.45);
+  border-radius: 8px;
+  padding: 1.125rem 1.25rem;
+  margin: .875rem 0 0;
+  box-shadow: 0 0 36px rgba(57,255,20,.08);
+}
+.aarc-rt {
+  display: flex; align-items: baseline;
+  gap: 18px; margin: 0 0 14px; flex-wrap: wrap;
+}
+.aarc-mk {
+  font-family: 'Orbitron', 'Segoe UI', Impact, sans-serif;
+  font-weight: 900; font-size: 34px; line-height: 1;
+  color: var(--green);
+  text-shadow: 0 0 22px rgba(57,255,20,.4);
+  letter-spacing: 1px;
+}
+.aarc-mk .of {
+  font-family: 'Share Tech Mono', ui-monospace, monospace;
+  font-size: 12px; color: var(--dim);
+  font-weight: 400; letter-spacing: 2px; margin-left: 8px;
+}
+.aarc-mk.pt {
+  color: var(--gold);
+  text-shadow: 0 0 22px rgba(255,215,0,.4);
+}
+.aarc-mk.fl {
+  color: #FF9500;
+  text-shadow: 0 0 22px rgba(255,149,0,.4);
+}
+
+.aarc-rst {
+  font-family: 'Share Tech Mono', ui-monospace, monospace;
+  font-size: 11px; letter-spacing: 1.8px;
+  color: var(--ink); margin: 0; flex: 1;
+  min-width: 190px; text-transform: uppercase;
+}
+
+.aarc-ans {
+  font-size: 13.5px; line-height: 1.95;
+  background: rgba(0,0,0,.4);
+  border: .5px solid var(--border);
+  border-radius: 4px;
+  padding: 13px 15px; margin: 0 0 14px;
+}
+.aarc-prt {
+  padding: 2px 5px; border-radius: 2px;
+  border-bottom: 1.5px solid;
+}
+.aarc-prtN {
+  background: rgba(57,255,20,.12);
+  color: var(--green); border-color: var(--green);
+}
+.aarc-prtE {
+  background: rgba(255,215,0,.12);
+  color: var(--gold); border-color: var(--gold);
+}
+.aarc-prtI {
+  background: rgba(255,149,0,.12);
+  color: #FF9500; border-color: #FF9500;
+}
+
+.aarc-bk {
+  font-family: 'Share Tech Mono', ui-monospace, monospace;
+  font-size: 11px; letter-spacing: .5px;
+}
+.aarc-bl {
+  display: flex; align-items: flex-start;
+  gap: 10px; padding: 6px 0;
+  border-top: .5px dashed var(--border);
+}
+.aarc-bl:first-child { border: none; padding-top: 0; }
+.aarc-bll {
+  min-width: 62px;
+  color: rgba(232,237,243,.32);
+  letter-spacing: 2.2px;
+}
+.aarc-ok { color: var(--green); font-weight: 700; margin-right: 8px; }
+.aarc-no { color: #FF9500; font-weight: 700; margin-right: 8px; }
+.aarc-bt {
+  color: var(--ink); flex: 1;
+  font-family: inherit; font-size: 12px;
+  letter-spacing: 0;
+}
+
+.aarc-cv {
+  font-family: 'Share Tech Mono', ui-monospace, monospace;
+  font-size: 10px; letter-spacing: .8px;
+  color: rgba(232,237,243,.32);
+  margin: 16px 0 0; line-height: 1.7;
+  padding: 10px 12px;
+  background: rgba(0,0,0,.32);
+  border-left: 1.5px solid #A855F7;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.aarc-ft {
+  margin: 14px 0 0;
+  display: flex; gap: 12px;
+  flex-wrap: wrap; align-items: center;
+}
+
+/* arc-section wrapper (matches Edtech .arc-section) */
+.arc-section {
+  position: relative;
+  z-index: 1;
+  padding: 80px 48px;
+  background: rgba(57,255,20,0.012);
+}
+.arc-inner {
+  max-width: 860px;
+  margin: 0 auto;
+}
+.arc-inner .aarc-root { margin-top: 52px; }
+
+@media (max-width: 768px) {
+  .arc-section { padding: 60px 20px; }
+}

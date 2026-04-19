@@ -17,6 +17,7 @@
 // rest of Signal continues to use BaseLayout.astro.
 
 import LandingLayout from '~/layouts/LandingLayout.astro';
+import AnswerArcDemo from '~/components/AnswerArcDemo';
 import '~/styles/landing.css';
 ---
 
@@ -32,6 +33,7 @@ import '~/styles/landing.css';
       </div>
       <div class="nav-links">
         <a href="#papers" class="nav-link">CONTENT AREAS</a>
+        <a href="#answer-arc" class="nav-link">ANSWER ARC</a>
         <a href="/signin" class="nav-cta">SIGN IN</a>
       </div>
     </nav>
@@ -183,6 +185,23 @@ import '~/styles/landing.css';
             <div class="paper-cta">EXPLORE PAPER TWO →</div>
           </a>
         </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="arc-section" id="answer-arc">
+      <div class="arc-inner">
+        <div class="s-eyebrow fade-up">TRY THE ANSWER ARC</div>
+        <h2 class="s-title fade-up">
+          A complete answer travels<br />from name to consequence.
+        </h2>
+        <p class="s-sub fade-up">
+          Every extended question rewards the same movement. Name the concept,
+          explain the mechanism, describe the real-world impact. Three marks,
+          three moves. Try one now.
+        </p>
+        <AnswerArcDemo client:load />
       </div>
     </section>
   </main>
