@@ -3,7 +3,7 @@ import { getCollection, getEntry, render } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import AuthorByline from '~/components/AuthorByline.astro';
 import TopicMeta from '~/components/TopicMeta.astro';
-import AssessmentPlaceholder from '~/components/AssessmentPlaceholder.astro';
+import AssessmentBlock from "~/components/AssessmentBlock.astro";
 
 export async function getStaticPaths() {
   const topics = await getCollection(
@@ -46,7 +46,7 @@ const area = await getEntry('contentAreas', topic.data.content_area);
       <Content />
     </article>
 
-    <AssessmentPlaceholder assessments={topic.data.assessments} />
+    <AssessmentBlock topicId={topic.id} assessments={topic.data.assessments} />
 
     <p style="margin-top: var(--space-5);">
       {

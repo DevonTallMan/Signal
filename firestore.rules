@@ -1,0 +1,48 @@
+rules_version = '2';
+
+// Signal Firestore security rules.
+//
+// A student can read and create only their own submissions. No one
+// can update or delete submissions (append-only for audit). Everything
+// else is denied by default.
+//
+// Deploy via Firebase console (see docs/FIRESTORE-RULES.md).
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+      // A user can read their own profile document if we ever create
+      // one. Writes happen from the client only when creating the
+      // initial doc; current Signal code does not write here yet.
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      match /submissions/{submissionId} {
+        // A user can read any of their own submissions.
+        allow read: if request.auth != null && request.auth.uid == userId;
+
+        // A user can create a new submission under their own path.
+        // The document must include the required fields.
+        allow create: if request.auth != null
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasAll([
+               'topicId', 'questionId', 'answerText',
+               'submittedAt', 'marking', 'source'
+             ])
+          && request.resource.data.source == 'signal'
+          && request.resource.data.topicId is string
+          && request.resource.data.questionId is string
+          && request.resource.data.answerText is string
+          && request.resource.data.marking is map;
+
+        // Submissions are append-only. No updates, no deletes.
+        allow update, delete: if false;
+      }
+    }
+
+    // Deny everything else by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
