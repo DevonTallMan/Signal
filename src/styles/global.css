@@ -608,3 +608,280 @@ samp {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================
+   TERMINOLOGY DRILL (warm-up panel on topic pages)
+   Positioned above the NEI submission block. Collapsed by
+   default. See src/components/DrillPanel.astro for rationale
+   on the design choices.
+   ========================================================== */
+
+.drill-panel {
+  margin-top: var(--space-5);
+  background: var(--void);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 0;
+}
+
+.drill-panel__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.drill-panel__summary::-webkit-details-marker {
+  display: none;
+}
+
+.drill-panel__label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.drill-panel__title {
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.drill-panel__meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+.drill-panel__chevron {
+  color: var(--dim);
+  font-size: 0.85rem;
+  transition: transform 0.15s ease;
+}
+
+.drill-panel[open] .drill-panel__chevron {
+  transform: rotate(90deg);
+}
+
+.drill-panel__body {
+  padding: 0 var(--space-4) var(--space-4) var(--space-4);
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-3);
+}
+
+.drill-panel__hint {
+  font-size: 0.9rem;
+  color: var(--dim);
+  margin: 0 0 var(--space-4) 0;
+  line-height: 1.5;
+}
+
+/* Drill in-progress view */
+
+.drill {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.drill__progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.drill__counter {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+.drill__progress-bar {
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.drill__progress-fill {
+  height: 100%;
+  background: var(--green);
+  transition: width 0.3s ease;
+}
+
+.drill__card {
+  padding: var(--space-4);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--gold);
+  border-radius: 2px;
+  min-height: 140px;
+}
+
+.drill__cue {
+  margin: var(--space-2) 0 0 0;
+  color: var(--ink);
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.drill__divider {
+  height: 1px;
+  background: var(--border);
+  margin: var(--space-4) 0;
+}
+
+.drill__answer {
+  margin: var(--space-2) 0 0 0;
+  color: var(--green);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.drill__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.drill__actions--rate {
+  justify-content: space-between;
+}
+
+.drill__reveal,
+.drill__got,
+.drill__miss {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: var(--space-3) var(--space-4);
+  border-radius: 2px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.drill__reveal {
+  background: var(--green);
+  color: var(--void);
+  border-color: var(--green);
+}
+
+.drill__reveal:hover {
+  background: #2ed60f;
+}
+
+.drill__got {
+  border-color: rgba(57, 255, 20, 0.4);
+  color: var(--green);
+}
+
+.drill__got:hover {
+  background: rgba(57, 255, 20, 0.08);
+}
+
+.drill__miss {
+  border-color: rgba(255, 107, 107, 0.4);
+  color: #ff6b6b;
+}
+
+.drill__miss:hover {
+  background: rgba(255, 107, 107, 0.08);
+}
+
+/* Drill done view */
+
+.drill-done {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: center;
+  text-align: center;
+  padding: var(--space-4);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(57, 255, 20, 0.35);
+  border-radius: 2px;
+}
+
+.drill-done__score {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+}
+
+.drill-done__got {
+  font-size: 3rem;
+  color: var(--green);
+  font-weight: 700;
+}
+
+.drill-done__divider {
+  font-size: 2rem;
+  color: var(--muted);
+}
+
+.drill-done__total {
+  font-size: 2rem;
+  color: var(--dim);
+}
+
+.drill-done__line {
+  margin: 0;
+  color: var(--ink);
+  max-width: 32em;
+}
+
+.drill-done__actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: var(--space-2);
+}
+
+.drill-done__cta {
+  background: var(--green);
+  color: var(--void);
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 2px;
+  font-weight: 700;
+}
+
+.drill-done__cta:hover {
+  background: #2ed60f;
+}
+
+.drill-done__restart {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.drill-done__restart:hover {
+  border-color: var(--ink);
+}

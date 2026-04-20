@@ -79,6 +79,15 @@ const topics = defineCollection({
     last_reviewed: z.coerce.date().optional(),
     revision_notes: z.string().optional(),
     assessments: z.array(z.union([mcqSchema, neiSchema])).default([]),
+    drill: z
+      .array(
+        z.object({
+          id: z.string(),
+          cue: z.string(),
+          answer: z.string(),
+        }),
+      )
+      .default([]),
   }),
 });
 
