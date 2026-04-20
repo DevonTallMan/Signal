@@ -1,0 +1,289 @@
+---
+title: How Digital Supports the Needs of a Business
+section_id: "5.1.3"
+content_area: 5-1
+paper: "2"
+status: published
+spec_version: "2024-01"
+authors:
+  - chris-morris
+reviewers:
+  - chris-morris
+learning_outcomes:
+  - Explain how automated stock control systems combine software, hardware, and processes to manage inventory
+  - Describe how parts of a stock control system communicate with each other
+  - Compare traditional and cloud-based technologies for communicating with internal and external stakeholders
+prerequisites:
+  - 5-1-2-it-support-for-organisation-functions
+estimated_minutes: 30
+last_reviewed: 2026-04-20
+revision_notes: |
+  2026-04-20: Initial draft. Scenario (TikTok creator selling
+  print-on-demand merch) chosen per Ofcom Online Nation 2025
+  showing 39% of 8-17s upload video content and TikTok as the
+  most popular video platform. Print-on-demand deliberately
+  chosen because the 'stock' is virtual, forcing a richer
+  discussion of how stock/inventory systems behave when the
+  physical inventory is held by a third party. Cloud
+  collaboration coverage uses the creator's relationship with
+  the print supplier, a courier, and their own small team
+  (editor, brand collaborator) as genuine external and internal
+  stakeholder examples.
+assessments:
+  - discriminant: mcq
+    value:
+      id: 513-mcq-01
+      prompt: A business uses barcode scanners at the warehouse and a web-based dashboard at head office. When stock is scanned, the dashboard updates in real time. This is an example of which principle?
+      options:
+        - Different parts of a system communicating with each other
+        - Offline-first data entry
+        - Local-only inventory management
+        - Manual stock reconciliation
+      correct_index: 0
+      feedback_correct: |
+        Correct. The barcode scanner (hardware) and the dashboard
+        (software on a remote server) are different parts of the
+        same system communicating in real time. This is exactly
+        what the spec means by "how different parts of the system
+        communicate with each other."
+      feedback_incorrect: |
+        The answer is "different parts of a system communicating
+        with each other". The scenario explicitly describes a
+        scanner (one part) and a dashboard (another part)
+        exchanging data automatically, which is the definition of
+        system communication in an automated stock control
+        context.
+      difficulty: foundation
+  - discriminant: nei
+    value:
+      id: 513-nei-01
+      stimulus: |
+        Mia is a 19-year-old TikTok creator with 180,000 followers
+        who posts daily short-form videos on student life and
+        mental health. She has launched a small merch line (tote
+        bags, hoodies, stickers) through a print-on-demand
+        supplier that holds no stock of its own but prints each
+        item only when an order comes in. Mia designs the artwork,
+        her sister edits the videos, and her supplier handles
+        production and dispatch directly to her customers. She is
+        trying to work out how best to coordinate between herself,
+        her sister, and her supplier so that nothing falls through
+        the cracks when merch drops go live alongside video
+        campaigns.
+      question: |
+        Name one cloud-based tool Mia could use to coordinate with
+        her sister and her supplier, and explain how it would
+        support the specific collaboration needs of her business.
+      max_marks: 4
+      mark_scheme:
+        name_expected: |
+          A specific named cloud-based collaboration tool suitable
+          to the scale and needs of the business. Examples that
+          would score: Google Workspace (Docs, Sheets, Drive),
+          Microsoft 365, Notion, Trello, Asana, ClickUp, Slack,
+          Discord, a shared cloud folder with specific permissions
+          set. A generic answer of "a cloud tool" or "the cloud"
+          does not hit this mark; the tool must be named specifically
+          enough that the reader knows what the student means.
+        explain_expected: |
+          A correct statement of what the tool does and how it
+          enables collaboration. The student should identify that
+          cloud-based tools let multiple people access the same
+          content from different locations and devices without
+          having to email files back and forth. For the example
+          tools above, credit is given for explaining the specific
+          collaboration mechanism: Google Docs lets multiple people
+          edit the same document at the same time; Notion combines
+          documents, tasks, and databases in one shared workspace;
+          Trello uses cards on shared boards to track work;
+          Slack/Discord provides channels for threaded chat.
+        impact_expected: |
+          The concrete consequence for Mia's business must be
+          described, linked to the scenario's specific problems
+          (coordinating three separate parties across creative,
+          logistics, and family/personal relationships, and
+          aligning merch drops with video campaigns). Examples
+          that would score: fewer missed merch drop deadlines
+          because everyone sees the same campaign calendar;
+          faster turnaround on artwork approvals because her
+          supplier can comment directly on the shared design;
+          fewer duplicate or lost messages because conversation
+          is organised by channel or board rather than spread
+          across texts and DMs. Generic claims like "it makes
+          work easier" without link to the scenario do not hit
+          this mark.
+      exemplar_answer: |
+        Mia could use Notion as her central cloud-based
+        collaboration tool. Notion combines shared documents,
+        task boards, and simple databases in one workspace that
+        she, her sister, and her supplier can all access through
+        the same browser-based interface, with different permission
+        levels for each collaborator so that her supplier sees
+        only the artwork and order information, not her personal
+        content planning.
+
+        Using Notion would solve the specific coordination problem
+        in the scenario. She can maintain a single merch drop
+        calendar that lines up with her video schedule, so her
+        sister knows which videos need to go live on which day and
+        her supplier knows when demand will spike. Artwork files
+        can sit alongside the campaign they belong to, so nothing
+        gets lost in message threads. Because Notion is cloud-based,
+        all three people can update and check the same information
+        from their phones without needing to be in the same place,
+        which matters given her supplier is a separate business and
+        her sister works around her own studies.
+drill:
+  - id: 513-drill-01
+    cue: A system that tracks stock levels, updates them automatically as items are sold, and flags when reordering is needed.
+    answer: Automated stock control system (or inventory management system)
+  - id: 513-drill-02
+    cue: The physical part of a stock control system, including scanners, terminals, and sensors that capture data in the warehouse.
+    answer: Hardware
+  - id: 513-drill-03
+    cue: The programmatic part of a stock control system, including the dashboard, database, and business logic.
+    answer: Software
+  - id: 513-drill-04
+    cue: The way two or more parts of a stock control system exchange data, such as a barcode scanner sending a sale event to a central database.
+    answer: System communication (or inter-system communication)
+  - id: 513-drill-05
+    cue: A technology that stores data and software on remote servers accessed over the internet rather than on a local machine.
+    answer: Cloud-based technology (or cloud computing)
+  - id: 513-drill-06
+    cue: A technology that stores data and runs software on local machines, without depending on an internet connection to remote servers.
+    answer: Traditional (on-premises) technology
+  - id: 513-drill-07
+    cue: A person or organisation inside the business whose work depends on collaborating with others in that business.
+    answer: Internal stakeholder
+  - id: 513-drill-08
+    cue: A person or organisation outside the business whose work interacts with the business, such as a supplier or a delivery partner.
+    answer: External stakeholder
+  - id: 513-drill-09
+    cue: A model where products are manufactured only after an order is placed, rather than held in stock in advance.
+    answer: Print-on-demand (or made-to-order)
+  - id: 513-drill-10
+    cue: Working together on shared tasks or content, often through tools that let multiple people edit or contribute at the same time.
+    answer: Collaboration
+---
+
+## What this topic asks of you
+
+The Pearson spec splits this section into two distinct capabilities,
+and you need to be able to talk about each one on its own terms:
+
+**One:** how digital enables automated stock and inventory control,
+and specifically how software, hardware, processes, and inter-system
+communication work together to make that control automatic.
+
+**Two:** how traditional and cloud-based technologies support
+communication and collaboration with stakeholders, both internal
+(people inside the business) and external (suppliers, delivery
+partners, customers).
+
+These are separate spec points. Do not blur them.
+
+## Automated stock control: the four ingredients
+
+A stock control system that deserves the word "automated" has to
+combine four ingredients. If one is missing, the system still works,
+it just works manually or with gaps.
+
+**Software.** The programs that record stock levels, trigger
+reorder points, produce reports, and display information on a
+dashboard. Every piece of business logic lives in software.
+
+**Hardware.** The physical devices that capture real-world events
+and feed them into the software. Barcode scanners, weight sensors,
+RFID readers, point-of-sale terminals. Without hardware, a human
+has to type every change, and "automated" becomes aspirational.
+
+**Processes.** The rules that describe what the system does when
+events happen. When stock falls below five units, reorder. When an
+item expires, flag for removal. When a courier scans a parcel as
+delivered, mark the order complete. Processes are the logic that
+software and hardware enact.
+
+**System communication.** The way the four different parts talk to
+each other. A barcode scanner captures a sale, the scanner sends
+that data to the central database over the network, the database
+updates stock levels, the dashboard reflects the new total, the
+reorder rule triggers if a threshold is crossed. All of this happens
+through system communication. Break the network and the automation
+stops.
+
+When a Paper 2 question asks you about automated stock control, you
+are expected to be able to talk about all four, not just name one
+or two. A strong answer walks a specific event (a customer buys an
+item) through the full chain.
+
+## Traditional versus cloud-based collaboration
+
+For most of business history, collaboration happened through
+traditional means: printed documents, in-person meetings, phone
+calls, desktop software that saved files to local hard drives, email
+with attachments.
+
+Traditional tools still work, and they still matter. Many
+organisations have good reasons to keep some work local (security,
+regulation, legacy software). Traditional collaboration is not
+obsolete.
+
+**Cloud-based tools** work differently. The data and the software
+live on remote servers accessed over the internet. Multiple people
+can work on the same file at the same time. Updates from one user
+appear to all others in seconds. Access follows the person, not the
+machine. Examples include Google Workspace, Microsoft 365, Notion,
+Trello, Slack, Dropbox.
+
+**Key differences that matter on the exam:**
+
+- **Location independence.** Cloud lets collaborators work from
+  different places without sending files back and forth.
+- **Real-time co-editing.** Two people editing the same document at
+  the same time is native to cloud tools and impossible with
+  traditional desktop software.
+- **Version control.** Cloud tools automatically track who changed
+  what and when; traditional tools typically leave this to manual
+  file naming.
+- **Access control.** Cloud tools make it straightforward to grant
+  specific permissions to specific people (this person can edit,
+  this person can comment, this person can only view).
+- **Dependency on connectivity.** Cloud tools need a working internet
+  connection; traditional desktop tools work offline.
+- **Recurring cost.** Cloud tools are usually subscription-based;
+  traditional software is often bought once outright.
+
+## Internal versus external stakeholders
+
+The spec is explicit that collaboration happens with both internal
+and external stakeholders. A good answer on this topic mentions both.
+
+**Internal stakeholders** are people inside the business. In a
+large company: staff, managers, executives, other teams. In a
+one-person business: there are no internal stakeholders in the
+strict sense, though family members or employees who help out
+function as internal.
+
+**External stakeholders** are people or organisations outside the
+business whose work the business depends on or affects. Suppliers,
+delivery partners, customers, regulators, investors, accountants.
+
+The reason exams push this distinction is that the tools you pick
+often differ. Internal collaboration might use a company's internal
+chat system (Slack, Teams). External collaboration with a supplier
+might happen through shared cloud folders with controlled access,
+or through the supplier's own portal.
+
+## Small-business reality
+
+Paper 2 scenarios regularly feature small businesses, and the
+tools a small business actually uses are different from the
+enterprise tools you might see mentioned in generic business
+reading. Do not assume every small business runs SAP. Most run on
+Google Workspace or Microsoft 365, a shared spreadsheet or two,
+and WhatsApp for quick messaging. The question you should ask on a
+small-business scenario is "what is the cheapest and simplest tool
+that genuinely supports the collaboration this business needs?",
+not "what is the most sophisticated tool available?"
+
+The assessment below works through one such scenario.
