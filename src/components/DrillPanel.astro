@@ -1,0 +1,55 @@
+---
+// src/components/DrillPanel.astro
+//
+// A collapsible 'Warm up' panel that sits above the NEI assessment on a
+// topic page. Collapsed by default; a student opts in to the drill.
+// When open, hosts the TerminologyDrill React island.
+//
+// Placement and framing matter. Per the Brainscape evaluation report,
+// the risk of a recall tool is that students substitute it for the
+// extended-answer work. This panel is therefore:
+//   - Above the NEI assessment, visually smaller than the assessment
+//   - Labelled 'Warm up', not 'Practice' or 'Study'
+//   - Collapsed by default so the NEI is the first thing students see
+//   - Its 'done' state links down to the NEI (#nei-assessment anchor)
+
+import TerminologyDrill from './TerminologyDrill';
+
+interface DrillItem {
+  id: string;
+  cue: string;
+  answer: string;
+}
+
+interface Props {
+  topicId: string;
+  items: DrillItem[];
+}
+
+const { topicId, items } = Astro.props;
+
+if (items.length === 0) {
+  return Astro.redirect('/404'); // impossible: parent checks length
+}
+---
+
+<details class="drill-panel">
+  <summary class="drill-panel__summary">
+    <span class="drill-panel__label">
+      <span class="eyebrow">Warm up</span>
+      <span class="drill-panel__title">Quick terminology drill</span>
+    </span>
+    <span class="drill-panel__meta">
+      {items.length} term{items.length === 1 ? '' : 's'} · ~2 minutes
+    </span>
+    <span class="drill-panel__chevron" aria-hidden="true">▸</span>
+  </summary>
+  <div class="drill-panel__body">
+    <p class="drill-panel__hint">
+      A few definition-to-term prompts drawn from this topic's mark scheme.
+      Useful before you write an extended answer, not a substitute for
+      writing one.
+    </p>
+    <TerminologyDrill client:load topicId={topicId} items={items} />
+  </div>
+</details>

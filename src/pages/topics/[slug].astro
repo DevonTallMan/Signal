@@ -4,6 +4,7 @@ import BaseLayout from '~/layouts/BaseLayout.astro';
 import AuthorByline from '~/components/AuthorByline.astro';
 import TopicMeta from '~/components/TopicMeta.astro';
 import AssessmentBlock from "~/components/AssessmentBlock.astro";
+import DrillPanel from "~/components/DrillPanel.astro";
 
 export async function getStaticPaths() {
   const topics = await getCollection(
@@ -46,7 +47,13 @@ const area = await getEntry('contentAreas', topic.data.content_area);
       <Content />
     </article>
 
-    <AssessmentBlock topicId={topic.id} assessments={topic.data.assessments} />
+    {topic.data.drill.length > 0 && (
+      <DrillPanel topicId={topic.id} items={topic.data.drill} />
+    )}
+
+    <div id="nei-assessment">
+      <AssessmentBlock topicId={topic.id} assessments={topic.data.assessments} />
+    </div>
 
     <p style="margin-top: var(--space-5);">
       {

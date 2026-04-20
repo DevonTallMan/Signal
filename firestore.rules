@@ -38,6 +38,28 @@ service cloud.firestore {
         // Submissions are append-only. No updates, no deletes.
         allow update, delete: if false;
       }
+
+      match /drillRatings/{ratingId} {
+        // A user can read any of their own drill ratings.
+        allow read: if request.auth != null && request.auth.uid == userId;
+
+        // Drill ratings use setDoc (upsert), so both create and update
+        // are allowed. Per-document the latest rating overwrites any
+        // previous rating for the same term. No delete for audit.
+        // The document must include the required fields.
+        allow create, update: if request.auth != null
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasAll([
+               'topicId', 'termId', 'outcome', 'ratedAt', 'source'
+             ])
+          && request.resource.data.source == 'signal'
+          && request.resource.data.topicId is string
+          && request.resource.data.termId is string
+          && (request.resource.data.outcome == 'got'
+              || request.resource.data.outcome == 'miss');
+
+        allow delete: if false;
+      }
     }
 
     // Deny everything else by default.
