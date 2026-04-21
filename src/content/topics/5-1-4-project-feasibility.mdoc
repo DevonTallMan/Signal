@@ -1,0 +1,300 @@
+---
+title: What Makes a Digital Project Feasible
+section_id: "5.1.4"
+content_area: 5-1
+paper: "2"
+status: published
+spec_version: "2024-01"
+authors:
+  - chris-morris
+reviewers:
+  - chris-morris
+learning_outcomes:
+  - Identify the five factors that determine whether a digital project is feasible (benefits, drawbacks, risks, constraints, dependencies)
+  - Apply each factor to a specific scenario rather than listing them abstractly
+  - Recognise that feasibility is a balance, not a single-dimension judgement
+prerequisites:
+  - 5-1-3-digital-supports-business-needs
+estimated_minutes: 30
+last_reviewed: 2026-04-20
+revision_notes: |
+  2026-04-20: Initial draft. Scenario (side-hustle tutor deciding
+  between a bookings website and Google Forms) chosen per Young
+  Enterprise November 2025 research: 37% of UK 16-24s have had a
+  side hustle, and tutoring/informal teaching is one of the most
+  common categories for school-age and student-age earners. The
+  scenario deliberately presents two genuinely-defensible options
+  rather than one obvious right answer, because feasibility
+  analysis is about trade-offs, not verdicts.
+assessments:
+  - discriminant: mcq
+    value:
+      id: 514-mcq-01
+      prompt: A small business is considering a digital project. They list the following as factors to weigh up. Which of these is a constraint rather than a risk?
+      options:
+        - "The project could fail if the main developer leaves partway through"
+        - "The business has a fixed budget of £2,000 that cannot be exceeded"
+        - "Customers might not adopt the new system"
+        - "A cybersecurity breach could expose customer data"
+      correct_index: 1
+      feedback_correct: |
+        Correct. A constraint is a hard limit the project must operate
+        within (budget, time, skills available, legal requirement). A
+        fixed £2,000 budget is a constraint because it bounds what can
+        be done. The other three options describe possible future
+        negative events, which are risks.
+      feedback_incorrect: |
+        The answer is "The business has a fixed budget of £2,000 that
+        cannot be exceeded." A constraint is a hard limit the project
+        must operate within. A risk is a possible future negative event
+        that may or may not happen. The £2,000 budget is definitely
+        true now (constraint); the others describe things that might
+        happen later (risks).
+      difficulty: foundation
+  - discriminant: nei
+    value:
+      id: 514-nei-01
+      stimulus: |
+        Jordan is an 18-year-old tutoring GCSE maths part-time
+        alongside his T-Level studies. He has 12 regular students
+        and picks up new ones through word of mouth. Currently he
+        manages bookings over WhatsApp and a paper diary, takes
+        payment in cash or bank transfer, and keeps no formal
+        records. His parents are nudging him to "look more
+        professional". He is weighing up two options: paying £15 a
+        month for a specialist booking website that handles
+        scheduling, reminders and card payments, or staying free
+        by using Google Forms for bookings and a shared Google
+        Sheet for tracking. He has about six hours a week of
+        non-tutoring time and modest technical confidence.
+      question: |
+        Identify one risk and one constraint that Jordan should
+        weigh up when deciding between the two options, and
+        explain why each one matters for his specific situation.
+      max_marks: 4
+      mark_scheme:
+        name_expected: |
+          A specific, scenario-anchored risk AND a specific,
+          scenario-anchored constraint, named clearly enough that
+          the reader knows what each refers to. A student who names
+          one risk and one constraint (one of each, as asked) hits
+          this mark in full. A student who names two risks or two
+          constraints can still earn partial credit on this mark if
+          both are well-chosen and clearly named, but full credit
+          requires one of each as the question specifies.
+
+          Examples of risks that would score: the booking site
+          could go down during peak booking windows and lose him
+          sessions; students might not adopt a new booking
+          system after being used to WhatsApp; a monthly
+          subscription with no clear revenue increase could be
+          money wasted; data kept in Google Sheets could be
+          exposed if the sheet is shared incorrectly.
+
+          Examples of constraints that would score: his six-hour
+          weekly time budget for non-tutoring activities; his
+          modest technical confidence (limits how complex a tool
+          he can set up and maintain); his need to keep overheads
+          very low because tutoring income is variable; GDPR
+          requirements on holding student data if he records
+          anything identifiable.
+        explain_expected: |
+          For the risk: a clear statement that this is a possible
+          future negative event (not certain) and what the impact
+          would be if it materialised. For example, "the booking
+          site might go down" is a statement; "if the booking site
+          goes down at the moment a new student is trying to book,
+          he loses that booking to competitors and may not get the
+          student back" is an explanation.
+
+          For the constraint: a clear statement that this is a
+          current hard limit (true now, not conditional on the
+          future) and how it bounds the decision. For example,
+          "he has limited time" is a statement; "because he has
+          six hours a week of non-tutoring time and is also
+          studying, he cannot afford to spend half of that time
+          learning a complex booking platform" is an explanation
+          that shows the limit constrains the choice.
+        impact_expected: |
+          The scenario-specific consequence must be clear, linked
+          to Jordan's actual situation (part-time, small number of
+          regular students, tight time budget, modest technical
+          confidence, parents nudging him to look more
+          professional), not a generic business-textbook answer.
+          Examples: if the risk is realised, Jordan loses students
+          he cannot easily replace through word of mouth; if the
+          constraint binds, Jordan adopts a simpler tool even if
+          a more polished one exists.
+
+          A student who mentions both risk and constraint but fails
+          to anchor either in Jordan's specific circumstances (such
+          as treating him as a generic business rather than a
+          part-time tutor with six hours spare a week) does not
+          hit this mark.
+      exemplar_answer: |
+        One risk Jordan should weigh is that adopting a £15-a-month
+        booking site could end up costing him money with no clear
+        return. He currently has 12 students and picks up new ones
+        through word of mouth, so the site is not solving a
+        customer-acquisition problem. If the site does not actually
+        bring in additional students, he is paying £180 a year out
+        of already-variable tutoring income, which matters because
+        his tutoring is part-time and sits alongside his T-Level
+        studies. The risk is that "looking more professional" does
+        not translate into measurable income that covers the cost.
+
+        One constraint is his weekly non-tutoring time budget of
+        about six hours. Setting up and maintaining a booking
+        platform, integrating payments, and training existing
+        students to use it will take hours of his limited
+        administrative time. This constraint rules out a tool that
+        requires ongoing configuration or troubleshooting, because
+        every hour spent on admin is an hour not spent preparing
+        sessions or studying for his own T-Level. The constraint
+        pushes the decision towards Google Forms plus a Sheet,
+        unless the booking site is genuinely low-setup, because he
+        cannot trade time he does not have for polish he does not
+        need.
+drill:
+  - id: 514-drill-01
+    cue: The positive outcomes a digital project is expected to deliver, such as time saved or revenue generated.
+    answer: Benefits
+  - id: 514-drill-02
+    cue: The downsides of a digital project that exist by design, such as ongoing cost or loss of flexibility.
+    answer: Drawbacks
+  - id: 514-drill-03
+    cue: A possible future negative event that may or may not happen, such as a system failure or poor user adoption.
+    answer: Risk
+  - id: 514-drill-04
+    cue: A hard limit that the project must operate within, such as a fixed budget or a legal deadline.
+    answer: Constraint
+  - id: 514-drill-05
+    cue: Something the project relies on that is outside the team's direct control, such as a third-party service or another team's delivery.
+    answer: Dependency
+  - id: 514-drill-06
+    cue: The positive difference between what a project costs and what it delivers, often expressed in time or money.
+    answer: Return on investment (or net benefit)
+  - id: 514-drill-07
+    cue: A decision-making approach that compares each option's benefits and drawbacks side by side before committing.
+    answer: Cost-benefit analysis (or trade-off analysis)
+  - id: 514-drill-08
+    cue: The distinction between a problem that is certain to occur now and one that may or may not occur in the future.
+    answer: Constraint versus risk
+  - id: 514-drill-09
+    cue: A risk factor concerning whether users will actually engage with and use a new system once it is launched.
+    answer: Adoption risk (or user adoption risk)
+  - id: 514-drill-10
+    cue: A dependency on a separate organisation or platform whose availability is outside the project's control.
+    answer: Third-party dependency
+---
+
+## What this topic asks of you
+
+Feasibility is not a single question. It is a set of five questions
+you ask about any digital project before committing to it:
+
+- What are the **benefits** this project will deliver?
+- What are the **drawbacks** that come with it by design?
+- What **risks** might materialise while we run it?
+- What **constraints** are we operating inside?
+- What **dependencies** do we need to hold up for it to succeed?
+
+A feasible project is not one where all five come out positive.
+It is one where the benefits and dependencies outweigh the
+drawbacks, risks, and constraints to a degree the business is
+comfortable with. Feasibility is a judgement, not a calculation.
+
+## The five factors in turn
+
+**Benefits** are the positive outcomes the project delivers. Time
+saved, revenue increased, customers acquired, errors reduced, risk
+lowered in another area, new capability unlocked. Benefits should
+be as concrete as the scenario allows. "It would be good for the
+business" is not a benefit. "It would save the bookings manager
+three hours a week" is.
+
+**Drawbacks** are the negatives that come with the project by
+design. They are always true, not just possibly true. Monthly
+subscription cost is a drawback. Reduced flexibility because you
+are now tied to a platform is a drawback. The learning curve for
+staff is a drawback. Drawbacks are different from risks: a
+drawback is a price you pay for doing the project at all.
+
+**Risks** are possible future negative events. They might happen.
+They might not. A risk has three components: the event (what could
+go wrong), the likelihood (how probable it is), and the impact (how
+bad it would be if it did). Well-named risks in exam answers use
+all three. "It might go wrong" is not a risk. "The booking platform
+could go down during peak booking times, which happens several
+times a year based on their status page, and if it does Jordan
+loses that session's worth of bookings" is a risk.
+
+**Constraints** are hard limits the project operates inside.
+Budget, time, available skills, legal requirements, technical
+compatibility. Constraints are different from risks because they
+are certain: the £2,000 budget is not a possibility, it is a fact.
+When a scenario gives you a specific number (time, money, people),
+that is almost always a constraint.
+
+**Dependencies** are things the project relies on that sit outside
+the team's direct control. A third-party API. A supplier's
+delivery schedule. Approval from a regulator. The weather, for
+some businesses. Dependencies become problems when they fail; they
+are also different from risks because they are usually known about
+in advance. The risk is that the dependency fails. The dependency
+itself is just the reliance.
+
+## The common confusions Pearson tests on
+
+Two pairs catch students out on almost every Paper 2 specimen
+question about feasibility:
+
+**Risk versus constraint.** A risk is a possible future event. A
+constraint is a current hard limit. "The system might fail" is a
+risk. "We can only spend £500" is a constraint. The MCQ below
+tests this distinction. Students who blur the two lose marks
+because their whole analysis becomes muddled.
+
+**Drawback versus risk.** A drawback is a certain negative that
+comes with doing the project at all. A risk is a possible future
+negative. "The subscription costs £180 a year" is a drawback (it
+is definitely true). "The subscription might not deliver enough
+value to justify the cost" is a risk (it might or might not prove
+true).
+
+## Balance, not verdict
+
+Feasibility analysis does not produce a yes/no answer. It produces
+a structured statement of the trade-offs, which a decision-maker
+then weighs against the specific priorities of the business. Two
+reasonable people looking at the same feasibility analysis can
+legitimately reach different conclusions, because they weight
+benefits and drawbacks differently.
+
+This is important on the exam. A Section B question that asks you
+to evaluate a digital project is not asking "is this a good idea
+or a bad idea." It is asking you to surface the factors honestly,
+weigh them against the scenario's specifics, and arrive at a
+recommendation that is defensible given the scenario's priorities.
+An answer that just says "yes, it is a good idea, because it saves
+time" without naming the drawbacks and constraints is not doing
+feasibility analysis. It is cheerleading.
+
+## What Section B expects
+
+Paper 2 feasibility questions usually give you:
+- A scenario with a proposed digital project
+- Some specific numbers (budget, timescale, team size)
+- A tension between the proposed solution and another option
+
+Your job, in order:
+
+1. Identify one or two of each factor that genuinely apply (not all
+   five; you will not have time for all five in a 9-mark answer).
+2. Explain each one in terms of the scenario, not in general.
+3. Arrive at a balanced recommendation that acknowledges the
+   trade-offs you just named.
+
+The assessment below gives you a specific scenario to practise on.
+Pay particular attention to the distinction between risk and
+constraint, because that is where most marks are won and lost.
