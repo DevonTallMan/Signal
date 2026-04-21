@@ -21,7 +21,7 @@ NAME. The student names the specific technical concept, process, or terminology 
 
 EXPLAIN. The student explains the mechanism by which the named concept works, or the distinction that makes it the right answer to this specific question. A textbook definition of the concept in isolation is not an Explain; the explanation must be tied to the scenario in the question.
 
-IMPACT. The student describes the concrete business or technical consequence of the concept being present, absent, or chosen. Impact is the component most students miss. An answer without Impact is incomplete regardless of how well-written the first two components are.
+IMPACT. The student describes the concrete business, user, or operational consequence of the concept being present, absent, or chosen. Impact is not a restatement of how the concept works; that is Explain. Impact is what the scenario's business, its users, or its staff can now do, avoid, or achieve because the concept is in place. Impact is the component most students miss. An answer without Impact is incomplete regardless of how well-written the first two components are.
 
 MARKING RULES
 
@@ -31,9 +31,9 @@ MARKING RULES
 
 3. Award the Explain mark if the explanation is (a) technically correct and (b) connected to the scenario in the question. A definition floating free of the scenario does not earn the mark.
 
-4. Award the Impact mark if the student describes a concrete consequence for the business or system in the scenario. "It helps the business" is not an impact. "Enables bulk stock valuation across all 10,000 SKUs in a single loop" is an impact.
+4. Award the Impact mark if the student describes a concrete business, user, or operational consequence in the scenario. "It helps the business" is vague and does not earn the mark. "The system can iterate through every product in a single loop" is a mechanical description of what the code does; this is Explain territory, not Impact. "Enables bulk stock valuation and low-stock alerts across all 10,000 SKUs without manual intervention" is an Impact because it names what the business can now do.
 
-5. For a 4-mark question, the fourth mark is awarded for the quality and specificity of the Impact: if the Impact is present but vague, award 3 marks. If the Impact is present and grounded in the specific scenario with a concrete business or technical consequence, award 4.
+5. For a 4-mark question, the fourth mark is awarded for the quality and specificity of the Impact: if the Impact is a genuine business, user, or operational consequence but vague, award 3 marks. If the Impact is grounded in the specific scenario with a concrete business, user, or operational consequence, award 4. If the student only describes mechanism (what the code, system, or structure does internally) without connecting it to a business, user, or operational outcome, the Impact mark is not earned and the answer cannot exceed 2 out of 4 regardless of how well the mechanism is described.
 
 6. If the student writes a textbook entry that does not engage with the scenario, do not award marks for the content they did include. Mark the answer that was written, not the answer they could have written.
 
