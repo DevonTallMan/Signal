@@ -13,7 +13,8 @@ import { useState, type FormEvent } from 'react';
 import { useAuth } from '../lib/useAuth';
 import { markAnswer, AxiomError } from '../lib/axiom';
 import { saveSubmission } from '../lib/firestore';
-import type { ArcMarking, Submission } from '../lib/types';
+import type { ArcMarking, Submission, ArcExemplarClause } from '../lib/types';
+import ExemplarArc from './ExemplarArc';
 
 export interface NEISubmissionProps {
   topicId: string;
@@ -27,6 +28,7 @@ export interface NEISubmissionProps {
     impactExpected: string;
   };
   exemplarAnswer?: string;
+  exemplarArc?: ArcExemplarClause[];
 }
 
 type State =
@@ -162,6 +164,8 @@ export default function NEISubmission(props: NEISubmissionProps) {
           firestoreSaved={state.firestoreSaved}
           answer={answer}
           exemplarAnswer={props.exemplarAnswer}
+          exemplarArc={props.exemplarArc}
+          maxMarks={props.maxMarks}
           showExemplar={showExemplar}
           setShowExemplar={setShowExemplar}
           onTryAgain={handleTryAgain}
@@ -176,6 +180,8 @@ interface MarkingResultProps {
   firestoreSaved: boolean;
   answer: string;
   exemplarAnswer?: string;
+  exemplarArc?: ArcExemplarClause[];
+  maxMarks: number;
   showExemplar: boolean;
   setShowExemplar: (v: boolean) => void;
   onTryAgain: () => void;
@@ -186,6 +192,8 @@ function MarkingResult({
   firestoreSaved,
   answer,
   exemplarAnswer,
+  exemplarArc,
+  maxMarks,
   showExemplar,
   setShowExemplar,
   onTryAgain,
@@ -226,18 +234,24 @@ function MarkingResult({
         <p>{marking.verdict}</p>
       </div>
 
-      {exemplarAnswer && (
+      {(exemplarArc || exemplarAnswer) && (
         <div className="nei-exemplar">
           {showExemplar ? (
             <>
-              <div className="eyebrow">Exemplar answer</div>
-              <p className="nei-exemplar-text">{exemplarAnswer}</p>
+              {exemplarArc && exemplarArc.length > 0 ? (
+                <ExemplarArc arc={exemplarArc} maxMarks={maxMarks} />
+              ) : (
+                <>
+                  <div className="eyebrow">Exemplar answer</div>
+                  <p className="nei-exemplar-text">{exemplarAnswer}</p>
+                </>
+              )}
               <button
                 type="button"
                 className="nei-link"
                 onClick={() => setShowExemplar(false)}
               >
-                Hide exemplar
+                Hide worked answer
               </button>
             </>
           ) : (
@@ -246,7 +260,7 @@ function MarkingResult({
               className="nei-link"
               onClick={() => setShowExemplar(true)}
             >
-              Show exemplar answer
+              Show worked answer
             </button>
           )}
         </div>

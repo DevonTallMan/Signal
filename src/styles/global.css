@@ -885,3 +885,136 @@ samp {
 .drill-done__restart:hover {
   border-color: var(--ink);
 }
+/* ==========================================================
+   Exemplar Arc
+   ----------------------------------------------------------
+   Post-submission worked-example display. Three visual variants
+   (name / explain / impact) distinguish the Answer Arc components.
+   Colours deliberately differ from the ribbon: the ribbon encodes
+   state (HIT/PARTIAL/MISS), the arc encodes component identity.
+   The one-line note inside .exemplar-arc__header exists to make
+   this distinction unambiguous for students.
+   --amber is not defined in the token set, so the Impact accent
+   uses an inline hex per repo convention.
+   ========================================================== */
+
+.exemplar-arc {
+  margin-top: var(--space-3);
+}
+
+.exemplar-arc__header {
+  margin-bottom: var(--space-3);
+}
+
+.exemplar-arc__note {
+  margin: var(--space-1) 0 0 0;
+  color: var(--dim);
+  font-size: 0.9rem;
+}
+
+.exemplar-arc__legend {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--void);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+.exemplar-arc__legend-item {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding-left: var(--space-2);
+  border-left: 3px solid transparent;
+}
+
+.exemplar-arc__legend-item--name {
+  color: var(--green);
+  border-left-color: var(--green);
+}
+
+.exemplar-arc__legend-item--explain {
+  color: var(--gold);
+  border-left-color: var(--gold);
+}
+
+.exemplar-arc__legend-item--impact {
+  color: #ff9d3a;
+  border-left-color: #ff9d3a;
+}
+
+.exemplar-arc__block {
+  position: relative;
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+.exemplar-arc__block:last-child {
+  margin-bottom: 0;
+}
+
+.exemplar-arc__block-index {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+}
+
+.arc-clause {
+  margin-bottom: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid transparent;
+  background: var(--void);
+}
+
+.arc-clause:last-child {
+  margin-bottom: 0;
+}
+
+.arc-clause__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-1);
+}
+
+.arc-clause__text {
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.arc-clause--name {
+  border-left-color: var(--green);
+}
+
+.arc-clause--name .arc-clause__label {
+  color: var(--green);
+}
+
+.arc-clause--explain {
+  border-left-color: var(--gold);
+}
+
+.arc-clause--explain .arc-clause__label {
+  color: var(--gold);
+}
+
+.arc-clause--impact {
+  border-left-color: #ff9d3a;
+}
+
+.arc-clause--impact .arc-clause__label {
+  color: #ff9d3a;
+}

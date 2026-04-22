@@ -59,6 +59,15 @@ const neiSchema = z.object({
       impact_expected: z.string().optional(),
     }),
     exemplar_answer: z.string().optional(),
+    exemplar_arc: z
+      .array(
+        z.object({
+          name: z.string(),
+          explain: z.string(),
+          impact: z.string(),
+        }),
+      )
+      .optional(),
   }),
 });
 
