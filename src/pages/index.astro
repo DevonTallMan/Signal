@@ -18,6 +18,7 @@
 
 import LandingLayout from '~/layouts/LandingLayout.astro';
 import AnswerArcDemo from '~/components/AnswerArcDemo';
+import AuthNav from '~/components/AuthNav';
 import '~/styles/landing.css';
 ---
 
@@ -34,7 +35,7 @@ import '~/styles/landing.css';
       <div class="nav-links">
         <a href="#papers" class="nav-link">CONTENT AREAS</a>
         <a href="#answer-arc" class="nav-link">ANSWER ARC</a>
-        <a href="/signin" class="nav-cta">SIGN IN</a>
+        <AuthNav client:load landingVariant />
       </div>
     </nav>
   </header>

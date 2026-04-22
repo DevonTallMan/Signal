@@ -618,3 +618,57 @@ a:focus-visible {
 @media (max-width: 768px) {
   .arc-section { padding: 60px 20px; }
 }
+
+/* ==========================================================
+   LANDING AUTH NAV (signed-in state on the cyberpunk landing)
+   Styled to sit alongside .nav-link and .nav-cta in the
+   landing nav. The signed-out state reuses .nav-cta from
+   above (applied via AuthNav's landingVariant=true). The
+   signed-in state uses these rules.
+   ========================================================== */
+
+.landing-auth {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.landing-auth--loading {
+  /* Keeps the nav from jumping when auth resolves. Empty space. */
+  min-width: 88px;
+  height: 32px;
+}
+
+.landing-auth__user {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--green);
+  text-transform: uppercase;
+  padding: 0 8px;
+}
+
+.landing-auth__signout {
+  /* Visually matches .nav-link: quiet text, same font stack. Native
+     button reset applied so it doesn't inherit browser button styling. */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--dim);
+  padding: 7px 14px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  transition: color .2s;
+}
+
+.landing-auth__signout:hover {
+  color: var(--ink);
+}
+
+.landing-auth__signout:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
