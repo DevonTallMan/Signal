@@ -9,18 +9,50 @@
 // state resolves is acceptable; we could suppress it with a loading
 // placeholder but it adds complexity for little gain on a static
 // site.
+//
+// Two visual variants:
+//   - default: used by BaseLayout on topic pages and signin page.
+//     Plain styling via `.auth-nav--*` classes.
+//   - landingVariant: used by the cyberpunk landing at / only.
+//     Matches the landing's nav-link / nav-cta styling so the
+//     button looks like the rest of the landing nav.
 
 import { signOut } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { useAuth } from '../lib/useAuth';
 
-export default function AuthNav() {
+interface AuthNavProps {
+  landingVariant?: boolean;
+}
+
+export default function AuthNav({ landingVariant = false }: AuthNavProps) {
   const { user, loading } = useAuth();
+
+  // Class prefix swaps based on variant. Kept as a local constant so
+  // the two variants stay close in the code and style changes to one
+  // are easy to mirror to the other if needed.
+  const cls = landingVariant
+    ? {
+        root: 'landing-auth',
+        loading: 'landing-auth landing-auth--loading',
+        signin: 'nav-cta landing-auth__signin',
+        signedInRoot: 'landing-auth landing-auth--signed-in',
+        userLabel: 'landing-auth__user',
+        signout: 'nav-link landing-auth__signout',
+      }
+    : {
+        root: 'auth-nav',
+        loading: 'auth-nav auth-nav--loading',
+        signin: 'auth-nav auth-nav--signin',
+        signedInRoot: 'auth-nav auth-nav--signed-in',
+        userLabel: 'auth-nav__user',
+        signout: 'auth-nav__signout',
+      };
 
   if (loading) {
     // Brief loading state. Invisible span keeps the nav from jumping
     // when auth resolves.
-    return <span className="auth-nav auth-nav--loading">&nbsp;</span>;
+    return <span className={cls.loading}>&nbsp;</span>;
   }
 
   if (!user) {
@@ -29,8 +61,8 @@ export default function AuthNav() {
       ? encodeURIComponent(window.location.pathname + window.location.search)
       : '/';
     return (
-      <a href={`/signin?next=${next}`} className="auth-nav auth-nav--signin">
-        Sign In
+      <a href={`/signin?next=${next}`} className={cls.signin}>
+        {landingVariant ? 'SIGN IN' : 'Sign In'}
       </a>
     );
   }
@@ -48,14 +80,14 @@ export default function AuthNav() {
   }
 
   return (
-    <span className="auth-nav auth-nav--signed-in">
-      <span className="auth-nav__user">{label}</span>
+    <span className={cls.signedInRoot}>
+      <span className={cls.userLabel}>{label}</span>
       <button
         type="button"
         onClick={handleSignOut}
-        className="auth-nav__signout"
+        className={cls.signout}
       >
-        Sign Out
+        {landingVariant ? 'SIGN OUT' : 'Sign Out'}
       </button>
     </span>
   );
