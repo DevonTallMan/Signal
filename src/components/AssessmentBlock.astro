@@ -30,6 +30,11 @@ type NEIValue = {
     impact_expected?: string;
   };
   exemplar_answer?: string;
+  exemplar_arc?: Array<{
+    name: string;
+    explain: string;
+    impact: string;
+  }>;
 };
 
 type Assessment =
@@ -90,6 +95,7 @@ const neiCount = assessments.filter((a) => a.discriminant === 'nei').length;
                   impactExpected: a.value.mark_scheme.impact_expected ?? '',
                 }}
                 exemplarAnswer={a.value.exemplar_answer}
+                exemplarArc={a.value.exemplar_arc}
               />
             </div>
           );
