@@ -14,7 +14,7 @@
     "start": "astro dev",
     "typecheck": "astro check"
   },
-  "dependencies": {
+"dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/markdoc": "^0.15.11",
     "@astrojs/react": "^4.4.2",
@@ -26,7 +26,7 @@
     "firebase": "^11.10.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "phaser": "^3.90.0"` to `dependencies`
+    "phaser": "^3.90.0"
   },
   "devDependencies": {
     "@types/node": "^20.17.0",
