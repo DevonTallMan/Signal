@@ -1,0 +1,115 @@
+---
+// src/pages/risk-classifier.astro
+//
+// Risk Classifier — EU AI Act interactive module.
+// First of four planned gamified classifiers (CMA, DUAA, IP pending rollback criterion).
+//
+// The page is server-rendered for SEO and auth. The interactive game mounts
+// inside a client-only React island to avoid SSR'ing Phaser (which hits
+// `window` at import time).
+
+import Layout from "../layouts/Layout.astro"; // adjust to actual Signal layout path
+import RiskClassifier from "../components/RiskClassifier.jsx";
+
+const pageTitle = "Risk Classifier — EU AI Act";
+const pageDescription =
+  "Classify AI systems under the EU AI Act's four risk tiers. An examiner-authored drag-and-drop module for T Level Digital.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <main class="risk-classifier-page">
+    <header class="rc-intro">
+      <div class="rc-intro__label">LEGISLATION · 6.X · EU AI ACT</div>
+      <h1 class="rc-intro__title">Risk Classifier</h1>
+      <p class="rc-intro__lede">
+        The EU AI Act sorts every AI system into one of four risk tiers. An
+        examiner will give you a system and ask which tier it falls under, and
+        why.
+      </p>
+      <p class="rc-intro__lede">
+        This module rehearses that discrimination with twelve scenarios. You
+        drag each scenario onto the tier you think it belongs in. The examiner
+        explains the reasoning after each answer — especially when you get it
+        wrong.
+      </p>
+    </header>
+
+    <section class="rc-game">
+      <RiskClassifier client:only="react" />
+    </section>
+
+    <footer class="rc-outro">
+      <p>
+        Based on the final consolidated text of the EU AI Act, Official Journal
+        of the European Union, 2024. Article and annex references appear in the
+        examiner reasoning after each answer.
+      </p>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .risk-classifier-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    color: var(--ink, #e8edf3);
+  }
+
+  .rc-intro {
+    margin-bottom: 2.5rem;
+  }
+
+  .rc-intro__label {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: var(--green, #39ff14);
+    margin-bottom: 0.75rem;
+  }
+
+  .rc-intro__title {
+    font-size: 2.5rem;
+    margin: 0 0 1.25rem 0;
+    color: var(--ink, #e8edf3);
+  }
+
+  .rc-intro__lede {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--ink, #e8edf3);
+    margin: 0 0 1rem 0;
+    max-width: 68ch;
+  }
+
+  .rc-game {
+    margin: 2rem 0;
+    min-height: 600px;
+    background: var(--panel, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-radius: 4px;
+    padding: 1.5rem;
+  }
+
+  .rc-outro {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    font-size: 0.85rem;
+    color: var(--muted, rgba(232, 237, 243, 0.55));
+    line-height: 1.5;
+  }
+
+  @media (max-width: 640px) {
+    .risk-classifier-page {
+      padding: 1.5rem 1rem 3rem;
+    }
+    .rc-intro__title {
+      font-size: 2rem;
+    }
+    .rc-game {
+      padding: 1rem;
+      min-height: 500px;
+    }
+  }
+</style>
