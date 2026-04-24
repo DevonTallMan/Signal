@@ -33,14 +33,22 @@ export interface SessionHandle {
  * Returns a SessionHandle if persistence succeeded, null if there is no
  * authenticated user (in which case the game runs in ephemeral mode).
  */
-export async function startSession(): Promise<SessionHandle | null> {
-  const app = typeof window !== "undefined" ? window.MSM_APP : null;
-  if (!app) {
-    console.warn(
-      "[risk-classifier] window.MSM_APP not available; running without persistence"
-    );
-    return null;
-  }
+export type SessionMode = "first-attempt" | "replay-wrong" | "challenge";
+
+export async function startSession(
+     mode: SessionMode = "first-attempt"
+   ): Promise<SessionHandle | null> {
+
+
+    const app = window.MSM_APP;
+    if (!app) {
+      console.info(
+        "[risk-classifier] Firebase app not initialised; running without persistence"
+      );
+      return null;
+    }
+   
+
 
   const auth = getAuth(app);
   const user = auth.currentUser;
@@ -64,7 +72,7 @@ export async function startSession(): Promise<SessionHandle | null> {
       completedAt: null,
       totalScenarios: null, // set by completeSession in sprint 2
       score: 0,
-      mode: "first-attempt",
+      mode,
     });
     return { id: sessionId };
   } catch (err) {
