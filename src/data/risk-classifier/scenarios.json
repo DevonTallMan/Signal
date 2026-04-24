@@ -1,0 +1,208 @@
+{
+  "_meta": {
+    "version": "v1",
+    "reviewStatus": "author-generated, unreviewed",
+    "caveat": "Content in this file was drafted by the AI author (Claude) and has not been independently reviewed by a qualified examiner or FE practitioner before pilot deployment. Pilot interpretation must account for content quality as a legitimate alternative explanation for any ambiguous results, alongside the intended variables. This caveat was pre-registered on 24 April 2026 as part of the Sprint 1 exit decisions; see src/data/risk-classifier/README.md for the full context.",
+    "firstReviewerPriority": ["uklaw-006", "uklaw-009", "uklaw-011"],
+    "specSource": "T-Level Technical Qualification in Digital Production, Design and Development. Version 1.4, April 2024. Content Area 4: Legislation and regulatory requirements.",
+    "citationsVerifiedOn": "2026-04-24",
+    "citationsVerifiedAgainst": "legislation.gov.uk, ICO, CPS guidance, NCSC"
+  },
+
+  "_schema": {
+    "description": "Scenarios for the UK Legislation Classifier. Each scenario presents a workplace digital situation and asks the student to identify which piece of legislation primarily applies. The four tiers correspond to legislation named in T-Level Digital spec Content Area 4.1. The examinerReasoning is shown on a correct answer; the commonMistakes array is shown on a wrong answer and addresses why each of the three plausible wrong answers is wrong.",
+    "fields": {
+      "id": "stable string identifier; format: uklaw-{num}; used in Firestore attempt records",
+      "difficulty": "one of: clean, grey, edge",
+      "scenario": "the workplace scenario the student classifies; 1-3 sentences; concrete and specific",
+      "correctTier": "one of: data-protection, computer-misuse, equality, intellectual-property",
+      "examinerReasoning": "shown on correct answer; 2-3 sentences; cites the specific Act and spec sub-section",
+      "commonMistakes": "array of { tier, why }; shown on wrong answer; addresses all three plausible wrong answers",
+      "actReference": "specific citation to the Act and the spec sub-section it maps to",
+      "specReference": "T-Level Digital spec sub-section (e.g. 4.1.2)"
+    },
+    "authoringNote": "Each scenario must map unambiguously to one Act as primary. Where more than one Act touches the scenario, the primary is the one under which the candidate would be expected to answer an exam question testing this situation."
+  },
+
+  "scenarios": [
+    {
+      "id": "uklaw-001",
+      "difficulty": "clean",
+      "scenario": "A marketing executive at a UK retailer downloads a customer contact list to a personal USB stick so she can work on a campaign at home over the weekend. She does not tell IT and the stick is not encrypted. The list includes names, emails, and purchase history for 4,200 customers.",
+      "correctTier": "data-protection",
+      "examinerReasoning": "Data Protection Act 2018 and UK GDPR. The scenario describes personal data being transferred outside the organisation's controlled environment without technical safeguards, which engages the security principle: personal data must be processed in a manner that ensures appropriate security, including protection against unauthorised access and accidental loss. The unencrypted USB stick is the specific breach; the customer data is the specific asset being mishandled.",
+      "commonMistakes": [
+        { "tier": "computer-misuse", "why": "The Computer Misuse Act criminalises unauthorised access to computer material. The marketing executive has authorised access to the customer list as part of her role; the issue is what she then does with that data, not whether she was permitted to see it. The Computer Misuse Act would apply if she had accessed a system she had no rights to." },
+        { "tier": "equality", "why": "The Equality Act protects people from discrimination on grounds of protected characteristics. There is no discrimination issue here. Poor data handling is a data-protection breach regardless of who the customers are." },
+        { "tier": "intellectual-property", "why": "The Intellectual Property Act covers unregistered designs, registered designs and patents. A customer list may hold commercial value, but its legal protection is governed by data-protection regulation (because it contains personal data) and potentially by contract, not by IP legislation. IP would apply if the scenario involved the company's registered designs or patents being copied." }
+      ],
+      "actReference": "Data Protection Act 2018 and UK GDPR, Article 5(1)(f) (security principle)",
+      "specReference": "4.1.2"
+    },
+
+    {
+      "id": "uklaw-002",
+      "difficulty": "clean",
+      "scenario": "A software developer leaves a company after a dispute. Two weeks later, using a former colleague's login credentials which she had noted down during her employment, she logs into the company's code repository and downloads a copy of the source code she had been working on.",
+      "correctTier": "computer-misuse",
+      "examinerReasoning": "Computer Misuse Act 1990. The offence is unauthorised access to computer material: using credentials that were not hers and logging into a system she was no longer authorised to use. Her previous employment does not grant continuing access rights, and the colleague's credentials were not given to her for this use. Section 1 of the Act captures this precisely.",
+      "commonMistakes": [
+        { "tier": "intellectual-property", "why": "The source code is likely to be protected as the company's IP, so an IP answer is not entirely misplaced, but the primary offence in the scenario is the unauthorised access itself. An exam answer led by IP would miss the more direct criminal breach. The Computer Misuse Act is the first statute engaged; IP considerations would follow." },
+        { "tier": "data-protection", "why": "Data protection legislation applies to personal data. Source code is not personal data unless it contains personal data embedded within it. The scenario describes source code as a corporate asset being accessed without authorisation, which is a Computer Misuse Act matter." },
+        { "tier": "equality", "why": "The Equality Act applies to discrimination on grounds of protected characteristics such as age, sex, or disability. The scenario describes a dispute and unauthorised access; nothing in the facts concerns discrimination. An employment dispute does not automatically engage the Equality Act." }
+      ],
+      "actReference": "Computer Misuse Act 1990, Section 1 (unauthorised access to computer material)",
+      "specReference": "4.1.3"
+    },
+
+    {
+      "id": "uklaw-003",
+      "difficulty": "clean",
+      "scenario": "A software company uses an automated CV-screening tool to filter applications for a developer role. After six months, HR notices that no applicants over fifty have been shortlisted, despite several applying with strong relevant experience. The screening tool weights recent graduate qualifications heavily.",
+      "correctTier": "equality",
+      "examinerReasoning": "Equality Act 2010. The scenario describes indirect discrimination: a neutral-sounding rule (weighting recent graduate qualifications) applies equally to all applicants but puts applicants sharing a protected characteristic (age) at a particular disadvantage, with no clear justification that the rule is a proportionate means of achieving a legitimate aim. Age is one of the nine protected characteristics under the Act.",
+      "commonMistakes": [
+        { "tier": "data-protection", "why": "The scenario involves processing personal data (CVs), which engages data-protection legislation in general. But the specific wrong in the scenario is discriminatory outcomes, not mishandling of the data itself. An exam answer focused on data protection would miss the central issue the scenario is testing." },
+        { "tier": "computer-misuse", "why": "The Computer Misuse Act concerns unauthorised access. The CV-screening tool is authorised use of the company's own system; there is no access breach. Do not confuse 'the computer produced a harmful outcome' with 'a computer was misused in the statutory sense.'" },
+        { "tier": "intellectual-property", "why": "The Intellectual Property Act covers design rights, patents and similar creative or technical outputs. The CV-screening software is IP in itself, owned by the vendor or the company, but the scenario tests whether its use produces an unlawful outcome. The outcome here is discriminatory, engaging the Equality Act, not IP legislation." }
+      ],
+      "actReference": "Equality Act 2010, Section 19 (indirect discrimination); age as protected characteristic under Section 5",
+      "specReference": "4.1.4"
+    },
+
+    {
+      "id": "uklaw-004",
+      "difficulty": "clean",
+      "scenario": "A council's IT department receives an email from a member of staff asking for a copy of the entire electoral roll to be sent to her personal Gmail address so she can work on an analysis project at home this weekend. The IT manager is unsure how to respond.",
+      "correctTier": "data-protection",
+      "examinerReasoning": "Data Protection Act 2018 and UK GDPR. The request is for a transfer of personal data to an unsecured personal email account outside the controller's infrastructure. The security principle requires appropriate technical and organisational measures; routing an entire electoral roll through consumer webmail fails that test. The IT manager's correct answer is to refuse and direct the staff member to a sanctioned remote-working route.",
+      "commonMistakes": [
+        { "tier": "computer-misuse", "why": "Computer Misuse would apply if the staff member had accessed the roll without authorisation. She has authorised access; the issue is the route by which she is asking for it to be sent. Do not confuse 'moving data insecurely' with 'accessing data without permission.'" },
+        { "tier": "equality", "why": "The Equality Act protects individuals from discrimination on protected characteristics. The electoral roll is the subject of a transfer request; no discrimination is at issue." },
+        { "tier": "intellectual-property", "why": "IP legislation covers designs, patents and similar protectable outputs. An electoral roll is a public-authority data asset protected by data-protection law, not by IP." }
+      ],
+      "actReference": "Data Protection Act 2018 and UK GDPR, Article 5(1)(f) (security principle); Article 32 (security of processing)",
+      "specReference": "4.1.2"
+    },
+
+    {
+      "id": "uklaw-005",
+      "difficulty": "grey",
+      "scenario": "An IT support technician at a law firm notices he can access the HR shared drive because a permission was never revoked after a previous role change. Over three months he opens salary spreadsheets for several partners and reads appraisal notes on his own line manager. He does not copy or share anything.",
+      "correctTier": "computer-misuse",
+      "examinerReasoning": "Computer Misuse Act 1990. Section 1 criminalises unauthorised access to computer material; it does not require copying, modification, or onward sharing, only that the accused intentionally secured access to material they knew they were not authorised to see. The misconfigured permission does not amount to authorisation: case law establishes that employees commit the offence when they access parts of a system their employer has not authorised them to use, regardless of whether the technical access is possible. Data protection is secondarily engaged because personal data is involved, but the primary statute tested in this scenario is the CMA.",
+      "commonMistakes": [
+        { "tier": "data-protection", "why": "Data protection is in play because salaries and appraisals are personal data, and an organisation that leaves a stale permission live has arguably breached the security principle. But the exam question tests the act of the employee, not the employer's controls. The employee's conduct is squarely a Section 1 CMA offence; data protection would be the frame if the question asked about the firm's liability as controller." },
+        { "tier": "equality", "why": "The Equality Act is not engaged by the act of reading a manager's appraisal without permission. Discrimination requires less favourable treatment on a protected characteristic; curiosity about salaries is not that." },
+        { "tier": "intellectual-property", "why": "Appraisal notes and salary data are not the subject matter of IP legislation. IP protects the form of creative or technical output, not the confidentiality of personnel information." }
+      ],
+      "actReference": "Computer Misuse Act 1990, Section 1 (unauthorised access to computer material)",
+      "specReference": "4.1.3"
+    },
+
+    {
+      "id": "uklaw-006",
+      "difficulty": "edge",
+      "scenario": "A third-party IT contractor is hired to build a new internal dashboard. The contract says he must delete all project files from his own laptop at the end of the contract. Six months after the contract ends, he still has a copy of the dashboard source code, which he reuses in a demo for a different prospective client.",
+      "correctTier": "intellectual-property",
+      "examinerReasoning": "Intellectual Property Act. The primary wrong here is unauthorised use of the commissioning company's intellectual property: in a standard contract-for-services arrangement, the finished code is typically owned by the commissioning company, and reuse for another client without consent is an IP breach. Computer Misuse is not engaged because the contractor obtained the code through authorised access during the contract; the wrong is what he does with the material after authorised possession ends, which is an IP and contract matter rather than a criminal access matter.",
+      "commonMistakes": [
+        { "tier": "computer-misuse", "why": "CMA tempts students because the contractor was supposed to delete the files, so keeping them feels like unauthorised retention. But Section 1 targets unauthorised access, not retention after authorised access. The route into the material was lawful; the wrong is subsequent reuse, which is IP." },
+        { "tier": "data-protection", "why": "Source code is not personal data unless personal data is embedded in it. Nothing in the scenario suggests the dashboard code contains personal data. If it did, DPA would layer on top of the IP issue, but the scenario as written is an IP matter." },
+        { "tier": "equality", "why": "No protected characteristic is engaged. Commercial reuse without consent is not discrimination." }
+      ],
+      "actReference": "Copyright, Designs and Patents Act 1988 (copyright in source code as a literary work); Intellectual Property Act 2014 context within spec 4.1.5",
+      "specReference": "4.1.5"
+    },
+
+    {
+      "id": "uklaw-007",
+      "difficulty": "clean",
+      "scenario": "A retail chain's new self-service kiosks use a touchscreen interface that cannot be operated by customers who are unable to stand for long periods or who cannot use a touchscreen because of limited hand dexterity. The chain has not provided a staffed alternative.",
+      "correctTier": "equality",
+      "examinerReasoning": "Equality Act 2010. Service providers are under a duty to make reasonable adjustments so that disabled people are not placed at a substantial disadvantage in accessing a service. Requiring all customers to use a touchscreen kiosk, with no staffed alternative, fails that duty. Disability is one of the protected characteristics; the adjustment duty is anticipatory, meaning the chain should have designed the service with disabled access in mind.",
+      "commonMistakes": [
+        { "tier": "data-protection", "why": "Kiosks may process personal data (payment card details, loyalty accounts), which engages data-protection law in general. The scenario does not describe a data-handling failure; the wrong is the exclusion of a group of customers, which is an Equality Act matter." },
+        { "tier": "computer-misuse", "why": "CMA is about unauthorised access to computer systems. A customer who cannot use a kiosk is not attempting unauthorised access; the kiosk's design is the issue, not anyone's conduct toward the system." },
+        { "tier": "intellectual-property", "why": "The kiosk software is IP, but the scenario tests whether the service meets an accessibility duty, not whether the software is lawfully used. IP is the wrong frame." }
+      ],
+      "actReference": "Equality Act 2010, Section 20 (duty to make adjustments); Section 6 (disability as protected characteristic)",
+      "specReference": "4.1.4"
+    },
+
+    {
+      "id": "uklaw-008",
+      "difficulty": "grey",
+      "scenario": "A small software house uses a popular open-source JavaScript library in a product it sells to clients. The library is released under the GPL, which requires any derivative work to be released under the same licence. The software house distributes its product as closed-source.",
+      "correctTier": "intellectual-property",
+      "examinerReasoning": "Intellectual Property Act. Open-source licences are copyright licences: the library's author grants use only on the condition that downstream work complies with the licence terms. Distributing a closed-source product that incorporates GPL code breaches the licence and therefore infringes the author's copyright. Contractual and licensing concerns are secondary; the primary statute engaged is copyright under the Copyright, Designs and Patents Act 1988, which sits within the IP framework named in spec 4.1.5.",
+      "commonMistakes": [
+        { "tier": "data-protection", "why": "The scenario concerns software licensing, not personal data. DPA would apply if the product mishandled user data, but the wrong described is licence non-compliance." },
+        { "tier": "computer-misuse", "why": "CMA concerns unauthorised access to computer material. The software house has lawful access to the library; what it does with the code is an IP question, not an access question." },
+        { "tier": "equality", "why": "Licensing compliance has no discrimination dimension. The Equality Act is not engaged." }
+      ],
+      "actReference": "Copyright, Designs and Patents Act 1988 (copyright in literary works including source code); Intellectual Property Act 2014 context within spec 4.1.5",
+      "specReference": "4.1.5"
+    },
+
+    {
+      "id": "uklaw-009",
+      "difficulty": "edge",
+      "scenario": "A marketing agency builds a targeted-advertising system that infers likely religious affiliation from users' browsing behaviour and serves ads accordingly. One advertiser is a political campaign. The system does not ask users for their religion and does not display the inference to them.",
+      "correctTier": "data-protection",
+      "examinerReasoning": "Data Protection Act 2018 and UK GDPR. Inferring religious affiliation creates 'special category' data (Article 9 UK GDPR), the processing of which requires a specific lawful basis beyond the usual Article 6 conditions. Inference without consent, and without any Article 9 condition being satisfied, is unlawful processing. An Equality Act angle is foreseeable if the targeting produces discriminatory outcomes, but the primary statute engaged is data protection because the wrong is the processing itself, not the outcome.",
+      "commonMistakes": [
+        { "tier": "equality", "why": "The Equality Act would be engaged if targeting produced discrimination on religion as a protected characteristic (e.g. denying service). The scenario describes the processing of inferred religious data, which is wrong regardless of whether a specific discriminatory outcome occurs. Equality is downstream of data protection here." },
+        { "tier": "computer-misuse", "why": "No unauthorised access to a computer system is described. The agency builds a system that processes data lawfully accessed; the wrong is the nature of the processing, not the route to it." },
+        { "tier": "intellectual-property", "why": "IP is not engaged by inference-based targeting. The targeting algorithm itself may be IP, but the scenario tests the lawfulness of the inference, which is a data-protection matter." }
+      ],
+      "actReference": "Data Protection Act 2018 and UK GDPR, Article 9 (special category personal data); Article 5(1)(a) (lawfulness)",
+      "specReference": "4.1.2"
+    },
+
+    {
+      "id": "uklaw-010",
+      "difficulty": "clean",
+      "scenario": "A teenager downloads a password-cracking tool from a hacking forum and uses it to try to guess the admin password of her school's student management system. She does not gain access but the tool records that she tried 400 passwords against the school's server over three hours.",
+      "correctTier": "computer-misuse",
+      "examinerReasoning": "Computer Misuse Act 1990. Section 1 is committed by causing a computer to perform a function with intent to secure unauthorised access; it does not require successful access. The 400 attempts evidence both the intent and the unauthorised nature of the attempt. A secondary Section 3A offence may be in play for obtaining the password-cracking tool for use in a Section 1 offence, but the primary statute engaged is the CMA throughout.",
+      "commonMistakes": [
+        { "tier": "data-protection", "why": "Data protection would be engaged if personal data were accessed or mishandled. Here the attempt failed, no data was accessed, and the wrong is the attempted breach of the system's access controls. That is CMA territory." },
+        { "tier": "equality", "why": "No protected characteristic is engaged. Attempting to hack a school system is not discrimination." },
+        { "tier": "intellectual-property", "why": "The student management system software is IP, but the wrong in the scenario is attempted unauthorised access, not IP infringement." }
+      ],
+      "actReference": "Computer Misuse Act 1990, Section 1 (unauthorised access); Section 3A (making, supplying or obtaining articles for use in offences)",
+      "specReference": "4.1.3"
+    },
+
+    {
+      "id": "uklaw-011",
+      "difficulty": "grey",
+      "scenario": "A university's recruitment team uses a video-interview platform that automatically scores candidates' responses on 'enthusiasm' and 'clarity' based on voice patterns. Candidates with non-British accents are scored lower on average, and a deaf candidate who uses a sign-language interpreter cannot be scored at all.",
+      "correctTier": "equality",
+      "examinerReasoning": "Equality Act 2010. Two distinct issues arise: indirect race discrimination because the accent-based scoring places applicants who share a national-origin characteristic at a particular disadvantage; and a failure of the reasonable-adjustment duty in relation to the deaf candidate who cannot access the scoring mechanism. Data protection is also engaged because automated decisions of this kind have specific obligations under UK GDPR Article 22, but the primary statute tested by this scenario is the Equality Act because the exam question would focus on the discriminatory and access-failure outcomes.",
+      "commonMistakes": [
+        { "tier": "data-protection", "why": "Article 22 UK GDPR covers solely automated decisions with significant effects; this platform arguably falls within it, and data protection is a legitimate secondary frame. But the exam question will test the discrimination outcomes, which are the Equality Act's territory. Answering data-protection primary would miss the central wrong." },
+        { "tier": "computer-misuse", "why": "All access to the platform is authorised. CMA has no purchase here." },
+        { "tier": "intellectual-property", "why": "The scoring algorithm is IP, but the scenario tests whether the use of that algorithm produces unlawful outcomes. The outcomes are discriminatory." }
+      ],
+      "actReference": "Equality Act 2010, Section 19 (indirect discrimination); Section 20 (reasonable adjustments); Section 9 (race as protected characteristic); Section 6 (disability)",
+      "specReference": "4.1.4"
+    },
+
+    {
+      "id": "uklaw-012",
+      "difficulty": "edge",
+      "scenario": "A junior developer at a fintech startup forks an open-source payment-processing library that is licensed under the permissive MIT licence. He removes the attribution notice from the header comment, renames the file, and commits it to the company's private repository as if it were original code. The product ships.",
+      "correctTier": "intellectual-property",
+      "examinerReasoning": "Intellectual Property Act. The MIT licence is permissive: it allows reuse, modification and inclusion in closed-source products, but on a single condition, that the copyright and licence notice is preserved. Stripping the attribution notice breaches that condition and therefore infringes the original author's copyright. The scenario is deliberately edge-case because students commonly assume permissive licences impose no obligations; in fact they impose a minimal but strict one.",
+      "commonMistakes": [
+        { "tier": "computer-misuse", "why": "CMA concerns unauthorised access. The developer has lawful access to the open-source library; the wrong is what he does with the code once he has it, which is IP." },
+        { "tier": "data-protection", "why": "Payment-processing code may handle personal data at runtime, engaging DPA for the company's product. The specific wrong in the scenario is the attribution removal, which is an IP matter distinct from how the resulting product processes data." },
+        { "tier": "equality", "why": "No discrimination dimension is present. The wrong is copyright-licence breach." }
+      ],
+      "actReference": "Copyright, Designs and Patents Act 1988 (copyright in literary works; moral rights and attribution); Intellectual Property Act 2014 context within spec 4.1.5",
+      "specReference": "4.1.5"
+    }
+  ]
+}
