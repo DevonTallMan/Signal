@@ -22,16 +22,16 @@ The pilot is **not** designed to produce evidence of educational impact versus a
 
 ### 2.1 Cohort
 
-- **Host:** Dave Smith, teaching his T-Level Digital class at [TO CONFIRM: institution name].
-- **Students:** [TO CONFIRM: number of students in the cohort, and whether all students participate or a subset].
-- **Consent and data handling:** [TO CONFIRM: whether student consent or opt-in is required by the institution, and whether pseudonymous Firestore IDs are sufficient or whether any identifying data handling needs addressing].
+- **Host:** Dave Smith, teaching his T-Level Digital class at Mid-Sussex College, Crawley campus.
+- **Students:** [Working assumption pending Dave's written confirmation: 14 students on the register, expected 11 to 12 active per session, all 14 to have access].
+- **Consent and data handling:** Pseudonymous Firestore IDs are sufficient under Mid-Sussex College's Curriculum Delivery policy. Institutional agreement obtained. No PII collected. Confirmed by Chris Morris, 24 April 2026, on the basis of agreement with the college.
 
 ### 2.2 Timing and duration
 
 - **Format:** Four consecutive weekly sessions.
-- **Start date:** [TO CONFIRM].
+- **Start date:** [Working assumption pending Dave's written confirmation: Monday 11 May 2026, with four consecutive weekly sessions running through to early June, ahead of student industry placements].
 - **End date:** Four calendar weeks after start date.
-- **Session length:** [TO CONFIRM: expected 20 to 40 minutes of platform time per session, to be agreed with Dave based on his teaching constraints].
+- **Session length:** [Working assumption pending Dave's written confirmation: 30 minutes of platform time per session, scheduled in the second half of Dave's Monday morning double-period].
 
 ### 2.3 Content
 
@@ -59,7 +59,7 @@ For each student, across the four-session window:
 
 - **Pre-test:** Administered by Dave at the start of session one, before any platform use. Five legislation-classification questions on unseen scenarios. Format matches Paper 1 exam style. Marked to a documented mark scheme.
 - **Post-test:** Administered at the end of session four, after the final platform session. Five different legislation-classification questions on unseen scenarios. Same format and mark scheme.
-- **Assessment questions:** [TO CONFIRM: who drafts the questions. Default plan is that Claude drafts ten candidate questions, Chris reviews, Dave confirms suitability for his cohort, before the pilot begins.]
+- **Assessment questions:** [Working assumption pending Dave's written confirmation: Claude drafts ten candidate questions, Chris reviews, Dave sense-checks for cohort-appropriate language before the pilot begins.]
 
 ### 3.3 Qualitative feedback
 
@@ -150,7 +150,16 @@ Filling in `[TO CONFIRM]` placeholders is not a methodological change and does n
 
 ### Placeholder fills
 
-*None logged yet.*
+**24 April 2026, Chris Morris.** Filled the following placeholders:
+
+- Section 2.1 institution name: Mid-Sussex College, Crawley campus. A-status, confirmed by Chris on the basis of institutional agreement obtained.
+- Section 2.1 consent and data handling: Pseudonymous Firestore IDs sufficient under college Curriculum Delivery policy, institutional agreement obtained. A-status, confirmed by Chris.
+- Section 2.1 cohort size: 14 students with 11 to 12 expected active per session. B-status, working assumption pending Dave Smith's written confirmation.
+- Section 2.2 start date: Monday 11 May 2026. B-status, working assumption pending Dave's written confirmation.
+- Section 2.2 session length: 30 minutes per session in Monday morning double-period. B-status, working assumption pending Dave's written confirmation.
+- Section 3.2 assessment question drafting: Claude drafts, Chris reviews, Dave sense-checks. B-status, working assumption pending Dave's written confirmation.
+
+The four B-status entries will be upgraded to A-status when Dave confirms in writing. Forwarded confirmation will be appended to this log when received.
 
 ### Methodological changes
 
