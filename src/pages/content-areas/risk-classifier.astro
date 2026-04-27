@@ -3,7 +3,7 @@
 // Pivoted from EU AI Act on 24 April 2026 after spec mismatch discovered.
 // See docs/sprint-2-scope.md and src/data/risk-classifier/README.md.
 //
-// Sprint 2 Increment 2 scope: scenario rendering + tier buttons (no feedback yet).
+// Sprint 2 Increment 3 scope: feedback panels (correct shows examiner reasoning, incorrect shows mistake plus reasoning).
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import RiskClassifierIsland from "../../components/RiskClassifier";
@@ -27,8 +27,8 @@ import RiskClassifierIsland from "../../components/RiskClassifier";
 
     <footer class="rc-outro">
       <p>
-        Sprint 2 Increment 2: one scenario shown, four tier buttons render.
-        Click logs to console only. Feedback panels arrive in Increment 3.
+        Sprint 2 Increment 3: feedback panels arrive on each click. Continue
+        button does not yet advance scenarios; that arrives in Increment 5.
       </p>
     </footer>
   </main>

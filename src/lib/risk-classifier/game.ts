@@ -2,15 +2,13 @@
 //
 // Phaser game configuration for the UK Legislation Classifier.
 //
-// Sprint 2 Increment 2 scope:
-//   - Read scenarios from JSON
-//   - Render four tier buttons inside the Phaser canvas
-//   - On click, invoke a callback exposed to the React parent
-//   - Scenario text and feedback panels are rendered by React, not Phaser
+// Sprint 2 Increment 3 scope:
+//   - Read scenarios from JSON (unchanged from Increment 2)
+//   - Render four tier buttons (unchanged from Increment 2)
+//   - Disable buttons after first click (new in Increment 3)
+//   - Click callback now receives both selected tier and correct flag
 //
-// Hybrid architecture (decided 24 April 2026):
-//   - Phaser owns the classify interaction (tier buttons, click handling)
-//   - React owns the text-heavy parts (scenario, feedback panels)
+// Hybrid architecture: Phaser owns interaction, React owns feedback panels.
 
 import Phaser from "phaser";
 import scenariosData from "../../data/risk-classifier/scenarios.json";
@@ -64,9 +62,17 @@ const TIER_ORDER: Tier[] = [
   "intellectual-property",
 ];
 
+interface TierButton {
+  tier: Tier;
+  bg: Phaser.GameObjects.Rectangle;
+  label: Phaser.GameObjects.Text;
+}
+
 class ClassifyScene extends Phaser.Scene {
   private sessionId: string | null;
   private onTierSelected: (tier: Tier) => void;
+  private buttons: TierButton[] = [];
+  private locked: boolean = false;
 
   constructor(input: { sessionId: string | null; onTierSelected: (tier: Tier) => void }) {
     super({ key: "ClassifyScene" });
@@ -92,8 +98,6 @@ class ClassifyScene extends Phaser.Scene {
   }
 
   private renderTierButtons(width: number, height: number): void {
-    // Four buttons in a 2x2 grid centered on the canvas.
-    // Buttons are 320x90 with 20px padding between, working at 800x560 base size.
     const buttonWidth = 320;
     const buttonHeight = 90;
     const gap = 24;
@@ -107,7 +111,8 @@ class ClassifyScene extends Phaser.Scene {
       const row = Math.floor(index / 2);
       const x = startX + col * (buttonWidth + gap);
       const y = startY + row * (buttonHeight + gap);
-      this.createTierButton(x, y, buttonWidth, buttonHeight, tier);
+      const button = this.createTierButton(x, y, buttonWidth, buttonHeight, tier);
+      this.buttons.push(button);
     });
   }
 
@@ -117,7 +122,7 @@ class ClassifyScene extends Phaser.Scene {
     w: number,
     h: number,
     tier: Tier
-  ): void {
+  ): TierButton {
     const bg = this.add
       .rectangle(x, y, w, h, 0x0a0e1a, 1)
       .setOrigin(0)
@@ -135,22 +140,39 @@ class ClassifyScene extends Phaser.Scene {
     bg.setInteractive({ useHandCursor: true });
 
     bg.on("pointerover", () => {
+      if (this.locked) return;
       bg.setStrokeStyle(1, 0x39ff14);
       label.setColor("#39ff14");
     });
 
     bg.on("pointerout", () => {
+      if (this.locked) return;
       bg.setStrokeStyle(1, 0x1f2733);
       label.setColor("#e8edf3");
     });
 
     bg.on("pointerdown", () => {
+      if (this.locked) return;
       bg.setFillStyle(0x1a2330, 1);
     });
 
     bg.on("pointerup", () => {
+      if (this.locked) return;
       bg.setFillStyle(0x0a0e1a, 1);
+      this.lock();
       this.onTierSelected(tier);
+    });
+
+    return { tier, bg, label };
+  }
+
+  private lock(): void {
+    this.locked = true;
+    this.buttons.forEach(({ bg, label }) => {
+      bg.disableInteractive();
+      bg.setStrokeStyle(1, 0x1f2733);
+      label.setColor("rgba(232, 237, 243, 0.35)");
+      bg.setFillStyle(0x0a0e1a, 1);
     });
   }
 
