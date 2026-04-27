@@ -1,174 +1,83 @@
 ﻿// src/lib/risk-classifier/game.ts
 //
-// Phaser scene definition for the Risk Classifier.
-// Sprint 1 scope: render a static scaffold with four empty tier zones and a
-// scaffold message. Proves the Phaser-React integration works and that the
-// canvas renders at the target size. Sprint 2 adds the real gameplay.
+// Phaser game configuration for the UK Legislation Classifier.
+// Sprint 2 Increment 1 scope: boot the canvas, render a placeholder scene,
+// confirm Phaser-Astro-React island integration works end to end.
+//
+// Hybrid architecture (decided 24 April 2026):
+//   - Phaser owns the classify interaction (scenario presentation, tier buttons)
+//   - React owns the feedback panels (examiner reasoning, common mistakes)
+// The React layer reads game state via callbacks emitted from the scene.
+//
+// Subsequent increments will replace the placeholder scene with the real
+// classifier flow.
 
 import Phaser from "phaser";
 
-// Signal CSS tokens, duplicated here because Phaser does not read CSS vars.
-// Keep in sync with the module's styles.
-const COLOURS = {
-  void: 0x0d1117,
-  panel: 0x141a24,
-  border: 0x1e2530,
-  green: 0x39ff14,
-  gold: 0xffd700,
-  ink: 0xe8edf3,
-  muted: 0x7a8290,
-  minimal: 0x39ff14,
-  limited: 0xffd700,
-  high: 0xff8c00,
-  unacceptable: 0xff3b3b,
-} as const;
-
-interface Tier {
-  key: string;
-  label: string;
-  colour: number;
-  cssColour: string;
-}
-
-const TIERS: Tier[] = [
-  { key: "minimal", label: "MINIMAL", colour: COLOURS.minimal, cssColour: "#39ff14" },
-  { key: "limited", label: "LIMITED", colour: COLOURS.limited, cssColour: "#ffd700" },
-  { key: "high", label: "HIGH", colour: COLOURS.high, cssColour: "#ff8c00" },
-  { key: "unacceptable", label: "UNACCEPTABLE", colour: COLOURS.unacceptable, cssColour: "#ff3b3b" },
-];
-
-interface ScaffoldSceneInitData {
-  sessionId: string | null;
-}
-
-class ScaffoldScene extends Phaser.Scene {
-  private sessionId: string | null = null;
-
-  constructor() {
-    super({ key: "ScaffoldScene" });
-  }
-
-  init(data: ScaffoldSceneInitData): void {
-    this.sessionId = data.sessionId ?? null;
-  }
-
-  create(): void {
-    const { width, height } = this.scale;
-
-    this.add.rectangle(0, 0, width, height, COLOURS.void).setOrigin(0, 0);
-
-    this.add
-      .text(width / 2, 60, "RISK CLASSIFIER \u00b7 SPRINT 1 SCAFFOLD", {
-        fontFamily: "JetBrains Mono, Courier New, monospace",
-        fontSize: "14px",
-        color: "#39ff14",
-      })
-      .setOrigin(0.5, 0.5);
-
-    this.add
-      .text(
-        width / 2,
-        90,
-        "Drag-and-drop, scenarios, and scoring arrive in sprint 2.",
-        {
-          fontFamily: "JetBrains Mono, Courier New, monospace",
-          fontSize: "11px",
-          color: "#7a8290",
-        }
-      )
-      .setOrigin(0.5, 0.5);
-
-    const cardW = 360;
-    const cardH = 120;
-    const cardX = width / 2;
-    const cardY = 200;
-    this.add
-      .rectangle(cardX, cardY, cardW, cardH, COLOURS.panel)
-      .setStrokeStyle(1, COLOURS.border);
-    this.add
-      .text(cardX, cardY, "[ scenario card placeholder ]", {
-        fontFamily: "JetBrains Mono, Courier New, monospace",
-        fontSize: "12px",
-        color: "#7a8290",
-      })
-      .setOrigin(0.5, 0.5);
-
-    const zoneW = width / 4 - 12;
-    const zoneH = 140;
-    const zoneY = height - zoneH / 2 - 40;
-
-    TIERS.forEach((tier, i) => {
-      const zoneX = (width / 4) * i + width / 8;
-
-      this.add
-        .rectangle(zoneX, zoneY, zoneW, zoneH, COLOURS.panel)
-        .setStrokeStyle(2, tier.colour);
-
-      this.add
-        .text(zoneX, zoneY - 30, tier.label, {
-          fontFamily: "JetBrains Mono, Courier New, monospace",
-          fontSize: "13px",
-          color: tier.cssColour,
-          fontStyle: "bold",
-        })
-        .setOrigin(0.5, 0.5);
-
-      this.add
-        .text(zoneX, zoneY + 10, `tier ${i + 1}`, {
-          fontFamily: "JetBrains Mono, Courier New, monospace",
-          fontSize: "10px",
-          color: "#7a8290",
-        })
-        .setOrigin(0.5, 0.5);
-    });
-
-    if (this.sessionId) {
-      this.add
-        .text(
-          width - 12,
-          12,
-          `session: ${this.sessionId.slice(0, 8)}`,
-          {
-            fontFamily: "JetBrains Mono, Courier New, monospace",
-            fontSize: "10px",
-            color: "#4a525e",
-          }
-        )
-        .setOrigin(1, 0);
-    }
-  }
-}
-
-export interface CreateGameConfigInput {
+export interface GameConfigInput {
   parent: HTMLElement;
   sessionId: string | null;
 }
 
-/**
- * Build a Phaser game config for the Risk Classifier.
- * Called by the React island with the DOM parent and (if available) a
- * Firestore session id.
- */
-export function createGameConfig(
-  input: CreateGameConfigInput
-): Phaser.Types.Core.GameConfig {
-  const { parent, sessionId } = input;
+class BootScene extends Phaser.Scene {
+  private sessionId: string | null;
 
+  constructor(sessionId: string | null) {
+    super({ key: "BootScene" });
+    this.sessionId = sessionId;
+  }
+
+  create(): void {
+    const { width, height } = this.scale;
+    const centreX = width / 2;
+    const centreY = height / 2;
+
+    this.add
+      .text(centreX, centreY - 20, "UK Legislation Classifier", {
+        fontFamily: "JetBrains Mono, Courier New, monospace",
+        fontSize: "28px",
+        color: "#e8edf3",
+      })
+      .setOrigin(0.5);
+
+    this.add
+      .text(
+        centreX,
+        centreY + 20,
+        this.sessionId
+          ? `session ${this.sessionId.slice(0, 8)} ready`
+          : "no session (unauthenticated)",
+        {
+          fontFamily: "JetBrains Mono, Courier New, monospace",
+          fontSize: "14px",
+          color: "#39ff14",
+        }
+      )
+      .setOrigin(0.5);
+
+    this.add
+      .text(centreX, centreY + 60, "Increment 1: scaffold mounted", {
+        fontFamily: "JetBrains Mono, Courier New, monospace",
+        fontSize: "12px",
+        color: "rgba(232, 237, 243, 0.55)",
+      })
+      .setOrigin(0.5);
+  }
+}
+
+export function createGameConfig(
+  input: GameConfigInput
+): Phaser.Types.Core.GameConfig {
   return {
     type: Phaser.AUTO,
-    parent,
-    width: 880,
-    height: 560,
-    backgroundColor: "#0d1117",
+    parent: input.parent,
+    backgroundColor: "#0a0e1a",
     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
+      width: 800,
+      height: 560,
     },
-    scene: [ScaffoldScene],
-    callbacks: {
-      preBoot: (game: Phaser.Game) => {
-        game.registry.set("sessionId", sessionId);
-      },
-    },
+    scene: new BootScene(input.sessionId),
   };
 }
