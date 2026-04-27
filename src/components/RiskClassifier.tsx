@@ -17,7 +17,7 @@
 //   "correct" or "incorrect" -> END (Increment 3 doesn't advance further)
 
 import { useEffect, useRef, useState } from "react";
-import { startSession } from "../lib/risk-classifier/firestore";
+import { startSession, writeAttempt } from "../lib/risk-classifier/firestore";
 import type Phaser from "phaser";
 import type { Tier, Scenario } from "../lib/risk-classifier/game";
 
@@ -69,11 +69,13 @@ export default function RiskClassifier(): JSX.Element {
         const firstScenario = allScenarios[0];
         setScenario(firstScenario);
 
+        const startedAt = Date.now();
         const config = createGameConfig({
           parent: containerRef.current,
           sessionId: session?.id ?? null,
           onTierSelected: (tier: Tier) => {
-            handleTierSelected(tier, firstScenario);
+            const timeToAnswerMs = Date.now() - startedAt;
+            handleTierSelected(tier, firstScenario, timeToAnswerMs, session?.id ?? null);
           },
         });
 
@@ -97,7 +99,12 @@ export default function RiskClassifier(): JSX.Element {
     };
   }, []);
 
-  function handleTierSelected(tier: Tier, scenarioFor: Scenario): void {
+  function handleTierSelected(
+    tier: Tier,
+    scenarioFor: Scenario,
+    timeToAnswerMs: number,
+    activeSessionId: string | null
+  ): void {
     if (tier === scenarioFor.correctTier) {
       setStatus("correct");
       setIncorrectFeedback(null);
@@ -106,8 +113,6 @@ export default function RiskClassifier(): JSX.Element {
         (m) => m.tier === tier
       );
       if (!matchingMistake) {
-        // Defensive: every wrong tier should have a matching commonMistakes entry,
-        // but if it doesn't, fall back to a generic message rather than crash.
         setStatus("incorrect");
         setIncorrectFeedback({
           selectedTier: tier,
@@ -120,6 +125,21 @@ export default function RiskClassifier(): JSX.Element {
         setStatus("incorrect");
         setIncorrectFeedback({ selectedTier: tier, matchingMistake });
       }
+    }
+
+    // Increment 4: persist the attempt to Firestore. Fire and forget; errors
+    // are logged inside writeAttempt and do not break the user experience.
+    if (activeSessionId) {
+      void writeAttempt({
+        sessionId: activeSessionId,
+        scenarioId: scenarioFor.id,
+        tierChosen: tier,
+        correctTier: scenarioFor.correctTier,
+        timeToAnswerMs,
+        // TODO: wire this to actual panel-viewed detection in a later increment.
+        // For Increment 4, we assume the panel is shown and treat as viewed.
+        viewedReasoning: true,
+      });
     }
   }
 

@@ -1,8 +1,9 @@
 ﻿// src/lib/risk-classifier/firestore.ts
 //
 // Firestore persistence for the Risk Classifier.
-// Sprint 1 scope: startSession only. Sprint 2 adds writeAttempt and
-// completeSession as real implementations.
+// Sprint 1 scope: startSession only.
+// Sprint 2 Increment 4: writeAttempt implemented.
+// Sprint 2 Increment 5 (pending): completeSession to be implemented.
 //
 // Uses Signal's existing Firebase setup. `window.MSM_APP` is exposed by
 // firebase-config.js and is the shared app instance. We resolve Firestore and
@@ -28,27 +29,23 @@ export interface SessionHandle {
   id: string;
 }
 
+export type SessionMode = "first-attempt" | "replay-wrong" | "challenge";
+
 /**
  * Start a Risk Classifier session for the current authenticated user.
  * Returns a SessionHandle if persistence succeeded, null if there is no
  * authenticated user (in which case the game runs in ephemeral mode).
  */
-export type SessionMode = "first-attempt" | "replay-wrong" | "challenge";
-
 export async function startSession(
-     mode: SessionMode = "first-attempt"
-   ): Promise<SessionHandle | null> {
-
-
-    const app = window.MSM_APP;
-    if (!app) {
-      console.info(
-        "[risk-classifier] Firebase app not initialised; running without persistence"
-      );
-      return null;
-    }
-   
-
+  mode: SessionMode = "first-attempt"
+): Promise<SessionHandle | null> {
+  const app = window.MSM_APP;
+  if (!app) {
+    console.info(
+      "[risk-classifier] Firebase app not initialised; running without persistence"
+    );
+    return null;
+  }
 
   const auth = getAuth(app);
   const user = auth.currentUser;
@@ -70,7 +67,7 @@ export async function startSession(
     await setDoc(sessionRef, {
       startedAt: serverTimestamp(),
       completedAt: null,
-      totalScenarios: null, // set by completeSession in sprint 2
+      totalScenarios: null,
       score: 0,
       mode,
     });
@@ -91,11 +88,62 @@ export interface WriteAttemptInput {
 }
 
 /**
- * Record a single classification attempt. Sprint 2 implementation.
- * Defined as a stub here so the import graph is stable for Sprint 1.
+ * Record a single classification attempt. Sprint 2 Increment 4 implementation.
+ *
+ * Writes to:
+ *   users/{uid}/data/risk-classifier/sessions/{sessionId}/attempts/{attemptId}
+ *
+ * Returns null in all cases. Errors are logged but not thrown, so a Firestore
+ * failure does not break the user-facing experience.
  */
 export async function writeAttempt(input: WriteAttemptInput): Promise<null> {
-  console.log("[risk-classifier] writeAttempt (sprint 2 stub):", input);
+  const app = window.MSM_APP;
+  if (!app) {
+    console.info(
+      "[risk-classifier] Firebase app not initialised; attempt not persisted"
+    );
+    return null;
+  }
+
+  const auth = getAuth(app);
+  const user = auth.currentUser;
+  if (!user) {
+    console.info(
+      "[risk-classifier] no authenticated user; attempt not persisted"
+    );
+    return null;
+  }
+
+  const db = getFirestore(app);
+  const attemptId = crypto.randomUUID();
+  const attemptRef = doc(
+    collection(
+      db,
+      "users",
+      user.uid,
+      "data",
+      "risk-classifier",
+      "sessions",
+      input.sessionId,
+      "attempts"
+    ),
+    attemptId
+  );
+
+  try {
+    await setDoc(attemptRef, {
+      scenarioId: input.scenarioId,
+      tierChosen: input.tierChosen,
+      correctTier: input.correctTier,
+      isCorrect: input.tierChosen === input.correctTier,
+      timeToAnswerMs: input.timeToAnswerMs,
+      viewedReasoning: input.viewedReasoning,
+      attemptedAt: serverTimestamp(),
+    });
+  } catch (err) {
+    console.error("[risk-classifier] failed to write attempt:", err);
+  }
+
   return null;
 }
 
@@ -105,8 +153,8 @@ export interface CompleteSessionInput {
 }
 
 /**
- * Mark a session as complete with its final score. Sprint 2 implementation.
- * Defined as a stub here so the import graph is stable for Sprint 1.
+ * Mark a session as complete with its final score. Sprint 2 stub.
+ * Real implementation in Increment 5 alongside the multi-scenario session loop.
  */
 export async function completeSession(input: CompleteSessionInput): Promise<null> {
   console.log("[risk-classifier] completeSession (sprint 2 stub):", input);
