@@ -1,11 +1,14 @@
 ﻿// src/components/RiskClassifier.tsx
 //
-// React island that mounts the Phaser Risk Classifier game.
+// React island that mounts the Phaser UK Legislation Classifier game.
 // client:only - does not SSR because Phaser touches `window` at import time.
 //
-// Sprint 1 scope: mount Phaser, render placeholder scaffold on canvas,
-// log a session-start record to Firestore, confirm the spine works.
-// No drag interaction, no scenarios, no animation yet.
+// Hybrid architecture: Phaser owns interaction, React owns feedback panels.
+// Pivoted from EU AI Act on 24 April 2026.
+//
+// Sprint 2 Increment 1 scope: mount Phaser, render placeholder scaffold on
+// canvas, log a session-start record to Firestore, confirm the spine works.
+// No tier buttons, no scenarios, no feedback panels yet.
 
 import { useEffect, useRef, useState } from "react";
 import { startSession } from "../lib/risk-classifier/firestore";
@@ -75,7 +78,7 @@ export default function RiskClassifier(): JSX.Element {
         ref={containerRef}
         className="rc-classifier__canvas"
         role="application"
-        aria-label="EU AI Act Risk Classifier"
+        aria-label="UK Legislation Risk Classifier"
       />
       {sessionId && (
         <div className="rc-classifier__session-id" aria-hidden="true">

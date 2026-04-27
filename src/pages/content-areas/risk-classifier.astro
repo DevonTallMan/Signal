@@ -1,11 +1,9 @@
 ﻿---
-// src/pages/content-areas/risk-classifier.astro
+// Risk Classifier - UK Legislation interactive module.
+// Pivoted from EU AI Act on 24 April 2026 after spec mismatch discovered.
+// See docs/sprint-2-scope.md and src/data/risk-classifier/README.md.
 //
-// Risk Classifier - EU AI Act interactive module.
-// First of four planned gamified classifiers (CMA, DUAA, IP pending rollback
-// criterion).
-//
-// Sprint 1 scope: page shell + scaffold island. No scenario content yet.
+// Sprint 2 Increment 1 scope: scaffold + Phaser canvas mount.
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import RiskClassifierIsland from "../../components/RiskClassifier";
@@ -14,11 +12,12 @@ import RiskClassifierIsland from "../../components/RiskClassifier";
 <BaseLayout title="Risk Classifier | Signal">
   <main class="risk-classifier-page">
     <header class="rc-intro">
-      <p class="rc-intro__kicker">EU AI ACT INTERACTIVE</p>
+     <p class="rc-intro__kicker">UK LEGISLATION INTERACTIVE</p>
       <h1 class="rc-intro__title">Risk Classifier</h1>
       <p class="rc-intro__lede">
-        Classify real-world AI systems against the EU AI Act's four-tier risk
-        framework. Learn by doing.
+        Classify workplace digital scenarios against UK legislation: Data
+        Protection, Computer Misuse, Equality, and Intellectual Property. Learn
+        by doing.
       </p>
     </header>
 
@@ -28,8 +27,9 @@ import RiskClassifierIsland from "../../components/RiskClassifier";
 
     <footer class="rc-outro">
       <p>
-        This is a preview scaffold. Drag-and-drop interaction, scenario cards,
-        and reasoning walkthroughs arrive in the next release.
+        This is Sprint 2 Increment 1: scaffold and Phaser canvas mount.
+        Scenarios, classification, and feedback panels arrive across
+        subsequent increments.
       </p>
     </footer>
   </main>
