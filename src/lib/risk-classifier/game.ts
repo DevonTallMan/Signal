@@ -2,13 +2,13 @@
 //
 // Phaser game configuration for the UK Legislation Classifier.
 //
-// Sprint 2 Increment 3 scope:
-//   - Read scenarios from JSON (unchanged from Increment 2)
-//   - Render four tier buttons (unchanged from Increment 2)
-//   - Disable buttons after first click (new in Increment 3)
-//   - Click callback now receives both selected tier and correct flag
+// Sprint 2 Increment 5 scope:
+//   - Adds a scenario-picker that selects 5 scenarios per session
+//     (within-session difficulty progression, tier-balanced)
+//   - Phaser scene supports reset between scenarios within a session
+//   - Click callback unchanged from Increment 4 (tier passed to React)
 //
-// Hybrid architecture: Phaser owns interaction, React owns feedback panels.
+// Hybrid architecture: Phaser owns interaction, React owns content rendering.
 
 import Phaser from "phaser";
 import scenariosData from "../../data/risk-classifier/scenarios.json";
@@ -36,16 +36,89 @@ interface ScenariosFile {
   scenarios: Scenario[];
 }
 
-const SCENARIOS = (scenariosData as ScenariosFile).scenarios;
+const ALL_SCENARIOS = (scenariosData as ScenariosFile).scenarios;
 
 export function getAllScenarios(): Scenario[] {
-  return SCENARIOS;
+  return ALL_SCENARIOS;
+}
+
+/**
+ * Pick 5 scenarios for a single session.
+ *
+ * Algorithm: tier-balanced (one from each of the four tiers) plus one
+ * wildcard. Within-session order is difficulty-progressive: clean first,
+ * grey middle, edge last where possible.
+ *
+ * Selection is deterministic by seed; passing a different seed gives a
+ * different set. For Increment 5, the seed is the session ID, so each
+ * Firestore session sees a different but reproducible set.
+ */
+export function pickSessionScenarios(seed: string): Scenario[] {
+  // Group scenarios by tier
+  const byTier: Record<Tier, Scenario[]> = {
+    "data-protection": [],
+    "computer-misuse": [],
+    equality: [],
+    "intellectual-property": [],
+  };
+  ALL_SCENARIOS.forEach((s) => {
+    byTier[s.correctTier].push(s);
+  });
+
+  // Deterministic pseudo-random helper: integer hash from seed string
+  function hashChar(s: string, salt: number): number {
+    let h = salt;
+    for (let i = 0; i < s.length; i += 1) {
+      h = (h * 31 + s.charCodeAt(i)) | 0;
+    }
+    return Math.abs(h);
+  }
+
+  // For each tier, pick one scenario deterministically based on seed
+  const selected: Scenario[] = [];
+  const tiers: Tier[] = [
+    "data-protection",
+    "computer-misuse",
+    "equality",
+    "intellectual-property",
+  ];
+  tiers.forEach((tier, idx) => {
+    const candidates = byTier[tier];
+    if (candidates.length === 0) return;
+    const pickIdx = hashChar(seed, idx + 1) % candidates.length;
+    selected.push(candidates[pickIdx]);
+  });
+
+  // Wildcard: pick from all scenarios not already selected
+  const selectedIds = new Set(selected.map((s) => s.id));
+  const remaining = ALL_SCENARIOS.filter((s) => !selectedIds.has(s.id));
+  if (remaining.length > 0) {
+    const wildcardIdx = hashChar(seed, 99) % remaining.length;
+    selected.push(remaining[wildcardIdx]);
+  }
+
+  // Sort by difficulty: clean -> grey -> edge
+  const difficultyOrder: Record<Scenario["difficulty"], number> = {
+    clean: 0,
+    grey: 1,
+    edge: 2,
+  };
+  selected.sort(
+    (a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]
+  );
+
+  return selected;
 }
 
 export interface GameConfigInput {
   parent: HTMLElement;
   sessionId: string | null;
   onTierSelected: (tier: Tier) => void;
+}
+
+export interface GameHandle {
+  game: Phaser.Game;
+  resetForNextScenario: () => void;
 }
 
 const TIER_LABELS: Record<Tier, string> = {
@@ -74,7 +147,10 @@ class ClassifyScene extends Phaser.Scene {
   private buttons: TierButton[] = [];
   private locked: boolean = false;
 
-  constructor(input: { sessionId: string | null; onTierSelected: (tier: Tier) => void }) {
+  constructor(input: {
+    sessionId: string | null;
+    onTierSelected: (tier: Tier) => void;
+  }) {
     super({ key: "ClassifyScene" });
     this.sessionId = input.sessionId;
     this.onTierSelected = input.onTierSelected;
@@ -176,6 +252,18 @@ class ClassifyScene extends Phaser.Scene {
     });
   }
 
+  // Called by React when the user clicks Continue and the next scenario should
+  // be live. Resets the buttons to interactive and clears the locked state.
+  unlockForNextScenario(): void {
+    this.locked = false;
+    this.buttons.forEach(({ bg, label }) => {
+      bg.setInteractive({ useHandCursor: true });
+      bg.setStrokeStyle(1, 0x1f2733);
+      label.setColor("#e8edf3");
+      bg.setFillStyle(0x0a0e1a, 1);
+    });
+  }
+
   private renderSessionLabel(width: number, height: number): void {
     const label = this.sessionId
       ? `session ${this.sessionId.slice(0, 8)}`
@@ -208,4 +296,14 @@ export function createGameConfig(
       onTierSelected: input.onTierSelected,
     }),
   };
+}
+
+/**
+ * Get a reference to the active ClassifyScene from a running Phaser.Game.
+ * Used by React to call unlockForNextScenario when the Continue button is
+ * clicked.
+ */
+export function getClassifyScene(game: Phaser.Game): ClassifyScene | null {
+  const scene = game.scene.getScene("ClassifyScene");
+  return scene as ClassifyScene | null;
 }

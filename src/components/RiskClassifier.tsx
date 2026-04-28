@@ -3,29 +3,49 @@
 // React island that mounts the Phaser UK Legislation Classifier game.
 // client:only - does not SSR because Phaser touches `window` at import time.
 //
-// Hybrid architecture: Phaser owns interaction, React owns feedback panels.
+// Hybrid architecture: Phaser owns interaction, React owns content rendering.
 //
-// Sprint 2 Increment 3 scope:
-//   - One scenario rendered above canvas (uklaw-001 hardcoded, same as Increment 2)
-//   - Click triggers feedback panel: correct shows examinerReasoning,
-//     incorrect shows examinerReasoning + matching commonMistakes entry
-//   - Continue button visible after answer; click does nothing (Increment 5 wires it)
+// Sprint 2 Increment 5 scope:
+//   - 5 scenarios per session, picked by pickSessionScenarios algorithm
+//   - Continue button advances to the next scenario
+//   - After scenario 5, end-of-session summary panel
+//   - Restart button starts a new Firestore session
+//   - completeSession called when summary appears
 //
 // State machine:
-//   "initialising" -> "ready" (waiting for click)
+//   "initialising" -> "ready" (showing scenario, waiting for tier click)
 //   "ready" -> "correct" or "incorrect" (after click)
-//   "correct" or "incorrect" -> END (Increment 3 doesn't advance further)
+//   "correct" or "incorrect" -> "ready" (next scenario, if more remain)
+//                            -> "session-complete" (if scenario 5 just answered)
 
 import { useEffect, useRef, useState } from "react";
-import { startSession, writeAttempt } from "../lib/risk-classifier/firestore";
+import {
+  startSession,
+  writeAttempt,
+  completeSession,
+} from "../lib/risk-classifier/firestore";
 import type Phaser from "phaser";
 import type { Tier, Scenario } from "../lib/risk-classifier/game";
 
-type Status = "initialising" | "ready" | "correct" | "incorrect" | "error";
+type Status =
+  | "initialising"
+  | "ready"
+  | "correct"
+  | "incorrect"
+  | "session-complete"
+  | "error";
 
 interface IncorrectFeedback {
   selectedTier: Tier;
   matchingMistake: { tier: Tier; why: string };
+}
+
+interface SessionState {
+  sessionId: string | null;
+  scenarios: Scenario[];
+  currentIndex: number;
+  correctCount: number;
+  startedAt: number;
 }
 
 const TIER_LABELS: Record<Tier, string> = {
@@ -38,11 +58,20 @@ const TIER_LABELS: Record<Tier, string> = {
 export default function RiskClassifier(): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
+  const sessionStateRef = useRef<SessionState | null>(null);
+  const scenarioStartedAtRef = useRef<number>(0);
+  const transitioningRef = useRef<boolean>(false);
+
   const [status, setStatus] = useState<Status>("initialising");
-  const [sessionId, setSessionId] = useState<string | null>(null);
   const [scenario, setScenario] = useState<Scenario | null>(null);
   const [incorrectFeedback, setIncorrectFeedback] =
     useState<IncorrectFeedback | null>(null);
+  const [progress, setProgress] = useState<{
+    current: number;
+    total: number;
+    correct: number;
+  }>({ current: 1, total: 5, correct: 0 });
+  const [completionTimeMs, setCompletionTimeMs] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -51,7 +80,7 @@ export default function RiskClassifier(): JSX.Element {
       try {
         const PhaserModule = await import("phaser");
         const Phaser = PhaserModule.default;
-        const { createGameConfig, getAllScenarios } = await import(
+        const { createGameConfig, pickSessionScenarios } = await import(
           "../lib/risk-classifier/game"
         );
 
@@ -60,22 +89,39 @@ export default function RiskClassifier(): JSX.Element {
 
         const session = await startSession();
         if (cancelled) return;
-        setSessionId(session?.id ?? null);
 
-        const allScenarios = getAllScenarios();
-        if (allScenarios.length === 0) {
-          throw new Error("No scenarios available");
+        // Use the Firestore session ID as the seed if available; otherwise a
+        // random local seed so unauthenticated users still see a deterministic
+        // set per page-load.
+        const seed = session?.id ?? `local-${crypto.randomUUID()}`;
+        const sessionScenarios = pickSessionScenarios(seed);
+        if (sessionScenarios.length === 0) {
+          throw new Error("No scenarios picked for session");
         }
-        const firstScenario = allScenarios[0];
-        setScenario(firstScenario);
 
-        const startedAt = Date.now();
+        sessionStateRef.current = {
+          sessionId: session?.id ?? null,
+          scenarios: sessionScenarios,
+          currentIndex: 0,
+          correctCount: 0,
+          startedAt: Date.now(),
+        };
+
+        const firstScenario = sessionScenarios[0];
+        setScenario(firstScenario);
+        setProgress({
+          current: 1,
+          total: sessionScenarios.length,
+          correct: 0,
+        });
+        scenarioStartedAtRef.current = Date.now();
+
         const config = createGameConfig({
           parent: containerRef.current,
           sessionId: session?.id ?? null,
           onTierSelected: (tier: Tier) => {
-            const timeToAnswerMs = Date.now() - startedAt;
-            handleTierSelected(tier, firstScenario, timeToAnswerMs, session?.id ?? null);
+            const elapsed = Date.now() - scenarioStartedAtRef.current;
+            handleTierSelected(tier, elapsed);
           },
         });
 
@@ -99,17 +145,21 @@ export default function RiskClassifier(): JSX.Element {
     };
   }, []);
 
-  function handleTierSelected(
-    tier: Tier,
-    scenarioFor: Scenario,
-    timeToAnswerMs: number,
-    activeSessionId: string | null
-  ): void {
-    if (tier === scenarioFor.correctTier) {
+  function handleTierSelected(tier: Tier, timeToAnswerMs: number): void {
+    const state = sessionStateRef.current;
+    if (!state) return;
+    const currentScenario = state.scenarios[state.currentIndex];
+    if (!currentScenario) return;
+
+    const isCorrect = tier === currentScenario.correctTier;
+
+    if (isCorrect) {
       setStatus("correct");
       setIncorrectFeedback(null);
+      state.correctCount += 1;
+      setProgress((p) => ({ ...p, correct: state.correctCount }));
     } else {
-      const matchingMistake = scenarioFor.commonMistakes.find(
+      const matchingMistake = currentScenario.commonMistakes.find(
         (m) => m.tier === tier
       );
       if (!matchingMistake) {
@@ -127,27 +177,73 @@ export default function RiskClassifier(): JSX.Element {
       }
     }
 
-    // Increment 4: persist the attempt to Firestore. Fire and forget; errors
-    // are logged inside writeAttempt and do not break the user experience.
-    if (activeSessionId) {
+    if (state.sessionId) {
       void writeAttempt({
-        sessionId: activeSessionId,
-        scenarioId: scenarioFor.id,
+        sessionId: state.sessionId,
+        scenarioId: currentScenario.id,
         tierChosen: tier,
-        correctTier: scenarioFor.correctTier,
+        correctTier: currentScenario.correctTier,
         timeToAnswerMs,
-        // TODO: wire this to actual panel-viewed detection in a later increment.
-        // For Increment 4, we assume the panel is shown and treat as viewed.
         viewedReasoning: true,
       });
     }
   }
 
-  function handleContinue(): void {
-    // Increment 3: continue button does nothing. Increment 5 will advance to the
-    // next scenario.
-    // eslint-disable-next-line no-console
-    console.log("[RiskClassifier] continue clicked (no-op in Increment 3)");
+  async function handleContinue(): Promise<void> {
+    if (transitioningRef.current) return;
+    transitioningRef.current = true;
+
+    try {
+      const state = sessionStateRef.current;
+      if (!state) {
+        return;
+      }
+      const nextIndex = state.currentIndex + 1;
+
+      if (nextIndex >= state.scenarios.length) {
+        // Session complete. Persist completion and show summary.
+        if (state.sessionId) {
+          void completeSession({
+            sessionId: state.sessionId,
+            score: state.correctCount,
+            totalScenarios: state.scenarios.length,
+          });
+        }
+        setCompletionTimeMs(Date.now() - state.startedAt);
+        setStatus("session-complete");
+        return;
+      }
+
+      state.currentIndex = nextIndex;
+      setScenario(state.scenarios[nextIndex]);
+      setProgress({
+        current: nextIndex + 1,
+        total: state.scenarios.length,
+        correct: state.correctCount,
+      });
+      setIncorrectFeedback(null);
+      scenarioStartedAtRef.current = Date.now();
+      setStatus("ready");
+
+      // Reset Phaser buttons.
+      const { getClassifyScene } = await import(
+        "../lib/risk-classifier/game"
+      );
+      if (gameRef.current) {
+        const scene = getClassifyScene(gameRef.current);
+        if (scene) {
+          scene.unlockForNextScenario();
+        }
+      }
+    } finally {
+      transitioningRef.current = false;
+    }
+  }
+
+  function handleRestart(): void {
+    // Force a remount by reloading the page. Simpler than tearing down and
+    // rebuilding the Phaser game in-place.
+    window.location.reload();
   }
 
   return (
@@ -161,14 +257,24 @@ export default function RiskClassifier(): JSX.Element {
         </div>
       )}
 
-      {(status === "ready" || status === "correct" || status === "incorrect") &&
+      {(status === "ready" ||
+        status === "correct" ||
+        status === "incorrect") &&
         scenario && (
-          <div className="rc-classifier__scenario">
-            <p className="rc-classifier__scenario-kicker">
-              Scenario {scenario.id} · {scenario.difficulty}
-            </p>
-            <p className="rc-classifier__scenario-text">{scenario.scenario}</p>
-          </div>
+          <>
+            <div className="rc-classifier__progress">
+              Scenario {progress.current} of {progress.total} ·{" "}
+              {progress.correct} correct
+            </div>
+            <div className="rc-classifier__scenario">
+              <p className="rc-classifier__scenario-kicker">
+                Scenario {scenario.id} · {scenario.difficulty}
+              </p>
+              <p className="rc-classifier__scenario-text">
+                {scenario.scenario}
+              </p>
+            </div>
+          </>
         )}
 
       <div
@@ -176,6 +282,9 @@ export default function RiskClassifier(): JSX.Element {
         className="rc-classifier__canvas"
         role="application"
         aria-label="UK Legislation Risk Classifier"
+        style={{
+          display: status === "session-complete" ? "none" : undefined,
+        }}
       />
 
       {status === "correct" && scenario && (
@@ -183,13 +292,13 @@ export default function RiskClassifier(): JSX.Element {
           <p className="rc-classifier__feedback-kicker">
             Correct · {TIER_LABELS[scenario.correctTier]}
           </p>
-          <h3 className="rc-classifier__feedback-heading">Examiner reasoning</h3>
+          <h3 className="rc-classifier__feedback-heading">
+            Examiner reasoning
+          </h3>
           <p className="rc-classifier__feedback-text">
             {scenario.examinerReasoning}
           </p>
-          <p className="rc-classifier__feedback-ref">
-            {scenario.actReference}
-          </p>
+          <p className="rc-classifier__feedback-ref">{scenario.actReference}</p>
           <button
             type="button"
             className="rc-classifier__continue"
@@ -206,8 +315,8 @@ export default function RiskClassifier(): JSX.Element {
             Not quite · You chose {TIER_LABELS[incorrectFeedback.selectedTier]}
           </p>
           <h3 className="rc-classifier__feedback-heading">
-            Why {TIER_LABELS[incorrectFeedback.selectedTier]} is not the primary
-            answer
+            Why {TIER_LABELS[incorrectFeedback.selectedTier]} is not the
+            primary answer
           </h3>
           <p className="rc-classifier__feedback-text">
             {incorrectFeedback.matchingMistake.why}
@@ -218,9 +327,7 @@ export default function RiskClassifier(): JSX.Element {
           <p className="rc-classifier__feedback-text">
             {scenario.examinerReasoning}
           </p>
-          <p className="rc-classifier__feedback-ref">
-            {scenario.actReference}
-          </p>
+          <p className="rc-classifier__feedback-ref">{scenario.actReference}</p>
           <button
             type="button"
             className="rc-classifier__continue"
@@ -231,9 +338,28 @@ export default function RiskClassifier(): JSX.Element {
         </div>
       )}
 
-      {sessionId && (
-        <div className="rc-classifier__session-id" aria-hidden="true">
-          session: {sessionId.slice(0, 8)}
+      {status === "session-complete" && sessionStateRef.current && (
+        <div className="rc-classifier__summary">
+          <p className="rc-classifier__summary-kicker">Session complete</p>
+          <div className="rc-classifier__summary-score">
+            <span className="rc-classifier__summary-score-value">
+              {sessionStateRef.current.correctCount}
+            </span>
+            <span className="rc-classifier__summary-score-divider">/</span>
+            <span className="rc-classifier__summary-score-total">
+              {sessionStateRef.current.scenarios.length}
+            </span>
+          </div>
+          <p className="rc-classifier__summary-time">
+            Total time: {Math.round((completionTimeMs ?? 0) / 1000)} seconds
+          </p>
+          <button
+            type="button"
+            className="rc-classifier__continue"
+            onClick={handleRestart}
+          >
+            Start a new session
+          </button>
         </div>
       )}
 
@@ -244,6 +370,13 @@ export default function RiskClassifier(): JSX.Element {
           display: flex;
           flex-direction: column;
           gap: 1.5rem;
+        }
+        .rc-classifier__progress {
+          font-family: "JetBrains Mono", "Courier New", monospace;
+          font-size: 0.75rem;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          color: var(--dim, rgba(232, 237, 243, 0.55));
         }
         .rc-classifier__scenario {
           padding: 1.25rem;
@@ -341,6 +474,46 @@ export default function RiskClassifier(): JSX.Element {
         .rc-classifier__continue:hover {
           background: #2ed60f;
         }
+        .rc-classifier__summary {
+          padding: 2rem 1.5rem;
+          background: var(--void, rgba(0, 0, 0, 0.25));
+          border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+          border-left: 2px solid var(--gold, #ffd700);
+          border-radius: 2px;
+          text-align: center;
+        }
+        .rc-classifier__summary-kicker {
+          font-family: "JetBrains Mono", "Courier New", monospace;
+          font-size: 0.7rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: var(--gold, #ffd700);
+          margin: 0 0 1rem;
+        }
+        .rc-classifier__summary-score {
+          font-family: "JetBrains Mono", "Courier New", monospace;
+          margin-bottom: 1rem;
+        }
+        .rc-classifier__summary-score-value {
+          font-size: 4rem;
+          color: var(--ink, #e8edf3);
+          font-weight: 700;
+        }
+        .rc-classifier__summary-score-divider {
+          font-size: 2.5rem;
+          color: var(--dim, rgba(232, 237, 243, 0.55));
+          margin: 0 0.5rem;
+        }
+        .rc-classifier__summary-score-total {
+          font-size: 2.5rem;
+          color: var(--dim, rgba(232, 237, 243, 0.55));
+        }
+        .rc-classifier__summary-time {
+          font-family: "JetBrains Mono", "Courier New", monospace;
+          font-size: 0.85rem;
+          color: var(--dim, rgba(232, 237, 243, 0.55));
+          margin: 0 0 1.5rem;
+        }
         .rc-classifier__status {
           padding: 2rem;
           text-align: center;
@@ -352,23 +525,18 @@ export default function RiskClassifier(): JSX.Element {
         .rc-classifier__status--error {
           color: #ff5c5c;
         }
-        .rc-classifier__session-id {
-          position: absolute;
-          bottom: 0.5rem;
-          right: 0.75rem;
-          font-family: "JetBrains Mono", "Courier New", monospace;
-          font-size: 0.7rem;
-          color: var(--muted, rgba(232, 237, 243, 0.35));
-          letter-spacing: 0.05em;
-        }
 
         @media (max-width: 640px) {
           .rc-classifier__scenario,
-          .rc-classifier__feedback {
+          .rc-classifier__feedback,
+          .rc-classifier__summary {
             padding: 1rem;
           }
           .rc-classifier__feedback-text {
             font-size: 0.9rem;
+          }
+          .rc-classifier__summary-score-value {
+            font-size: 3rem;
           }
         }
       `}</style>
