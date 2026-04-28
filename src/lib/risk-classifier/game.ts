@@ -2,11 +2,12 @@
 //
 // Phaser game configuration for the UK Legislation Classifier.
 //
-// Sprint 2 Increment 5 scope:
-//   - Adds a scenario-picker that selects 5 scenarios per session
-//     (within-session difficulty progression, tier-balanced)
-//   - Phaser scene supports reset between scenarios within a session
-//   - Click callback unchanged from Increment 4 (tier passed to React)
+// Sprint 2 Increment 2: scenario rendering and tier buttons.
+// Sprint 2 Increment 3: button locking after first click.
+// Sprint 2 Increment 4: click callback wired to React for Firestore persistence.
+// Sprint 2 Increment 5: pickSessionScenarios for 5-scenario sessions, plus
+//   unlockForNextScenario reset method on the scene and getClassifyScene
+//   accessor for React to call between scenarios.
 //
 // Hybrid architecture: Phaser owns interaction, React owns content rendering.
 

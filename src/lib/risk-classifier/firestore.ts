@@ -4,6 +4,10 @@
 // Sprint 1 scope: startSession.
 // Sprint 2 Increment 4: writeAttempt implemented.
 // Sprint 2 Increment 5: completeSession implemented.
+//
+// Uses Signal's existing Firebase setup. `window.MSM_APP` is exposed by
+// firebase-config.js and is the shared app instance. We resolve Firestore and
+// Auth from that, rather than re-initialising.
 
 import {
   getFirestore,
@@ -28,6 +32,11 @@ export interface SessionHandle {
 
 export type SessionMode = "first-attempt" | "replay-wrong" | "challenge";
 
+/**
+ * Start a Risk Classifier session for the current authenticated user.
+ * Returns a SessionHandle if persistence succeeded, null if there is no
+ * authenticated user (in which case the game runs in ephemeral mode).
+ */
 export async function startSession(
   mode: SessionMode = "first-attempt"
 ): Promise<SessionHandle | null> {
@@ -79,6 +88,15 @@ export interface WriteAttemptInput {
   viewedReasoning: boolean;
 }
 
+/**
+ * Record a single classification attempt. Sprint 2 Increment 4 implementation.
+ *
+ * Writes to:
+ *   users/{uid}/data/risk-classifier/sessions/{sessionId}/attempts/{attemptId}
+ *
+ * Returns null in all cases. Errors are logged but not thrown, so a Firestore
+ * failure does not break the user-facing experience.
+ */
 export async function writeAttempt(input: WriteAttemptInput): Promise<null> {
   const app = window.MSM_APP;
   if (!app) {
@@ -181,3 +199,4 @@ export async function completeSession(
 
   return null;
 }
+
