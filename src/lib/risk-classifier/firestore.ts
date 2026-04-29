@@ -4,27 +4,19 @@
 // Sprint 1 scope: startSession.
 // Sprint 2 Increment 4: writeAttempt implemented.
 // Sprint 2 Increment 5: completeSession implemented.
-//
-// Uses Signal's existing Firebase setup. `window.MSM_APP` is exposed by
-// firebase-config.js and is the shared app instance. We resolve Firestore and
-// Auth from that, rather than re-initialising.
+// Sprint 2 Increment 6 (wiring): app and auth now imported directly
+//   from firebase.ts rather than read from window.MSM_APP. This was
+//   the legacy MSM pattern; Signal uses module imports throughout.
 
 import {
-  getFirestore,
   collection,
   doc,
+  getFirestore,
   setDoc,
   updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import type { FirebaseApp } from "firebase/app";
-
-declare global {
-  interface Window {
-    MSM_APP?: FirebaseApp;
-  }
-}
+import { app, auth } from "../firebase";
 
 export interface SessionHandle {
   id: string;
@@ -40,15 +32,6 @@ export type SessionMode = "first-attempt" | "replay-wrong" | "challenge";
 export async function startSession(
   mode: SessionMode = "first-attempt"
 ): Promise<SessionHandle | null> {
-  const app = window.MSM_APP;
-  if (!app) {
-    console.info(
-      "[risk-classifier] Firebase app not initialised; running without persistence"
-    );
-    return null;
-  }
-
-  const auth = getAuth(app);
   const user = auth.currentUser;
   if (!user) {
     console.info(
@@ -98,15 +81,6 @@ export interface WriteAttemptInput {
  * failure does not break the user-facing experience.
  */
 export async function writeAttempt(input: WriteAttemptInput): Promise<null> {
-  const app = window.MSM_APP;
-  if (!app) {
-    console.info(
-      "[risk-classifier] Firebase app not initialised; attempt not persisted"
-    );
-    return null;
-  }
-
-  const auth = getAuth(app);
   const user = auth.currentUser;
   if (!user) {
     console.info(
@@ -164,15 +138,6 @@ export interface CompleteSessionInput {
 export async function completeSession(
   input: CompleteSessionInput
 ): Promise<null> {
-  const app = window.MSM_APP;
-  if (!app) {
-    console.info(
-      "[risk-classifier] Firebase app not initialised; session completion not persisted"
-    );
-    return null;
-  }
-
-  const auth = getAuth(app);
   const user = auth.currentUser;
   if (!user) {
     console.info(
@@ -199,4 +164,3 @@ export async function completeSession(
 
   return null;
 }
-
