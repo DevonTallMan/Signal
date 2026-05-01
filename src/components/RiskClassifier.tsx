@@ -1,4 +1,4 @@
-﻿// src/components/RiskClassifier.tsx
+// src/components/RiskClassifier.tsx
 //
 // React island that mounts the Phaser UK Legislation Classifier game.
 // client:only - does not SSR because Phaser touches `window` at import time.
@@ -11,6 +11,10 @@
 //   - After scenario 5, end-of-session summary panel
 //   - Restart button starts a new Firestore session
 //   - completeSession called when summary appears
+//
+// Sprint 2 A4 (post-Increment-6) addition:
+//   - Session intro paragraph rendered above the first scenario,
+//     read from scenarios.json `_sessionIntro`. Hides on first tier click.
 //
 // State machine:
 //   "initialising" -> "ready" (showing scenario, waiting for tier click)
@@ -26,6 +30,10 @@ import {
 } from "../lib/risk-classifier/firestore";
 import type Phaser from "phaser";
 import type { Tier, Scenario } from "../lib/risk-classifier/game";
+import scenariosData from "../data/risk-classifier/scenarios.json";
+
+const SESSION_INTRO: string =
+  (scenariosData as { _sessionIntro?: string })._sessionIntro ?? "";
 
 type Status =
   | "initialising"
@@ -72,6 +80,7 @@ export default function RiskClassifier(): JSX.Element {
     correct: number;
   }>({ current: 1, total: 5, correct: 0 });
   const [completionTimeMs, setCompletionTimeMs] = useState<number | null>(null);
+  const [introVisible, setIntroVisible] = useState<boolean>(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -90,9 +99,6 @@ export default function RiskClassifier(): JSX.Element {
         const session = await startSession();
         if (cancelled) return;
 
-        // Use the Firestore session ID as the seed if available; otherwise a
-        // random local seed so unauthenticated users still see a deterministic
-        // set per page-load.
         const seed = session?.id ?? `local-${crypto.randomUUID()}`;
         const sessionScenarios = pickSessionScenarios(seed);
         if (sessionScenarios.length === 0) {
@@ -151,6 +157,8 @@ export default function RiskClassifier(): JSX.Element {
     const currentScenario = state.scenarios[state.currentIndex];
     if (!currentScenario) return;
 
+    setIntroVisible(false);
+
     const isCorrect = tier === currentScenario.correctTier;
 
     if (isCorrect) {
@@ -201,7 +209,6 @@ export default function RiskClassifier(): JSX.Element {
       const nextIndex = state.currentIndex + 1;
 
       if (nextIndex >= state.scenarios.length) {
-        // Session complete. Persist completion and show summary.
         if (state.sessionId) {
           void completeSession({
             sessionId: state.sessionId,
@@ -225,7 +232,6 @@ export default function RiskClassifier(): JSX.Element {
       scenarioStartedAtRef.current = Date.now();
       setStatus("ready");
 
-      // Reset Phaser buttons.
       const { getClassifyScene } = await import(
         "../lib/risk-classifier/game"
       );
@@ -241,8 +247,6 @@ export default function RiskClassifier(): JSX.Element {
   }
 
   function handleRestart(): void {
-    // Force a remount by reloading the page. Simpler than tearing down and
-    // rebuilding the Phaser game in-place.
     window.location.reload();
   }
 
@@ -262,6 +266,11 @@ export default function RiskClassifier(): JSX.Element {
         status === "incorrect") &&
         scenario && (
           <>
+            {introVisible && SESSION_INTRO && (
+              <div className="rc-classifier__intro">
+                <p className="rc-classifier__intro-text">{SESSION_INTRO}</p>
+              </div>
+            )}
             <div className="rc-classifier__progress">
               Scenario {progress.current} of {progress.total} ·{" "}
               {progress.correct} correct
@@ -370,6 +379,25 @@ export default function RiskClassifier(): JSX.Element {
           display: flex;
           flex-direction: column;
           gap: 1.5rem;
+        }
+        .rc-classifier__intro {
+          padding: 1rem 1.25rem;
+          background: var(--void, rgba(0, 0, 0, 0.25));
+          border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+          border-left: 2px solid var(--green, #39ff14);
+          border-radius: 2px;
+          animation: rc-intro-fade 320ms ease-out;
+        }
+        .rc-classifier__intro-text {
+          margin: 0;
+          color: var(--ink, #e8edf3);
+          font-size: 0.95rem;
+          line-height: 1.6;
+          font-style: italic;
+        }
+        @keyframes rc-intro-fade {
+          from { opacity: 0; transform: translateY(-4px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         .rc-classifier__progress {
           font-family: "JetBrains Mono", "Courier New", monospace;
