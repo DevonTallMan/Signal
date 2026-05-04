@@ -1,0 +1,43 @@
+# .github/workflows/test.yml
+#
+# Run the full test suite on every PR to main.
+# This is the gate that prevents test regressions from reaching main.
+
+name: test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: vitest (unit + rules)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools@15
+
+      - name: Run tests with Firestore emulator
+        run: firebase emulators:exec --only firestore --project demo-test "npm test"
+        
