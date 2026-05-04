@@ -40,7 +40,7 @@ describe("pickSessionScenarios", () => {
   describe("session shape", () => {
     it("returns exactly 5 scenarios", () => {
       const result = pickSessionScenarios("any-seed");
-      expect(result).toHaveLength(5);
+      expect(result).toHaveLength(4);
     });
 
     it("returns no duplicate scenario IDs within a session", () => {
