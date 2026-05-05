@@ -3,7 +3,8 @@
 // Pivoted from EU AI Act on 24 April 2026 after spec mismatch discovered.
 // See docs/sprint-2-scope.md and src/data/risk-classifier/README.md.
 //
-// Sprint 2 Increment 4 scope: Firestore writeAttempt for each click (authenticated only).
+// Sprint 2 Increment 5 scope: 5-scenario session loop, Continue advances, end-of-session summary, completeSession Firestore write.
+
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import RiskClassifierIsland from "../../components/RiskClassifier";
@@ -27,9 +28,9 @@ import RiskClassifierIsland from "../../components/RiskClassifier";
 
     <footer class="rc-outro">
       <p>
-       Sprint 2 Increment 4: each classification is persisted to Firestore for
-        authenticated users. Continue button still does not advance; that
-        arrives in Increment 5 alongside the multi-scenario session loop.
+       Sprint 2 Increment 5: full 5-scenario session loop, end-of-session
+        summary with score and time, Firestore session completion. The pilot
+        mechanic is now end-to-end functional.
       </p>
     </footer>
   </main>
