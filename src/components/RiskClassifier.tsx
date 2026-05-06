@@ -16,6 +16,11 @@
 //   - Session intro paragraph rendered above the first scenario,
 //     read from scenarios.json `_sessionIntro`. Hides on first tier click.
 //
+// Sprint 2.5 test API addition:
+//   - Exposes window.__signalTestApi in dev builds so Playwright tests
+//     can drive the component without interacting with Phaser canvas.
+//     See src/lib/risk-classifier/testApi.ts for the API surface.
+//
 // State machine:
 //   "initialising" -> "ready" (showing scenario, waiting for tier click)
 //   "ready" -> "correct" or "incorrect" (after click)
@@ -31,6 +36,11 @@ import {
 import type Phaser from "phaser";
 import type { Tier, Scenario } from "../lib/risk-classifier/game";
 import scenariosData from "../data/risk-classifier/scenarios.json";
+import {
+  registerTestApi,
+  unregisterTestApi,
+  type TestApiSessionState,
+} from "../lib/risk-classifier/testApi";
 
 const SESSION_INTRO: string =
   (scenariosData as { _sessionIntro?: string })._sessionIntro ?? "";
@@ -69,6 +79,21 @@ export default function RiskClassifier(): JSX.Element {
   const sessionStateRef = useRef<SessionState | null>(null);
   const scenarioStartedAtRef = useRef<number>(0);
   const transitioningRef = useRef<boolean>(false);
+
+  // Test API support: keep latest state snapshot and handler references
+  // in refs so the API exposed on window can call into them without
+  // stale closures.
+  const testStateRef = useRef<TestApiSessionState>({
+    status: "initialising",
+    currentScenario: null,
+    sessionId: null,
+    currentIndex: 0,
+    correctCount: 0,
+    totalScenarios: 0,
+    completionTimeMs: null,
+  });
+ const handleTierSelectedRef = useRef<(tier: Tier, timeToAnswerMs: number) => void>(() => {});
+  const handleContinueRef = useRef<() => Promise<void>>(async () => {});
 
   const [status, setStatus] = useState<Status>("initialising");
   const [scenario, setScenario] = useState<Scenario | null>(null);
@@ -249,6 +274,35 @@ export default function RiskClassifier(): JSX.Element {
   function handleRestart(): void {
     window.location.reload();
   }
+
+  // Mirror current state and handler references for the test API.
+  // Runs on every render so the test API always sees fresh values.
+  testStateRef.current = {
+    status,
+    currentScenario: scenario,
+    sessionId: sessionStateRef.current?.sessionId ?? null,
+    currentIndex: sessionStateRef.current?.currentIndex ?? 0,
+    correctCount: sessionStateRef.current?.correctCount ?? 0,
+    totalScenarios: sessionStateRef.current?.scenarios.length ?? 0,
+    completionTimeMs,
+  };
+  handleTierSelectedRef.current = handleTierSelected;
+  handleContinueRef.current = handleContinue;
+
+  // Register the test API once on mount. Production builds (where
+  // import.meta.env.DEV is false) no-op inside registerTestApi, so
+  // window.__signalTestApi is never set in production.
+  useEffect(() => {
+    registerTestApi({
+      clickTier: (tier) => {
+        const elapsed = Date.now() - scenarioStartedAtRef.current;
+        handleTierSelectedRef.current(tier, elapsed);
+      },
+      continue: () => handleContinueRef.current(),
+      getSessionState: () => testStateRef.current,
+    });
+    return () => unregisterTestApi();
+  }, []);
 
   return (
     <div className="rc-classifier">
@@ -571,3 +625,4 @@ export default function RiskClassifier(): JSX.Element {
     </div>
   );
 }
+
