@@ -1,0 +1,206 @@
+# Signal Risk Classifier: Pilot Pre/Post Assessment
+
+**Status: draft for review.**
+**Drafted: 7 May 2026.**
+**Author: Claude.**
+**Reviewer: Chris Morris.**
+**Sense-check: Dave Smith (cohort-appropriate language) before pilot deployment.**
+
+This document provides the ten candidate assessment questions called for by Section 3.2 of the pre-registered Pilot Evaluation Plan (`docs/pilot-evaluation-plan.md`). Five questions form the pre-test, administered before any platform use; five form the post-test, administered after the final platform session.
+
+The pre/post split is matched on legislation distribution (2 DPA + 1 CMA + 1 Equality + 1 IP per test) and on difficulty curve (4 clean + 1 grey per test). Both tests use the same scoring framework (3 marks per question, 15 marks total) so pre/post results are directly comparable.
+
+All ten scenarios are distinct from the twelve platform scenarios in `src/data/risk-classifier/scenarios.json`, in line with the "unseen scenarios" requirement of Section 3.2.
+
+**Content caveat:** same as the platform scenarios — author-generated, unreviewed by a qualified examiner. See `docs/pilot-evaluation-plan.md` Section 2.3 for the full caveat. This document inherits that caveat and is itself subject to Dave's sense-check before deployment.
+
+---
+
+## Pre-test (5 questions, 15 marks total)
+
+### Q1 [3 marks] · Data Protection Act / UK GDPR · clean
+
+**Scenario:** A finance officer at a small charity emails a spreadsheet of 800 donor records to her own personal Hotmail account so she can finish a fundraising report from home that evening. The spreadsheet includes donors' names, addresses, and donation amounts.
+
+**Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
+
+**Mark scheme:**
+
+- **1 mark** for naming Data Protection Act 2018 / UK GDPR.
+- **Up to 2 marks** for the explanation, which should reference: (a) personal data is being transferred outside the controller's environment to an unsecured personal email account; (b) this engages the security principle (Article 5(1)(f)) requiring appropriate technical and organisational measures.
+- Award 1 explanation mark for answers that name security/storage but don't cite the principle. Award 0 for explanations that just describe the scenario without identifying the wrong.
+
+**Author note (for Dave's sense-check):** Tests recognition of the most common DPA breach pattern in workplace settings. Students should connect "personal email = no organisational control" to a security principle violation.
+
+---
+
+### Q2 [3 marks] · Data Protection Act / UK GDPR · grey
+
+**Scenario:** An online clothing retailer keeps every customer's order history on file indefinitely. A customer who has not ordered anything for nine years emails to ask for her records to be deleted. The retailer refuses, telling her the records are "useful for marketing in case you come back."
+
+**Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
+
+**Mark scheme:**
+
+- **1 mark** for naming Data Protection Act 2018 / UK GDPR.
+- **Up to 2 marks** for the explanation, which should reference: (a) the right to erasure (Article 17) entitles individuals to have their personal data deleted in defined circumstances, including when the data is no longer necessary for the original purpose; (b) "useful for marketing in case you come back" is not a recognised lawful basis for refusing erasure where the original processing purpose has lapsed.
+- Award 1 explanation mark for answers that mention "the right to be deleted" without naming the article or explaining why "useful for marketing" doesn't suffice.
+
+**Author note:** Grey case. Students may pick "no Act applies because the retailer has a business reason." The teaching point is that lawful bases for refusing erasure must be specific and recognised under UK GDPR; "we want to keep the data" is not one of them. Tests whether students know DPA contains rights as well as security obligations.
+
+---
+
+### Q3 [3 marks] · Computer Misuse Act 1990 · clean
+
+**Scenario:** A warehouse worker discovers that her supervisor has stepped away and left his workstation logged in. While the supervisor is on his break, the worker uses the logged-in session to open the staff bonus spreadsheet, which is restricted to managers. She does not download or change anything.
+
+**Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
+
+**Mark scheme:**
+
+- **1 mark** for naming Computer Misuse Act 1990.
+- **Up to 2 marks** for the explanation, which should reference: (a) Section 1 makes it an offence to cause a computer to perform a function with intent to secure unauthorised access to material; (b) the worker had no authority to view the staff bonus spreadsheet, and accessing it through the supervisor's session is unauthorised even though the worker did not bypass any technical control.
+- Award 1 explanation mark for answers that recognise unauthorised access without citing Section 1, or that note "she didn't have permission" without explaining why the supervisor's logged-in state doesn't grant it.
+
+**Author note:** Clean Section 1 CMA case. Common student error: thinking the offence requires "hacking" or technical bypass. The teaching point is that Section 1 covers any unauthorised access, including via someone else's logged-in session.
+
+---
+
+### Q4 [3 marks] · Equality Act 2010 · clean
+
+**Scenario:** A council redesigns its planning portal so that all objections to planning applications must now be submitted through a new smartphone app. A long-term elderly resident, who has used the previous web form for years to make objections, does not own a smartphone. When she contacts the council, she is told there is no other route to submit her objection.
+
+**Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
+
+**Mark scheme:**
+
+- **1 mark** for naming Equality Act 2010.
+- **Up to 2 marks** for the explanation, which should reference: (a) public-sector service providers must avoid indirect discrimination on protected characteristics; (b) requiring all submissions through a smartphone app puts older people, who are less likely to own smartphones, at a particular disadvantage with no obvious justification, engaging Section 19 (indirect discrimination on age, a protected characteristic under Section 5).
+- Award 1 explanation mark for answers that mention "discrimination" without identifying the protected characteristic or the indirect mechanism. Award 1 explanation mark for answers focused on disability/reasonable adjustments — partly right, since the underlying logic of "barrier to access" is correct, but the scenario doesn't actually establish a disability.
+
+**Author note:** Clean indirect discrimination case on age. Students may want to invoke disability (because the resident is "elderly"), but the scenario doesn't establish a disability — only smartphone non-ownership, which correlates with age. The cleanest answer engages Section 19 on age.
+
+---
+
+### Q5 [3 marks] · Intellectual Property · clean
+
+**Scenario:** A small indie games studio is making a trailer for its new game. The team finds a popular instrumental music track on YouTube and embeds it directly in the trailer, which they then upload to their own social media channels and YouTube channel. They do not contact the track's composer or pay any licence fee.
+
+**Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
+
+**Mark scheme:**
+
+- **1 mark** for naming the Intellectual Property framework. Acceptable answers: "Intellectual Property Act 2014," "Copyright, Designs and Patents Act 1988," or "copyright law."
+- **Up to 2 marks** for the explanation, which should reference: (a) the music track is a copyrighted work; (b) using it in another work and re-publishing without the rights-holder's permission infringes the composer's copyright, regardless of where the track was found.
+- Award 1 explanation mark for answers that mention "copyright" without explaining that finding a work online does not grant a licence to reuse it.
+
+**Author note:** Clean copyright infringement. Common student misconception: "if it's free to listen to on YouTube, it's free to use." The teaching point is that public availability is not a licence.
+
+---
+
+## Post-test (5 questions, 15 marks total)
+
+### Q1 [3 marks] · Data Protection Act / UK GDPR · clean
+
+**Scenario:** A solicitor's clerk takes a printed list of clients' names, addresses, and case numbers home in her work bag so she can prepare for a meeting the following morning. She loses the bag on the train and is unable to recover it.
+
+**Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
+
+**Mark scheme:**
+
+- **1 mark** for naming Data Protection Act 2018 / UK GDPR.
+- **Up to 2 marks** for the explanation, which should reference: (a) personal data has been lost outside the controller's secure environment; (b) this engages the security principle (Article 5(1)(f)) requiring appropriate technical and organisational measures, and may trigger breach notification obligations under Articles 33 and 34.
+- Award 1 explanation mark for answers that recognise "data loss" without citing the security principle.
+
+**Author note:** Distinct from Pre Q1 (transmission via personal email): this is loss of physical media. Same act, different mechanic. Tests that students recognise DPA applies regardless of medium (paper, electronic, USB).
+
+---
+
+### Q2 [3 marks] · Data Protection Act / UK GDPR · grey
+
+**Scenario:** A wellness app on mobile phones collects data from users about their menstrual cycles and the medication they take for anxiety. The app's terms of service mention that data is collected "to improve our service." Users tap a single "I accept" button to use the app. The terms do not specifically mention that health information is being collected and processed.
+
+**Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
+
+**Mark scheme:**
+
+- **1 mark** for naming Data Protection Act 2018 / UK GDPR.
+- **Up to 2 marks** for the explanation, which should reference: (a) menstrual cycle data and medication for anxiety constitute health-related personal data, which is "special category" data under Article 9 of UK GDPR; (b) processing special category data requires explicit consent or another Article 9 condition; a generic "I accept" against vague ToS does not constitute the explicit consent Article 9 requires.
+- Award 1 explanation mark for answers that recognise "health data is more sensitive" without citing Article 9 specifically.
+
+**Author note:** Grey case matching Pre Q2 in difficulty. Students may misclassify as Equality (because menstrual cycles correlate with sex) or argue that "I accept" is valid consent. The teaching point is that Article 9 special category data requires explicit, specific consent — generic "I accept" is insufficient.
+
+---
+
+### Q3 [3 marks] · Computer Misuse Act 1990 · clean
+
+**Scenario:** A student on a two-week work experience placement at a council is given a temporary login that allows access to the council's general administrative document store. Curious about a planning dispute involving her own neighbourhood, she navigates to the planning team's internal folder and reads sensitive correspondence about her neighbour's pending planning application. She does not download or share what she reads.
+
+**Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
+
+**Mark scheme:**
+
+- **1 mark** for naming Computer Misuse Act 1990.
+- **Up to 2 marks** for the explanation, which should reference: (a) Section 1 makes it an offence to access material the person is not authorised to access; (b) her temporary login was scoped to general administrative documents, not to the planning team's internal correspondence — so accessing the planning folder exceeds her authorisation, regardless of whether the technical access was possible.
+- Award 1 explanation mark for answers that note "outside her remit" without distinguishing between technical access and authorised scope.
+
+**Author note:** Clean Section 1 CMA case. Distinct from Pre Q3 (warehouse worker via supervisor's session): there she used someone else's session; here she's using her own login but accessing material outside the scope she was given. Both engage Section 1; the teaching point is that authorisation is content-scoped, not just credential-scoped.
+
+---
+
+### Q4 [3 marks] · Equality Act 2010 · clean
+
+**Scenario:** A logistics company introduces a new automated shift-allocation system. The system schedules all overnight shifts, which carry a higher hourly rate, for drivers who indicated "fully flexible availability" on their application form. After six months, a manager notices that women drivers, who on average had less flexibility because of caring responsibilities, are concentrated in the lower-paid daytime shifts.
+
+**Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
+
+**Mark scheme:**
+
+- **1 mark** for naming Equality Act 2010.
+- **Up to 2 marks** for the explanation, which should reference: (a) a neutral-sounding rule (allocating overnight shifts based on declared flexibility) puts women at a particular disadvantage because of caring responsibilities; (b) this engages Section 19 (indirect discrimination on sex, a protected characteristic under Section 11) unless the company can justify the rule as a proportionate means of achieving a legitimate aim.
+- Award 1 explanation mark for answers that recognise "discrimination against women" without identifying the indirect mechanism.
+
+**Author note:** Distinct from Pre Q4 (council planning portal — age) by protected characteristic and mechanism. Tests whether students recognise indirect discrimination via algorithm or workplace policy, with sex as the protected characteristic.
+
+---
+
+### Q5 [3 marks] · Intellectual Property · clean
+
+**Scenario:** A graphic-design agency uses Adobe Photoshop on its office computers. The agency holds 3 valid Photoshop licences but has installed the software on 12 machines because, in the words of the office manager, "we don't all use it at once anyway."
+
+**Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
+
+**Mark scheme:**
+
+- **1 mark** for naming the Intellectual Property framework. Acceptable answers: "Intellectual Property Act 2014," "Copyright, Designs and Patents Act 1988," "copyright law," or "software licensing law."
+- **Up to 2 marks** for the explanation, which should reference: (a) Adobe Photoshop is licensed software; (b) installing it on more machines than the licence permits exceeds the scope of the agreement and infringes Adobe's copyright in the software, regardless of how often the additional machines are actually used.
+- Award 1 explanation mark for answers that recognise "they don't have enough licences" without explaining that licence terms govern installation, not just simultaneous use.
+
+**Author note:** Distinct from Pre Q5 (YouTube music in trailer): there the issue was using a copyrighted work without licensing it at all; here the issue is exceeding the scope of an existing licence. Both engage IP; the teaching point is that licences are limits on what specific use is permitted, not "you bought one, do what you like."
+
+---
+
+## Notes for Dave (sense-check items)
+
+The author has tried to use cohort-appropriate language throughout, but the following items would benefit from your read on whether they will land for Mid-Sussex College T-Level Digital learners:
+
+1. **Reading load.** Each scenario is 2-3 sentences. Total per test: roughly 5-6 minutes of reading + 9-12 minutes of writing for explanations = roughly 15-18 minutes. Tight but realistic in a 30-minute pre/post window.
+
+2. **Cultural references.** Hotmail in Pre Q1, smartphone-only portal in Pre Q4, Photoshop in Post Q5. Are any of these going to confuse the cohort or feel dated?
+
+3. **Specific terms.** "Special category data" in Post Q2 is a UK GDPR term of art. Students who haven't covered Article 9 explicitly may not recognise the phrase. The mark scheme accepts "health data is more sensitive" as a partial answer — does that match how you've taught the topic?
+
+4. **Section vs Article numbers.** The mark scheme references specific sections of CMA and Equality Act, plus specific articles of UK GDPR. If your teaching has not gone to that level of specificity, please flag — the mark scheme can be adjusted to credit higher-level descriptions without specific citations.
+
+5. **The Equality Act questions.** Pre Q4 (age + smartphones) and Post Q4 (sex + caring responsibilities) both rely on students recognising that an apparently-neutral rule can produce discriminatory outcomes. If the cohort hasn't been taught indirect discrimination as a concept distinct from direct discrimination, both questions become much harder than the difficulty rating suggests.
+
+6. **Anything else.** Anything in any scenario that feels off for the cohort — flag it. The author has no contact with the cohort and is working only from the spec.
+
+---
+
+## Audit trail
+
+Drafted on 7 May 2026 by Claude as the deliverable for Section 3.2 of the pilot evaluation plan. Per the plan, Chris reviews; Dave sense-checks for cohort-appropriate language; finalised version is locked before the pilot begins.
+
+Filling this document is not a methodological change to the pre-registered plan and does not require re-agreement under Section 8 of `docs/pilot-evaluation-plan.md`. Any subsequent modification to the questions or mark schemes after Dave's sense-check, however, would require re-agreement.
+
