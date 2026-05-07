@@ -192,9 +192,9 @@ The author has tried to use cohort-appropriate language throughout, but the foll
 
 1. **Reading load.** Each scenario is 2-3 sentences. Total per test: roughly 5-6 minutes of reading + 9-12 minutes of writing for explanations = roughly 15-18 minutes. Tight but realistic in a 30-minute pre/post window.
 
-2. **Cultural references.** Hotmail in Pre Q1, smartphone-only portal in Pre Q4, Photoshop in Post Q5. Are any of these going to confuse the cohort or feel dated?
+2. **Cultural references.** Smartphone-only portal in Pre Q4 and Photoshop in Post Q5. Are either going to confuse the cohort or feel dated?
 
-3. **Specific terms.** "Special category data" in Post Q2 is a UK GDPR term of art. Students who haven't covered Article 9 explicitly may not recognise the phrase. The mark scheme accepts "health data is more sensitive" as a partial answer — does that match how you've taught the topic?
+3. **Time budget.** The estimate above is 15-18 minutes for 5 questions × 3 marks of writing in a 30-minute window. That's tight. Realistic for your cohort, or should we cut to 4 questions per side?
 
 4. **Section vs Article numbers.** The mark scheme references specific sections of CMA and Equality Act, plus specific articles of UK GDPR. If your teaching has not gone to that level of specificity, please flag — the mark scheme can be adjusted to credit higher-level descriptions without specific citations.
 
