@@ -12,6 +12,8 @@ The pre/post split is matched on legislation distribution (2 DPA + 1 CMA + 1 Equ
 
 All ten scenarios are distinct from the twelve platform scenarios in `src/data/risk-classifier/scenarios.json`, in line with the "unseen scenarios" requirement of Section 3.2.
 
+**Strand-level overlap on Equality:** both Pre Q4 and Post Q4 test indirect discrimination, as do platform scenarios uklaw-003 and uklaw-011. The protected characteristic, proxy variable, and sectoral context differ across all four. The mark scheme requires students to identify the specific protected characteristic and the indirect mechanism, so pattern-matching alone does not produce full marks. Acknowledged as an unavoidable strand-level overlap given the T-Level spec's emphasis on algorithmic indirect discrimination (Content Area 4.1.4).
+
 **Content caveat:** same as the platform scenarios — author-generated, unreviewed by a qualified examiner. See `docs/pilot-evaluation-plan.md` Section 2.3 for the full caveat. This document inherits that caveat and is itself subject to Dave's sense-check before deployment.
 
 ---
@@ -20,17 +22,17 @@ All ten scenarios are distinct from the twelve platform scenarios in `src/data/r
 
 ### Q1 [3 marks] · Data Protection Act / UK GDPR · clean
 
-**Scenario:** A finance officer at a small charity emails a spreadsheet of 800 donor records to her own personal Hotmail account so she can finish a fundraising report from home that evening. The spreadsheet includes donors' names, addresses, and donation amounts.
+**Scenario:** An HR officer at a manufacturing company photographs the printed pile of candidate CVs on her desk using her personal phone so she can review them at home that evening. The CVs include candidates' names, contact details, and previous employers.
 
 **Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
 
 **Mark scheme:**
 
 - **1 mark** for naming Data Protection Act 2018 / UK GDPR.
-- **Up to 2 marks** for the explanation, which should reference: (a) personal data is being transferred outside the controller's environment to an unsecured personal email account; (b) this engages the security principle (Article 5(1)(f)) requiring appropriate technical and organisational measures.
+- **Up to 2 marks** for the explanation, which should reference: (a) personal data (the candidates' details on the CVs) is being captured on a personal device outside the controller's environment, with no technical or organisational safeguards; (b) this engages the security principle (Article 5(1)(f)) requiring appropriate technical and organisational measures.
 - Award 1 explanation mark for answers that name security/storage but don't cite the principle. Award 0 for explanations that just describe the scenario without identifying the wrong.
 
-**Author note (for Dave's sense-check):** Tests recognition of the most common DPA breach pattern in workplace settings. Students should connect "personal email = no organisational control" to a security principle violation.
+**Author note (for Dave's sense-check):** Tests recognition of a less common DPA breach pattern: photographing personal data on a personal device. The wrong is the transfer of personal data onto an uncontrolled device, regardless of whether the photos are subsequently shared, deleted, or backed up. Distinct in mechanic from platform scenarios uklaw-001 (USB stick) and uklaw-004 (request to email roll to personal Gmail), both of which test the same security principle via different routes.
 
 ---
 
@@ -136,17 +138,17 @@ All ten scenarios are distinct from the twelve platform scenarios in `src/data/r
 
 ### Q3 [3 marks] · Computer Misuse Act 1990 · clean
 
-**Scenario:** An office administrator is dismissed on Friday afternoon. On Saturday morning, before the IT team has revoked her credentials, she logs in from home to the company HR system to read what colleagues have been told about her departure.
+**Scenario:** A receptionist at a doctor's surgery has access to the patient records system as part of her job, which involves checking patients in and booking appointments. Curious about a recent argument with her ex-partner, she logs in and reads through his medical history.
 
 **Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
 
 **Mark scheme:**
 
 - **1 mark** for naming Computer Misuse Act 1990.
-- **Up to 2 marks** for the explanation, which should reference: (a) Section 1 makes it an offence to cause a computer to perform a function with intent to secure unauthorised access; (b) her authorisation to access company systems ended on dismissal, so accessing the HR system the following day is unauthorised regardless of whether IT had technically revoked her credentials.
-- Award 1 explanation mark for answers that recognise "she shouldn't be in the system after being fired" without distinguishing technical access from authorisation.
+- **Up to 2 marks** for the explanation, which should reference: (a) Section 1 makes it an offence to cause a computer to perform a function with intent to secure unauthorised access; (b) her authorisation to use the patient records system is bound to her work purposes (check-in and booking), so accessing records out of personal curiosity is outside that purpose and therefore unauthorised, regardless of whether the system technically permits the access.
+- Award 1 explanation mark for answers that recognise "she shouldn't be looking up his records" without distinguishing between technical access and authorised purpose.
 
-**Author note:** Clean Section 1 CMA case. Distinct from Pre Q3 (warehouse worker via supervisor's session): there the access uses someone else's session; here the access uses her own credentials after authorisation has ended. Both engage Section 1; both are matched in cognitive demand because the wrong is visible at first reading.
+**Author note:** Clean Section 1 CMA case based on a canonical pattern in UK case law (NHS curiosity-snooping prosecutions). Distinct from Pre Q3 (warehouse worker via supervisor's session): there the access uses someone else's session; here the access uses her own credentials but for a purpose outside what was authorised. Distinct in mechanic from platform scenarios uklaw-002 (post-employment, stolen credentials), uklaw-005 (stale permission), and uklaw-010 (external attack).
 
 ---
 
