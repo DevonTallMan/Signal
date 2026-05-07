@@ -8,7 +8,7 @@
 
 This document provides the ten candidate assessment questions called for by Section 3.2 of the pre-registered Pilot Evaluation Plan (`docs/pilot-evaluation-plan.md`). Five questions form the pre-test, administered before any platform use; five form the post-test, administered after the final platform session.
 
-The pre/post split is matched on legislation distribution (2 DPA + 1 CMA + 1 Equality + 1 IP per test) and on difficulty curve (4 clean + 1 grey per test). Both tests use the same scoring framework (3 marks per question, 15 marks total) so pre/post results are directly comparable.
+The pre/post split is matched on legislation distribution (2 DPA + 1 CMA + 1 Equality + 1 IP per test) and on difficulty profile (3 clean + 2 grey per test, where the grey items are the second DPA question and the Equality question). Both tests use the same scoring framework (3 marks per question, 15 marks total) so pre/post results are directly comparable.
 
 All ten scenarios are distinct from the twelve platform scenarios in `src/data/risk-classifier/scenarios.json`, in line with the "unseen scenarios" requirement of Section 3.2.
 
@@ -43,7 +43,7 @@ All ten scenarios are distinct from the twelve platform scenarios in `src/data/r
 **Mark scheme:**
 
 - **1 mark** for naming Data Protection Act 2018 / UK GDPR.
-- **Up to 2 marks** for the explanation, which should reference: (a) the right to erasure (Article 17) entitles individuals to have their personal data deleted in defined circumstances, including when the data is no longer necessary for the original purpose; (b) "useful for marketing in case you come back" is not a recognised lawful basis for refusing erasure where the original processing purpose has lapsed.
+- **Up to 2 marks** for the explanation, which should reference: (a) the right to erasure (Article 17) entitles individuals to have their personal data deleted where the data is no longer necessary for the original purpose; (b) "useful in case you come back" does not establish ongoing necessity after nine years of inactivity. The retailer's reason also describes direct-marketing processing, against which the customer has an absolute right to object under Article 21.
 - Award 1 explanation mark for answers that mention "the right to be deleted" without naming the article or explaining why "useful for marketing" doesn't suffice.
 
 **Author note:** Grey case. Students may pick "no Act applies because the retailer has a business reason." The teaching point is that lawful bases for refusing erasure must be specific and recognised under UK GDPR; "we want to keep the data" is not one of them. Tests whether students know DPA contains rights as well as security obligations.
@@ -66,7 +66,7 @@ All ten scenarios are distinct from the twelve platform scenarios in `src/data/r
 
 ---
 
-### Q4 [3 marks] · Equality Act 2010 · clean
+### Q4 [3 marks] · Equality Act 2010 · grey
 
 **Scenario:** A council redesigns its planning portal so that all objections to planning applications must now be submitted through a new smartphone app. A long-term elderly resident, who has used the previous web form for years to make objections, does not own a smartphone. When she contacts the council, she is told there is no other route to submit her objection.
 
@@ -80,6 +80,8 @@ All ten scenarios are distinct from the twelve platform scenarios in `src/data/r
 
 **Author note:** Clean indirect discrimination case on age. Students may want to invoke disability (because the resident is "elderly"), but the scenario doesn't establish a disability — only smartphone non-ownership, which correlates with age. The cleanest answer engages Section 19 on age.
 
+**Difficulty:** Grey, not clean. The question requires students to recognise that smartphone non-ownership is a proxy for age, which is a sociological inference rather than a fact in the scenario. If indirect discrimination has not been taught explicitly, this question is closer to edge than grey.
+
 ---
 
 ### Q5 [3 marks] · Intellectual Property · clean
@@ -90,7 +92,7 @@ All ten scenarios are distinct from the twelve platform scenarios in `src/data/r
 
 **Mark scheme:**
 
-- **1 mark** for naming the Intellectual Property framework. Acceptable answers: "Intellectual Property Act 2014," "Copyright, Designs and Patents Act 1988," or "copyright law."
+- **1 mark** for naming the Intellectual Property framework. Acceptable answers: "Copyright, Designs and Patents Act 1988" or "copyright law."
 - **Up to 2 marks** for the explanation, which should reference: (a) the music track is a copyrighted work; (b) using it in another work and re-publishing without the rights-holder's permission infringes the composer's copyright, regardless of where the track was found.
 - Award 1 explanation mark for answers that mention "copyright" without explaining that finding a work online does not grant a licence to reuse it.
 
@@ -118,37 +120,37 @@ All ten scenarios are distinct from the twelve platform scenarios in `src/data/r
 
 ### Q2 [3 marks] · Data Protection Act / UK GDPR · grey
 
-**Scenario:** A wellness app on mobile phones collects data from users about their menstrual cycles and the medication they take for anxiety. The app's terms of service mention that data is collected "to improve our service." Users tap a single "I accept" button to use the app. The terms do not specifically mention that health information is being collected and processed.
+**Scenario:** A bank's customer-records system has recorded a customer's date of birth incorrectly, which is causing him repeated problems passing age verification on the bank's online portal. He emails customer services with a scan of his passport and asks the bank to correct the error. The bank replies that "our records were imported from your original application and we cannot edit them."
 
 **Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
 
 **Mark scheme:**
 
 - **1 mark** for naming Data Protection Act 2018 / UK GDPR.
-- **Up to 2 marks** for the explanation, which should reference: (a) menstrual cycle data and medication for anxiety constitute health-related personal data, which is "special category" data under Article 9 of UK GDPR; (b) processing special category data requires explicit consent or another Article 9 condition; a generic "I accept" against vague ToS does not constitute the explicit consent Article 9 requires.
-- Award 1 explanation mark for answers that recognise "health data is more sensitive" without citing Article 9 specifically.
+- **Up to 2 marks** for the explanation, which should reference: (a) the right to rectification (Article 16) entitles individuals to have inaccurate personal data corrected without undue delay; (b) "imported from your original application and we cannot edit them" is not a recognised ground for refusing rectification where the data is demonstrably inaccurate and the customer has supplied evidence.
+- Award 1 explanation mark for answers that mention "the right to have data corrected" without naming Article 16 or explaining why "we can't edit it" doesn't suffice.
 
-**Author note:** Grey case matching Pre Q2 in difficulty. Students may misclassify as Equality (because menstrual cycles correlate with sex) or argue that "I accept" is valid consent. The teaching point is that Article 9 special category data requires explicit, specific consent — generic "I accept" is insufficient.
+**Author note:** Grey case matched to Pre Q2 in difficulty. Single concept (Article 16 rectification) parallel to Pre Q2's single concept (Article 17 erasure). Tests that students recognise DPA contains correction rights as well as deletion rights, and that "the system won't let us" is not a lawful basis to refuse.
 
 ---
 
 ### Q3 [3 marks] · Computer Misuse Act 1990 · clean
 
-**Scenario:** A student on a two-week work experience placement at a council is given a temporary login that allows access to the council's general administrative document store. Curious about a planning dispute involving her own neighbourhood, she navigates to the planning team's internal folder and reads sensitive correspondence about her neighbour's pending planning application. She does not download or share what she reads.
+**Scenario:** An office administrator is dismissed on Friday afternoon. On Saturday morning, before the IT team has revoked her credentials, she logs in from home to the company HR system to read what colleagues have been told about her departure.
 
 **Question:** Which piece of legislation is the primary one engaged by this scenario? Briefly explain your answer.
 
 **Mark scheme:**
 
 - **1 mark** for naming Computer Misuse Act 1990.
-- **Up to 2 marks** for the explanation, which should reference: (a) Section 1 makes it an offence to access material the person is not authorised to access; (b) her temporary login was scoped to general administrative documents, not to the planning team's internal correspondence — so accessing the planning folder exceeds her authorisation, regardless of whether the technical access was possible.
-- Award 1 explanation mark for answers that note "outside her remit" without distinguishing between technical access and authorised scope.
+- **Up to 2 marks** for the explanation, which should reference: (a) Section 1 makes it an offence to cause a computer to perform a function with intent to secure unauthorised access; (b) her authorisation to access company systems ended on dismissal, so accessing the HR system the following day is unauthorised regardless of whether IT had technically revoked her credentials.
+- Award 1 explanation mark for answers that recognise "she shouldn't be in the system after being fired" without distinguishing technical access from authorisation.
 
-**Author note:** Clean Section 1 CMA case. Distinct from Pre Q3 (warehouse worker via supervisor's session): there she used someone else's session; here she's using her own login but accessing material outside the scope she was given. Both engage Section 1; the teaching point is that authorisation is content-scoped, not just credential-scoped.
+**Author note:** Clean Section 1 CMA case. Distinct from Pre Q3 (warehouse worker via supervisor's session): there the access uses someone else's session; here the access uses her own credentials after authorisation has ended. Both engage Section 1; both are matched in cognitive demand because the wrong is visible at first reading.
 
 ---
 
-### Q4 [3 marks] · Equality Act 2010 · clean
+### Q4 [3 marks] · Equality Act 2010 · grey
 
 **Scenario:** A logistics company introduces a new automated shift-allocation system. The system schedules all overnight shifts, which carry a higher hourly rate, for drivers who indicated "fully flexible availability" on their application form. After six months, a manager notices that women drivers, who on average had less flexibility because of caring responsibilities, are concentrated in the lower-paid daytime shifts.
 
@@ -162,6 +164,8 @@ All ten scenarios are distinct from the twelve platform scenarios in `src/data/r
 
 **Author note:** Distinct from Pre Q4 (council planning portal — age) by protected characteristic and mechanism. Tests whether students recognise indirect discrimination via algorithm or workplace policy, with sex as the protected characteristic.
 
+**Difficulty:** Grey, not clean. The question requires students to recognise that declared flexibility is a proxy for caring responsibilities, which correlate with sex. Same fragility as Pre Q4: if indirect discrimination has not been taught explicitly, this becomes very hard.
+
 ---
 
 ### Q5 [3 marks] · Intellectual Property · clean
@@ -172,7 +176,7 @@ All ten scenarios are distinct from the twelve platform scenarios in `src/data/r
 
 **Mark scheme:**
 
-- **1 mark** for naming the Intellectual Property framework. Acceptable answers: "Intellectual Property Act 2014," "Copyright, Designs and Patents Act 1988," "copyright law," or "software licensing law."
+- **1 mark** for naming the Intellectual Property framework. Acceptable answers: "Copyright, Designs and Patents Act 1988," "copyright law," or "software licensing law."
 - **Up to 2 marks** for the explanation, which should reference: (a) Adobe Photoshop is licensed software; (b) installing it on more machines than the licence permits exceeds the scope of the agreement and infringes Adobe's copyright in the software, regardless of how often the additional machines are actually used.
 - Award 1 explanation mark for answers that recognise "they don't have enough licences" without explaining that licence terms govern installation, not just simultaneous use.
 
@@ -203,4 +207,3 @@ The author has tried to use cohort-appropriate language throughout, but the foll
 Drafted on 7 May 2026 by Claude as the deliverable for Section 3.2 of the pilot evaluation plan. Per the plan, Chris reviews; Dave sense-checks for cohort-appropriate language; finalised version is locked before the pilot begins.
 
 Filling this document is not a methodological change to the pre-registered plan and does not require re-agreement under Section 8 of `docs/pilot-evaluation-plan.md`. Any subsequent modification to the questions or mark schemes after Dave's sense-check, however, would require re-agreement.
-
