@@ -41,17 +41,7 @@ interface TestApiSessionState {
   completionTimeMs: number | null;
 }
 
-interface TestApiHandlers {
-  clickTier: (tier: Tier) => void;
-  continue: () => Promise<void>;
-  getSessionState: () => TestApiSessionState;
-}
 
-declare global {
-  interface Window {
-    __signalTestApi?: TestApiHandlers;
-  }
-}
 
 const RISK_CLASSIFIER_PATH = "/content-areas/risk-classifier";
 
