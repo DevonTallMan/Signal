@@ -9,3 +9,9 @@ dist/
 
 # Keystatic auth (local dev only)
 keystatic-cloud-auth/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

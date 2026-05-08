@@ -1,0 +1,52 @@
+# .github/workflows/playwright.yml
+#
+# Playwright end-to-end tests for the Signal Risk Classifier.
+# Runs on PRs and on push to main. Seeds the staging Playwright test
+# user (idempotent) before running the suite.
+#
+# Required GitHub Actions secrets:
+#   PLAYWRIGHT_TEST_EMAIL    — email for the seeded staging test user
+#   PLAYWRIGHT_TEST_PASSWORD — password for the seeded staging test user
+
+name: playwright
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PLAYWRIGHT_TEST_EMAIL: ${{ secrets.PLAYWRIGHT_TEST_EMAIL }}
+      PLAYWRIGHT_TEST_PASSWORD: ${{ secrets.PLAYWRIGHT_TEST_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Seed Playwright test user (idempotent)
+        run: npx tsx scripts/seed-playwright-user.ts
+
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
