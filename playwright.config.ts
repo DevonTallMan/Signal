@@ -21,7 +21,7 @@ testMatch: /\.spec\.ts$/,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
   workers: isCI ? 1 : undefined,
-  reporter: isCI ? [["list"], ["github"]] : "list",
+  reporter: isCI ? [["list"], ["github"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL: BASE_URL,
     trace: "on-first-retry",
