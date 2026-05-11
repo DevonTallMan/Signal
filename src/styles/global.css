@@ -12,6 +12,7 @@
   --ink: #e8edf3;
   --dim: rgba(232, 237, 243, 0.55);
   --muted: rgba(232, 237, 243, 0.3);
+  --red: #FF3B3B; 
 
   --font-display: 'Orbitron', system-ui, sans-serif;
   --font-mono: 'Share Tech Mono', ui-monospace, monospace;
