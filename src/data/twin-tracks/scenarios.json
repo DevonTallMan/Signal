@@ -1,0 +1,58 @@
+[
+  {
+    "id": "hospital-remote-access",
+    "title": "Hospital Remote Access",
+    "questionType": "discuss",
+    "scenarioPanels": [],
+    "phrases": [
+      {
+        "id": "ph1",
+        "text": "One positive impact is continuous availability of patient records for authorised staff.",
+        "track": "positive",
+        "slot": "introduce"
+      },
+      {
+        "id": "ph2",
+        "text": "Because the server is reachable from hospital-issued smartphones and laptops, on-call doctors can retrieve patient records remotely instead of needing to be physically present.",
+        "track": "positive",
+        "slot": "explain"
+      },
+      {
+        "id": "ph3",
+        "text": "Faster clinical decisions in time-critical situations, like an on-call consultant reviewing patient history, improve outcomes and meet the hospital's continuous-availability requirement.",
+        "track": "positive",
+        "slot": "develop"
+      },
+      {
+        "id": "ph4",
+        "text": "One negative impact is increased exposure to cyber attacks on the server holding sensitive medical information.",
+        "track": "negative",
+        "slot": "introduce"
+      },
+      {
+        "id": "ph5",
+        "text": "Lost or stolen devices and phishing-compromised credentials let attackers authenticate to the server like an authorised user.",
+        "track": "negative",
+        "slot": "explain"
+      },
+      {
+        "id": "ph6",
+        "text": "A confidentiality breach would be a notifiable data breach under UK GDPR, exposing the hospital to ICO regulatory action and reputational damage.",
+        "track": "negative",
+        "slot": "develop"
+      }
+    ],
+    "modelAnswer": {
+      "positive": {
+        "introduce": "One positive impact for the hospital is that authorised staff can access patient records at any time, including when they are away from the hospital site.",
+        "explain": "Because the server is reachable over the internet from hospital-issued smartphones and laptops, on-call doctors and specialists responding from outside the hospital can retrieve sensitive medical information when they need it, rather than being blocked by having to be physically present at a workstation.",
+        "develop": "This means the hospital can make faster clinical decisions in time-critical situations, for example when an on-call consultant reviews a patient's medical history before authorising treatment, which improves patient outcomes and helps the hospital meet its requirement for continuous availability of records."
+      },
+      "negative": {
+        "introduce": "One negative impact is that allowing access over the internet increases the hospital's exposure to cyber attacks on the server holding sensitive medical information.",
+        "explain": "Each smartphone and laptop that can reach the server becomes a potential entry point for an attacker, so if a device is lost or stolen, or if a member of staff's credentials are compromised through phishing, the attacker can authenticate to the server in the same way an authorised user would.",
+        "develop": "This creates the risk of a confidentiality breach affecting patient medical records, which would be a notifiable data breach under UK GDPR and could expose the hospital to regulatory action from the Information Commissioner's Office and significant reputational damage that undermines patient trust in how their data is handled."
+      }
+    }
+  }
+]
