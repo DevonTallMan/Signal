@@ -2,21 +2,30 @@
 apply-content-pr.ps1
 
 Branches from latest main, copies content files to target paths, commits,
-pushes, and opens a draft PR via gh CLI. Reusable across Sort & Match
-worked examples.
+pushes, and opens a draft PR via gh CLI. Reusable across worked examples
+for any Sort and Match-related activity (Sort and Match, Twin Tracks).
 
-Usage example (Six Vs):
+Usage example (Sort and Match - Six Vs):
     .\apply-content-pr.ps1 `
+        -Activity "sort-and-match" `
         -Slug "six-vs" `
         -Title "Six Vs and Data Quality" `
         -ScenariosSrc "C:\Users\morri\Downloads\scenarios.json" `
         -LogSrc "C:\Users\morri\Downloads\six-vs.md"
 
+Usage example (Twin Tracks - Hospital):
+    .\apply-content-pr.ps1 `
+        -Activity "twin-tracks" `
+        -Slug "hospital-remote-access" `
+        -Title "Hospital Remote Access" `
+        -ScenariosSrc "C:\Users\morri\Downloads\scenarios.json" `
+        -LogSrc "C:\Users\morri\Downloads\hospital-twin-tracks.md"
+
 Prerequisites:
     - gh CLI installed and authenticated (run: gh auth status)
-    - ScenariosSrc is the COMPLETE current state of scenarios.json
-      (when adding Hospital later, that file must contain both
-      Six Vs and Hospital records; the script overwrites)
+    - ScenariosSrc is the COMPLETE current state of the activity's scenarios.json
+      (when adding a second worked example, that file must contain ALL records
+      for that activity; the script overwrites)
     - Working tree clean before invocation
 
 Memory references:
@@ -28,6 +37,7 @@ Memory references:
 #>
 
 param(
+    [Parameter(Mandatory=$true)] [string]$Activity,
     [Parameter(Mandatory=$true)] [string]$Slug,
     [Parameter(Mandatory=$true)] [string]$Title,
     [Parameter(Mandatory=$true)] [string]$ScenariosSrc,
@@ -36,6 +46,14 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+
+# --- Validate Activity and derive display name ---
+
+$ActivityDisplay = switch ($Activity) {
+    "sort-and-match" { "Sort and Match" }
+    "twin-tracks"    { "Twin Tracks" }
+    default          { throw "Unknown Activity: '$Activity'. Expected 'sort-and-match' or 'twin-tracks'." }
+}
 
 # --- Pre-flight ---
 
@@ -53,7 +71,7 @@ if ($status) { throw "Working tree has uncommitted changes. Commit or stash firs
 
 # --- Branch from latest main ---
 
-$branch = "content/sort-and-match-$Slug-phrases"
+$branch = "content/$Activity-$Slug-phrases"
 
 git fetch origin main
 git checkout main
@@ -69,7 +87,7 @@ git checkout -b $branch
 
 # --- Copy files to target paths ---
 
-$jsonDestRel = "src/data/sort-and-match/scenarios.json"
+$jsonDestRel = "src/data/$Activity/scenarios.json"
 $logDestRel  = "docs/sort-and-match-content-review/$Slug.md"
 
 $jsonDestAbs = Join-Path $RepoRoot $jsonDestRel
@@ -89,20 +107,20 @@ $logContent  = Get-Content -Path $LogSrc       -Encoding UTF8 -Raw
 # --- Commit and push ---
 
 git add $jsonDestRel $logDestRel
-git commit -m "content: Sort and Match $Title phrase set plus review log"
+git commit -m "content: $ActivityDisplay $Title phrase set plus review log"
 git push -u origin $branch
 
 # --- Open draft PR ---
 
-$prTitle = "content: Sort and Match $Title phrase set plus review log"
+$prTitle = "content: $ActivityDisplay $Title phrase set plus review log"
 $prBody = @"
-Content review: Sort and Match $Title.
+Content review: $ActivityDisplay $Title.
 
 Phrases and review log shipped per spec Section 11 protocol.
 
 ## Files
-- src/data/sort-and-match/scenarios.json
-- docs/sort-and-match-content-review/$Slug.md
+- $jsonDestRel
+- $logDestRel
 
 ## Reviewer note
 This PR ships content. The review log is the audit trail.
@@ -111,8 +129,8 @@ with the example-specific summary and marks ready for review.
 
 ## TODO before marking ready
 - Replace this body with the example-specific summary including
-  phrase count distribution (e.g. 5 phrases, 1N/2E/2I) and any
-  decisions called out from the review log.
+  phrase count distribution and any decisions called out from the
+  review log.
 - Confirm any open questions in the log are flagged here.
 "@
 
