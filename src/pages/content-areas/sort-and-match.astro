@@ -1,0 +1,85 @@
+---
+// Sort & Match — N·E·I drag-and-drop interactive module.
+// Sprint 3 worked example: Six Vs and Data Quality.
+//
+// Sprint 3 Increment 3.1 scope: STATIC UI SHELL ONLY.
+//   - Renders the scenarioPanels comic strip (5 panels using Glyph component)
+//   - Renders phrase pool (5 phrases as static cards)
+//   - Renders three buckets (N, E, I) as empty containers
+//   - No drag-and-drop interaction (Inc 3.2)
+//   - No validation, no persistence, no session loop, no tests
+//
+// See docs/sort-and-match-nei-spec.md for full Sprint 3 spec.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SortAndMatchIsland from "../../components/SortAndMatch";
+---
+<BaseLayout title="Sort & Match | Signal">
+  <main class="sort-and-match-page">
+    <header class="sm-intro">
+      <p class="sm-intro__kicker">N·E·I WORKED EXAMPLE</p>
+      <h1 class="sm-intro__title">Sort & Match</h1>
+      <p class="sm-intro__lede">
+        Drag each analytical phrase into the N (Name), E (Explain), or I (Impact)
+        bucket that best fits its function in a worked answer.
+      </p>
+    </header>
+    <section class="sm-game">
+      <SortAndMatchIsland client:only="react" />
+    </section>
+    <footer class="sm-outro">
+      <p>
+        Sprint 3 Increment 3.1: static UI shell. Drag-and-drop, validation,
+        and session persistence land in subsequent increments.
+      </p>
+    </footer>
+  </main>
+</BaseLayout>
+<style>
+  .sort-and-match-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+  }
+  .sm-intro { margin-bottom: 2rem; }
+  .sm-intro__kicker {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--green, #39ff14);
+    margin: 0 0 0.75rem;
+  }
+  .sm-intro__title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--ink, #e8edf3);
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.01em;
+  }
+  .sm-intro__lede {
+    font-size: 1.05rem;
+    color: var(--dim, rgba(232, 237, 243, 0.75));
+    margin: 0;
+    max-width: 68ch;
+  }
+  .sm-game {
+    margin: 2rem 0;
+    min-height: 600px;
+    background: var(--panel, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-radius: 4px;
+    padding: 1.5rem;
+  }
+  .sm-outro {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    font-size: 0.85rem;
+    color: var(--muted, rgba(232, 237, 243, 0.55));
+    line-height: 1.5;
+  }
+  @media (max-width: 640px) {
+    .sort-and-match-page { padding: 1.5rem 1rem 3rem; }
+    .sm-intro__title { font-size: 2rem; }
+    .sm-game { padding: 1rem; min-height: 500px; }
+  }
+</style>
