@@ -2,7 +2,33 @@
   {
     "id": "six-vs-data-quality",
     "title": "Six Vs and Data Quality",
-    "scenarioPanels": [],
+    "scenarioPanels": [
+      {
+        "id": "p1",
+        "glyph": "office",
+        "caption": "A business drowns in data: orders, clicks, sensors, social mentions, every day."
+      },
+      {
+        "id": "p2",
+        "glyph": "data-centre",
+        "caption": "Volume: petabytes pile up. Without enough storage, processing crawls to a halt."
+      },
+      {
+        "id": "p3",
+        "glyph": "data-in-transit",
+        "caption": "Velocity: real-time streams flood in faster than analysts can read them."
+      },
+      {
+        "id": "p4",
+        "glyph": "warning",
+        "caption": "Veracity: unreliable sources poison every downstream analysis they touch."
+      },
+      {
+        "id": "p5",
+        "glyph": "employee",
+        "caption": "Mishandled Vs corrode decision-makers' confidence in their own systems."
+      }
+    ],
     "phrases": [
       {
         "id": "ph1",
