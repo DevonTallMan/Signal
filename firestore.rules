@@ -42,26 +42,39 @@ service cloud.firestore {
       match /data/{dataKey}/sessions/{sessionId} {
         allow read: if request.auth != null
           && request.auth.uid == userId
-          && dataKey == 'risk-classifier';
+          && (dataKey == 'risk-classifier' || dataKey == 'sort-and-match');
 
         allow create: if request.auth != null
           && request.auth.uid == userId
-          && dataKey == 'risk-classifier'
-          && request.resource.data.keys().hasAll([
-               'startedAt', 'completedAt', 'totalScenarios',
-               'score', 'mode', 'source'
-             ])
-          && request.resource.data.source == 'signal'
-          && (request.resource.data.mode == 'first-attempt'
-              || request.resource.data.mode == 'replay-wrong'
-              || request.resource.data.mode == 'challenge')
-          && request.resource.data.completedAt == null
-          && request.resource.data.totalScenarios == null
-          && request.resource.data.score == 0;
+          && (
+            (dataKey == 'risk-classifier'
+              && request.resource.data.keys().hasAll([
+                   'startedAt', 'completedAt', 'totalScenarios',
+                   'score', 'mode', 'source'
+                 ])
+              && request.resource.data.source == 'signal'
+              && (request.resource.data.mode == 'first-attempt'
+                  || request.resource.data.mode == 'replay-wrong'
+                  || request.resource.data.mode == 'challenge')
+              && request.resource.data.completedAt == null
+              && request.resource.data.totalScenarios == null
+              && request.resource.data.score == 0)
+            ||
+            (dataKey == 'sort-and-match'
+              && request.resource.data.keys().hasAll([
+                   'startedAt', 'completedAt', 'totalScenarios',
+                   'score', 'mode', 'source'
+                 ])
+              && request.resource.data.source == 'signal'
+              && request.resource.data.mode == 'first-attempt'
+              && request.resource.data.completedAt == null
+              && request.resource.data.totalScenarios == null
+              && request.resource.data.score == 0)
+          );
 
         allow update: if request.auth != null
           && request.auth.uid == userId
-          && dataKey == 'risk-classifier'
+          && (dataKey == 'risk-classifier' || dataKey == 'sort-and-match')
           && request.resource.data.startedAt == resource.data.startedAt
           && request.resource.data.mode == resource.data.mode
           && request.resource.data.source == resource.data.source
@@ -77,25 +90,51 @@ service cloud.firestore {
         match /attempts/{attemptId} {
           allow read: if request.auth != null
             && request.auth.uid == userId
-            && dataKey == 'risk-classifier';
+            && (dataKey == 'risk-classifier' || dataKey == 'sort-and-match');
 
           allow create: if request.auth != null
             && request.auth.uid == userId
-            && dataKey == 'risk-classifier'
-            && request.resource.data.keys().hasAll([
-                 'scenarioId', 'tierChosen', 'correctTier',
-                 'isCorrect', 'timeToAnswerMs', 'viewedReasoning',
-                 'attemptedAt', 'source'
-               ])
-            && request.resource.data.source == 'signal'
-            && request.resource.data.scenarioId is string
-            && request.resource.data.tierChosen is string
-            && request.resource.data.correctTier is string
-            && request.resource.data.isCorrect ==
-                 (request.resource.data.tierChosen == request.resource.data.correctTier)
-            && request.resource.data.timeToAnswerMs is int
-            && request.resource.data.timeToAnswerMs >= 0
-            && request.resource.data.viewedReasoning is bool;
+            && (
+              (dataKey == 'risk-classifier'
+                && request.resource.data.keys().hasAll([
+                     'scenarioId', 'tierChosen', 'correctTier',
+                     'isCorrect', 'timeToAnswerMs', 'viewedReasoning',
+                     'attemptedAt', 'source'
+                   ])
+                && request.resource.data.source == 'signal'
+                && request.resource.data.scenarioId is string
+                && request.resource.data.tierChosen is string
+                && request.resource.data.correctTier is string
+                && request.resource.data.isCorrect ==
+                     (request.resource.data.tierChosen == request.resource.data.correctTier)
+                && request.resource.data.timeToAnswerMs is int
+                && request.resource.data.timeToAnswerMs >= 0
+                && request.resource.data.viewedReasoning is bool)
+              ||
+              (dataKey == 'sort-and-match'
+                && request.resource.data.keys().hasAll([
+                     'scenarioId', 'attemptNumber', 'placements',
+                     'isCorrect', 'correctCount', 'totalPhrases',
+                     'timeToCheckMs', 'attemptedAt', 'source'
+                   ])
+                && request.resource.data.source == 'signal'
+                && request.resource.data.scenarioId is string
+                && request.resource.data.attemptNumber is int
+                && request.resource.data.attemptNumber >= 1
+                && request.resource.data.attemptNumber <= 3
+                && request.resource.data.placements is map
+                && request.resource.data.isCorrect is bool
+                && request.resource.data.correctCount is int
+                && request.resource.data.correctCount >= 0
+                && request.resource.data.totalPhrases is int
+                && request.resource.data.totalPhrases >= 1
+                && request.resource.data.totalPhrases <= 20
+                && request.resource.data.correctCount <= request.resource.data.totalPhrases
+                && request.resource.data.isCorrect ==
+                     (request.resource.data.correctCount == request.resource.data.totalPhrases)
+                && request.resource.data.timeToCheckMs is int
+                && request.resource.data.timeToCheckMs >= 0)
+            );
 
           allow update, delete: if false;
         }

@@ -3,35 +3,27 @@
 // React island for the Sort & Match N·E·I drag-and-drop activity.
 // Sprint 3 worked example: Six Vs and Data Quality (single scenario currently).
 //
-// Sprint 3 Increment 3.4 scope: SESSION LOOP.
-//   - Seed-based scenario picking via pickSessionScenarios (matches RC pattern)
-//   - SESSION_LENGTH = 3 scenarios per session (only 1 exists today; picker
-//     returns min(desired, available) gracefully)
-//   - Progress indicator at top: "Scenario X of N · M correct"
-//   - Continue button inside model-answer panel advances to next scenario
-//   - End-of-session summary panel with score + total time
-//   - "Start a new session" button on summary re-seeds and restarts
-//   - Reset button clears CURRENT scenario only (not entire session)
-//   - All Inc 3.3 functionality preserved (validation, stuck mitigation,
-//     model answer reveal, two terminal kicker variants)
+// Sprint 3 Increment 3.5 scope: FIRESTORE PERSISTENCE.
+//   - On boot: call startSession(); use returned ID as session seed; fallback
+//     to local UUID if no auth
+//   - On Check click: call writeAttempt() with full attempt data
+//   - On session-complete transition: call completeSession() with final score
+//   - All writes are fire-and-forget; failure logs via console but does NOT
+//     break the UI (silent-failure pattern; trade-off documented in firestore.ts)
+//   - Per-scenario timer (scenarioStartedAtRef) records timeToCheckMs from
+//     scenario start to each Check click; resets on scenario advance and reset
 //
 // What this PR does NOT do:
-//   - Firestore session persistence (Inc 3.5; seed becomes Firebase session id)
 //   - Playwright tests (Inc 3.6)
+//   - Production rules deployment automation (manual `firebase deploy` step
+//     after merge; see PR body)
 //
-// State machine (per-scenario layer):
-//   "placing" -> "feedback" (check, not all correct, attempts remaining)
-//   "placing" -> "complete-correct" (check, all correct)
-//   "placing" -> "complete-with-help" (check on attempt 3, not all correct)
-//   "feedback" -> "placing" (user drags any phrase)
-//   "complete-*" -> "placing" with next scenario (Continue), OR
-//   "complete-*" -> "session-complete" (Continue at last scenario)
-//
-// Session layer:
-//   session.outcomes records "correct" or "with-help" per scenario, written
-//   only on Continue. correctCount in summary = outcomes filtered to "correct".
+// State machine (unchanged from Inc 3.4):
+//   per-scenario: placing -> feedback -> complete-correct | complete-with-help
+//   session: scenarios array, currentIndex, outcomes[], session-complete on
+//   final Continue
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   DndContext,
   PointerSensor,
@@ -44,6 +36,11 @@ import {
 } from "@dnd-kit/core";
 import scenariosData from "../data/sort-and-match/scenarios.json";
 import { pickSessionScenarios } from "../lib/sort-and-match/sessionPicker";
+import {
+  startSession,
+  writeAttempt,
+  completeSession,
+} from "../lib/sort-and-match/firestore";
 import { Glyph } from "./glyphs";
 import type { GlyphName } from "./glyphs";
 
@@ -76,6 +73,7 @@ interface Scenario {
 type Outcome = "correct" | "with-help";
 
 interface SessionState {
+  sessionId: string | null; // null when running ephemerally (no auth)
   scenarios: Scenario[];
   currentIndex: number;
   outcomes: Outcome[];
@@ -191,6 +189,10 @@ export default function SortAndMatch(): JSX.Element {
     Record<string, PhraseFeedback>
   >({});
 
+  // Ref for per-scenario timer (used in timeToCheckMs on each Check click).
+  // Reset whenever a new scenario starts (boot, advance, reset).
+  const scenarioStartedAtRef = useRef<number>(0);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 4 },
@@ -200,23 +202,29 @@ export default function SortAndMatch(): JSX.Element {
     })
   );
 
-  // Boot: pick scenarios for a fresh session.
+  // Boot: start a Firestore session, pick scenarios with that ID as seed.
   useEffect(() => {
     bootSession();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function bootSession(): void {
+  async function bootSession(): Promise<void> {
     const allScenarios = scenariosData as Scenario[];
-    const seed = `local-${crypto.randomUUID()}`;
-    const picked = pickSessionScenarios(seed, allScenarios, SESSION_LENGTH);
 
+    // Try to start a Firestore session. If we get a handle, use its ID as the
+    // picker seed AND as the persistence key. If we get null (no auth or
+    // Firestore failure), fall back to a local UUID seed and run ephemerally.
+    const sessionHandle = await startSession();
+    const seed = sessionHandle?.id ?? `local-${crypto.randomUUID()}`;
+    const sessionId = sessionHandle?.id ?? null;
+
+    const picked = pickSessionScenarios(seed, allScenarios, SESSION_LENGTH);
     if (picked.length === 0) {
-      // No scenarios available; nothing to render.
-      return;
+      return; // No scenarios available; nothing to render.
     }
 
     setSession({
+      sessionId,
       scenarios: picked,
       currentIndex: 0,
       outcomes: [],
@@ -228,6 +236,7 @@ export default function SortAndMatch(): JSX.Element {
     setPhraseFeedback({});
     setStatus("placing");
     setAttemptNumber(1);
+    scenarioStartedAtRef.current = Date.now();
   }
 
   function initPhraseLocationsFor(scenario: Scenario): void {
@@ -243,6 +252,7 @@ export default function SortAndMatch(): JSX.Element {
     setPhraseFeedback({});
     setStatus("placing");
     setAttemptNumber(1);
+    scenarioStartedAtRef.current = Date.now();
   }
 
   function handleDragEnd(event: DragEndEvent): void {
@@ -273,17 +283,38 @@ export default function SortAndMatch(): JSX.Element {
     if (!session) return;
     const currentScenario = session.scenarios[session.currentIndex];
     const newFeedback: Record<string, PhraseFeedback> = {};
-    let allCorrect = true;
+    let correctCount = 0;
     for (const p of currentScenario.phrases) {
       const placedIn = phraseLocations[p.id];
       if (placedIn === p.category) {
         newFeedback[p.id] = "correct";
+        correctCount += 1;
       } else {
         newFeedback[p.id] = "incorrect";
-        allCorrect = false;
       }
     }
+    const totalPhrases = currentScenario.phrases.length;
+    const allCorrect = correctCount === totalPhrases;
     setPhraseFeedback(newFeedback);
+
+    // Persist this attempt (fire-and-forget). Only attempted if we have a
+    // Firestore session; writeAttempt itself also guards on auth.currentUser.
+    if (session.sessionId) {
+      const placements: Record<string, string> = {};
+      for (const p of currentScenario.phrases) {
+        placements[p.id] = phraseLocations[p.id] ?? "pool";
+      }
+      const timeToCheckMs = Date.now() - scenarioStartedAtRef.current;
+      void writeAttempt({
+        sessionId: session.sessionId,
+        scenarioId: currentScenario.id,
+        attemptNumber,
+        placements,
+        correctCount,
+        totalPhrases,
+        timeToCheckMs,
+      });
+    }
 
     if (allCorrect) {
       setStatus("complete-correct");
@@ -307,7 +338,16 @@ export default function SortAndMatch(): JSX.Element {
     const nextIndex = session.currentIndex + 1;
 
     if (nextIndex >= session.scenarios.length) {
-      // Session complete.
+      // Session complete: write completion to Firestore (fire-and-forget) and
+      // transition to summary state.
+      const correctCount = newOutcomes.filter((o) => o === "correct").length;
+      if (session.sessionId) {
+        void completeSession({
+          sessionId: session.sessionId,
+          score: correctCount,
+          totalScenarios: session.scenarios.length,
+        });
+      }
       setSession({
         ...session,
         outcomes: newOutcomes,
@@ -328,10 +368,11 @@ export default function SortAndMatch(): JSX.Element {
     setPhraseFeedback({});
     setStatus("placing");
     setAttemptNumber(1);
+    scenarioStartedAtRef.current = Date.now();
   }
 
   function handleRestart(): void {
-    bootSession();
+    void bootSession();
   }
 
   if (!session) {
@@ -574,8 +615,7 @@ export default function SortAndMatch(): JSX.Element {
   );
 }
 
-// Styles are shared between the active-session and session-complete renders,
-// so kept in a constant rather than duplicated.
+// Styles shared between active-session and session-complete renders.
 const commonStyles = `
   .sm-sortmatch {
     position: relative;
