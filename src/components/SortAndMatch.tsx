@@ -3,17 +3,29 @@
 // React island for the Sort & Match N·E·I drag-and-drop activity.
 // Sprint 3 worked example: Six Vs and Data Quality.
 //
-// Sprint 3 Increment 3.2 scope: DRAG-AND-DROP WIRING.
-//   - Phrases are draggable from the pool
-//   - Buckets (N, E, I) accept drops; phrases can also be returned to the pool
-//   - Buckets highlight when a phrase is being dragged over them
-//   - Reset button sends all phrases back to the pool
-//   - Pointer (mouse) AND touch (tablet/phone) sensors enabled
-//   - No reordering inside buckets (drop anywhere in a bucket; phrases stack)
-//   - No validation (Inc 3.3)
-//   - No session loop (Inc 3.4)
-//   - No Firestore persistence (Inc 3.5)
-//   - No tests (Inc 3.6)
+// Sprint 3 Increment 3.3 scope: VALIDATION + STUCK MITIGATION + MODEL ANSWER REVEAL.
+//   - "Check answers" button appears when all 5 phrases are placed
+//   - On check: per-phrase feedback (correct/incorrect; correct bucket NOT revealed)
+//   - 3-attempt stuck mitigation: failing attempt 3 reveals model answer
+//   - On all correct OR on stuck mitigation: structured model answer panel reveals
+//     (N / E / I sections with prose from scenario.modelAnswer)
+//   - Different kicker text for "completed correctly" vs "completed with help"
+//   - Dragging clears feedback and returns to placing state for another attempt
+//   - Reset button works at any time (full reset: locations + feedback + attempts)
+//   - Drag disabled in terminal complete states
+//   - All Inc 3.2 functionality preserved (drag/drop, dropzone highlights, touch support)
+//
+// What this PR does NOT do:
+//   - Continue button + session loop (Inc 3.4)
+//   - Firestore persistence (Inc 3.5)
+//   - Playwright tests (Inc 3.6)
+//
+// State machine:
+//   "placing" -> "feedback" (check, not all correct, attempts remaining)
+//   "placing" -> "complete-correct" (check, all correct)
+//   "placing" -> "complete-with-help" (check on attempt 3, not all correct)
+//   "feedback" -> "placing" (user drags any phrase)
+//   "complete-*" terminal (only Reset can leave)
 //
 // See docs/sort-and-match-nei-spec.md for full Sprint 3 spec.
 
@@ -59,6 +71,8 @@ interface Scenario {
 }
 
 type Location = "pool" | "N" | "E" | "I";
+type PhraseFeedback = "unchecked" | "correct" | "incorrect";
+type Status = "placing" | "feedback" | "complete-correct" | "complete-with-help";
 
 const BUCKET_LABELS: Record<"N" | "E" | "I", string> = {
   N: "Name",
@@ -66,33 +80,58 @@ const BUCKET_LABELS: Record<"N" | "E" | "I", string> = {
   I: "Impact",
 };
 
+const MAX_ATTEMPTS = 3;
+
 // ---------- DraggablePhrase ----------
 interface DraggablePhraseProps {
   phrase: Phrase;
+  feedback: PhraseFeedback;
+  disabled: boolean;
 }
 
-function DraggablePhrase({ phrase }: DraggablePhraseProps): JSX.Element {
+function DraggablePhrase({
+  phrase,
+  feedback,
+  disabled,
+}: DraggablePhraseProps): JSX.Element {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({ id: phrase.id });
+    useDraggable({ id: phrase.id, disabled });
 
   const style: React.CSSProperties = {
     transform: transform
       ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
       : undefined,
     opacity: isDragging ? 0.5 : 1,
-    cursor: isDragging ? "grabbing" : "grab",
+    cursor: disabled ? "default" : isDragging ? "grabbing" : "grab",
     touchAction: "none",
   };
+
+  const feedbackClass =
+    feedback === "correct"
+      ? " sm-sortmatch__phrase--correct"
+      : feedback === "incorrect"
+      ? " sm-sortmatch__phrase--incorrect"
+      : "";
 
   return (
     <div
       ref={setNodeRef}
-      className="sm-sortmatch__phrase"
+      className={`sm-sortmatch__phrase${feedbackClass}`}
       style={style}
       {...listeners}
       {...attributes}
     >
-      {phrase.text}
+      <span className="sm-sortmatch__phrase-text">{phrase.text}</span>
+      {feedback === "correct" && (
+        <span className="sm-sortmatch__phrase-marker sm-sortmatch__phrase-marker--correct">
+          CORRECT
+        </span>
+      )}
+      {feedback === "incorrect" && (
+        <span className="sm-sortmatch__phrase-marker sm-sortmatch__phrase-marker--incorrect">
+          TRY AGAIN
+        </span>
+      )}
     </div>
   );
 }
@@ -126,7 +165,6 @@ export default function SortAndMatch(): JSX.Element {
   const scenarios = scenariosData as Scenario[];
   const scenario = scenarios[0];
 
-  // Build the initial layout: every phrase starts in the pool.
   const [phraseLocations, setPhraseLocations] = useState<
     Record<string, Location>
   >(() => {
@@ -136,6 +174,12 @@ export default function SortAndMatch(): JSX.Element {
     }
     return initial;
   });
+
+  const [status, setStatus] = useState<Status>("placing");
+  const [attemptNumber, setAttemptNumber] = useState<number>(1);
+  const [phraseFeedback, setPhraseFeedback] = useState<
+    Record<string, PhraseFeedback>
+  >({});
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -147,13 +191,49 @@ export default function SortAndMatch(): JSX.Element {
   );
 
   function handleDragEnd(event: DragEndEvent): void {
+    if (status === "complete-correct" || status === "complete-with-help") {
+      return; // terminal state; drag disabled but guard anyway
+    }
+
     const { active, over } = event;
     if (!over) return;
     const newLocation = over.id as Location;
+
     setPhraseLocations((prev) => ({
       ...prev,
       [String(active.id)]: newLocation,
     }));
+
+    // Clear feedback and return to placing when the user starts a new attempt.
+    if (status === "feedback") {
+      setPhraseFeedback({});
+      setStatus("placing");
+    }
+  }
+
+  function handleCheck(): void {
+    if (!scenario) return;
+    const newFeedback: Record<string, PhraseFeedback> = {};
+    let allCorrect = true;
+    for (const p of scenario.phrases) {
+      const placedIn = phraseLocations[p.id];
+      if (placedIn === p.category) {
+        newFeedback[p.id] = "correct";
+      } else {
+        newFeedback[p.id] = "incorrect";
+        allCorrect = false;
+      }
+    }
+    setPhraseFeedback(newFeedback);
+
+    if (allCorrect) {
+      setStatus("complete-correct");
+    } else if (attemptNumber >= MAX_ATTEMPTS) {
+      setStatus("complete-with-help");
+    } else {
+      setStatus("feedback");
+      setAttemptNumber((prev) => prev + 1);
+    }
   }
 
   function handleReset(): void {
@@ -161,6 +241,9 @@ export default function SortAndMatch(): JSX.Element {
     const reset: Record<string, Location> = {};
     for (const p of scenario.phrases) reset[p.id] = "pool";
     setPhraseLocations(reset);
+    setPhraseFeedback({});
+    setStatus("placing");
+    setAttemptNumber(1);
   }
 
   if (!scenario) {
@@ -173,6 +256,17 @@ export default function SortAndMatch(): JSX.Element {
 
   const phrasesIn = (loc: Location): Phrase[] =>
     scenario.phrases.filter((p) => phraseLocations[p.id] === loc);
+
+  const allPhrasesPlaced = scenario.phrases.every(
+    (p) => phraseLocations[p.id] !== "pool"
+  );
+
+  const showCheckButton = status === "placing" && allPhrasesPlaced;
+  const dragDisabled =
+    status === "complete-correct" || status === "complete-with-help";
+  const incorrectCount = Object.values(phraseFeedback).filter(
+    (f) => f === "incorrect"
+  ).length;
 
   return (
     <div className="sm-sortmatch">
@@ -205,7 +299,12 @@ export default function SortAndMatch(): JSX.Element {
             >
               <div className="sm-sortmatch__phrases">
                 {phrasesIn("pool").map((phrase) => (
-                  <DraggablePhrase key={phrase.id} phrase={phrase} />
+                  <DraggablePhrase
+                    key={phrase.id}
+                    phrase={phrase}
+                    feedback={phraseFeedback[phrase.id] ?? "unchecked"}
+                    disabled={dragDisabled}
+                  />
                 ))}
                 {phrasesIn("pool").length === 0 && (
                   <p className="sm-sortmatch__pool-empty">
@@ -240,15 +339,85 @@ export default function SortAndMatch(): JSX.Element {
                     ariaLabel={`${BUCKET_LABELS[cat]} bucket`}
                   >
                     {phrasesIn(cat).map((phrase) => (
-                      <DraggablePhrase key={phrase.id} phrase={phrase} />
+                      <DraggablePhrase
+                        key={phrase.id}
+                        phrase={phrase}
+                        feedback={phraseFeedback[phrase.id] ?? "unchecked"}
+                        disabled={dragDisabled}
+                      />
                     ))}
                   </Droppable>
                 </div>
               ))}
             </div>
           </div>
+
+          {status === "feedback" && (
+            <div className="sm-sortmatch__attempt-banner">
+              <span className="sm-sortmatch__attempt-banner-kicker">
+                ATTEMPT {attemptNumber} OF {MAX_ATTEMPTS}
+              </span>
+              <span className="sm-sortmatch__attempt-banner-text">
+                {incorrectCount === 1
+                  ? "1 phrase needs rethinking. Drag it to a different bucket and check again."
+                  : `${incorrectCount} phrases need rethinking. Drag them to different buckets and check again.`}
+              </span>
+            </div>
+          )}
+
+          {showCheckButton && (
+            <button
+              type="button"
+              className="sm-sortmatch__check"
+              onClick={handleCheck}
+            >
+              Check answers
+            </button>
+          )}
         </div>
       </DndContext>
+
+      {(status === "complete-correct" || status === "complete-with-help") && (
+        <div
+          className={`sm-sortmatch__model-answer${
+            status === "complete-with-help"
+              ? " sm-sortmatch__model-answer--with-help"
+              : ""
+          }`}
+        >
+          <p className="sm-sortmatch__model-answer-kicker">
+            {status === "complete-correct"
+              ? "SCENARIO COMPLETE"
+              : "MODEL ANSWER"}
+          </p>
+          <p className="sm-sortmatch__model-answer-context">
+            {status === "complete-correct"
+              ? `Solved on attempt ${attemptNumber} of ${MAX_ATTEMPTS}. Read the full model answer below to see how the N·E·I structure reads as continuous prose.`
+              : `Three attempts used. Read the full model answer below and try the scenario again when you're ready.`}
+          </p>
+
+          <section className="sm-sortmatch__model-section">
+            <h3 className="sm-sortmatch__model-heading">N · Name</h3>
+            <p className="sm-sortmatch__model-text">
+              {scenario.modelAnswer.name}
+            </p>
+          </section>
+
+          <section className="sm-sortmatch__model-section">
+            <h3 className="sm-sortmatch__model-heading">E · Explain</h3>
+            <p className="sm-sortmatch__model-text">
+              {scenario.modelAnswer.explain}
+            </p>
+          </section>
+
+          <section className="sm-sortmatch__model-section">
+            <h3 className="sm-sortmatch__model-heading">I · Impact</h3>
+            <p className="sm-sortmatch__model-text">
+              {scenario.modelAnswer.impact}
+            </p>
+          </section>
+        </div>
+      )}
 
       <style>{`
         .sm-sortmatch {
@@ -362,6 +531,40 @@ export default function SortAndMatch(): JSX.Element {
           font-size: 0.9rem;
           line-height: 1.5;
           user-select: none;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.75rem;
+          transition: border-color 160ms ease;
+        }
+        .sm-sortmatch__phrase-text {
+          flex: 1;
+        }
+        .sm-sortmatch__phrase--correct {
+          border-left-color: var(--green, #39ff14);
+          box-shadow: inset 2px 0 0 var(--green, #39ff14);
+        }
+        .sm-sortmatch__phrase--incorrect {
+          border-left-color: var(--red, #ff3b3b);
+          box-shadow: inset 2px 0 0 var(--red, #ff3b3b);
+        }
+        .sm-sortmatch__phrase-marker {
+          font-family: "JetBrains Mono", "Courier New", monospace;
+          font-size: 0.65rem;
+          letter-spacing: 0.18em;
+          padding: 0.2rem 0.5rem;
+          border-radius: 2px;
+          flex-shrink: 0;
+        }
+        .sm-sortmatch__phrase-marker--correct {
+          color: var(--green, #39ff14);
+          background: rgba(57, 255, 20, 0.1);
+          border: 1px solid rgba(57, 255, 20, 0.35);
+        }
+        .sm-sortmatch__phrase-marker--incorrect {
+          color: var(--red, #ff3b3b);
+          background: rgba(255, 59, 59, 0.1);
+          border: 1px solid rgba(255, 59, 59, 0.35);
         }
 
         .sm-sortmatch__bucket-group {
@@ -440,6 +643,101 @@ export default function SortAndMatch(): JSX.Element {
           background: rgba(57, 255, 20, 0.05);
         }
 
+        .sm-sortmatch__attempt-banner {
+          padding: 0.875rem 1rem;
+          background: var(--void, rgba(0, 0, 0, 0.35));
+          border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+          border-left: 2px solid var(--gold, #ffd700);
+          border-radius: 2px;
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+        }
+        .sm-sortmatch__attempt-banner-kicker {
+          font-family: "JetBrains Mono", "Courier New", monospace;
+          font-size: 0.7rem;
+          letter-spacing: 0.2em;
+          color: var(--gold, #ffd700);
+        }
+        .sm-sortmatch__attempt-banner-text {
+          color: var(--ink, #e8edf3);
+          font-size: 0.9rem;
+          line-height: 1.5;
+        }
+
+        .sm-sortmatch__check {
+          align-self: flex-start;
+          background: var(--green, #39ff14);
+          color: var(--void, #0a0e1a);
+          border: 0;
+          padding: 0.75rem 1.5rem;
+          font-family: "JetBrains Mono", "Courier New", monospace;
+          font-size: 0.85rem;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          font-weight: 700;
+          cursor: pointer;
+          border-radius: 2px;
+          transition: background 120ms ease, box-shadow 120ms ease;
+        }
+        .sm-sortmatch__check:hover {
+          background: #2ed60f;
+          box-shadow: 0 0 0 4px rgba(57, 255, 20, 0.15);
+        }
+
+        .sm-sortmatch__model-answer {
+          padding: 1.5rem;
+          background: var(--void, rgba(0, 0, 0, 0.25));
+          border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+          border-left: 2px solid var(--green, #39ff14);
+          border-radius: 2px;
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+        }
+        .sm-sortmatch__model-answer--with-help {
+          border-left-color: var(--gold, #ffd700);
+        }
+        .sm-sortmatch__model-answer-kicker {
+          font-family: "JetBrains Mono", "Courier New", monospace;
+          font-size: 0.75rem;
+          letter-spacing: 0.2em;
+          margin: 0;
+          color: var(--green, #39ff14);
+        }
+        .sm-sortmatch__model-answer--with-help
+          .sm-sortmatch__model-answer-kicker {
+          color: var(--gold, #ffd700);
+        }
+        .sm-sortmatch__model-answer-context {
+          margin: 0;
+          color: var(--dim, rgba(232, 237, 243, 0.75));
+          font-size: 0.9rem;
+          line-height: 1.5;
+        }
+        .sm-sortmatch__model-section {
+          padding-top: 0.75rem;
+          border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+        }
+        .sm-sortmatch__model-section:first-of-type {
+          border-top: 0;
+          padding-top: 0;
+        }
+        .sm-sortmatch__model-heading {
+          margin: 0 0 0.5rem;
+          font-family: "JetBrains Mono", "Courier New", monospace;
+          font-size: 0.8rem;
+          letter-spacing: 0.2em;
+          color: var(--green, #39ff14);
+          font-weight: 700;
+        }
+        .sm-sortmatch__model-text {
+          margin: 0;
+          color: var(--ink, #e8edf3);
+          font-size: 0.95rem;
+          line-height: 1.65;
+        }
+
         .sm-sortmatch__status {
           padding: 2rem;
           text-align: center;
@@ -455,6 +753,10 @@ export default function SortAndMatch(): JSX.Element {
           }
           .sm-sortmatch__bucket-row {
             grid-template-columns: 1fr;
+          }
+          .sm-sortmatch__phrase {
+            flex-direction: column;
+            align-items: flex-start;
           }
         }
 
