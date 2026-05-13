@@ -41,6 +41,11 @@ import {
   writeAttempt,
   completeSession,
 } from "../lib/sort-and-match/firestore";
+import {
+  registerTestApi,
+  unregisterTestApi,
+  type TestApiSessionState,
+} from "../lib/sort-and-match/testApi";
 import { Glyph } from "./glyphs";
 import type { GlyphName } from "./glyphs";
 
@@ -207,7 +212,62 @@ export default function SortAndMatch(): JSX.Element {
     bootSession();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+useEffect(() => {
+  registerTestApi({
+    placePhrase: (phraseId, location) => {
+      setPhraseLocations((prev) => ({
+        ...prev,
+        [phraseId]: location,
+      }));
+      if (status === "feedback") {
+        setPhraseFeedback({});
+        setStatus("placing");
+      }
+    },
+    clickCheck: () => {
+      handleCheck();
+    },
+    clickContinue: () => {
+      handleContinue();
+    },
+    clickReset: () => {
+      resetCurrentScenario();
+    },
+    getSessionState: (): TestApiSessionState => {
+      if (!session) {
+        return {
+          status: "loading",
+          sessionId: null,
+          currentScenarioId: null,
+          currentIndex: 0,
+          totalScenarios: 0,
+          correctCount: 0,
+          placements: {},
+          attemptNumber: 1,
+          phrasesInScenario: [],
+        };
+      }
+      const currentScenario = session.scenarios[session.currentIndex];
+      return {
+        status,
+        sessionId: session.sessionId,
+        currentScenarioId: currentScenario.id,
+        currentIndex: session.currentIndex,
+        totalScenarios: session.scenarios.length,
+        correctCount: session.outcomes.filter((o) => o === "correct").length,
+        placements: phraseLocations,
+        attemptNumber,
+        phrasesInScenario: currentScenario.phrases.map((p) => ({
+          id: p.id,
+          category: p.category,
+        })),
+      };
+    },
+  });
+  return () => {
+    unregisterTestApi();
+  };
+});
   async function bootSession(): Promise<void> {
     const allScenarios = scenariosData as Scenario[];
 
