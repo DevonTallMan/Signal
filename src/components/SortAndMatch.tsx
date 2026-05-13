@@ -1,35 +1,37 @@
 // src/components/SortAndMatch.tsx
 //
 // React island for the Sort & Match N·E·I drag-and-drop activity.
-// Sprint 3 worked example: Six Vs and Data Quality.
+// Sprint 3 worked example: Six Vs and Data Quality (single scenario currently).
 //
-// Sprint 3 Increment 3.3 scope: VALIDATION + STUCK MITIGATION + MODEL ANSWER REVEAL.
-//   - "Check answers" button appears when all 5 phrases are placed
-//   - On check: per-phrase feedback (correct/incorrect; correct bucket NOT revealed)
-//   - 3-attempt stuck mitigation: failing attempt 3 reveals model answer
-//   - On all correct OR on stuck mitigation: structured model answer panel reveals
-//     (N / E / I sections with prose from scenario.modelAnswer)
-//   - Different kicker text for "completed correctly" vs "completed with help"
-//   - Dragging clears feedback and returns to placing state for another attempt
-//   - Reset button works at any time (full reset: locations + feedback + attempts)
-//   - Drag disabled in terminal complete states
-//   - All Inc 3.2 functionality preserved (drag/drop, dropzone highlights, touch support)
+// Sprint 3 Increment 3.4 scope: SESSION LOOP.
+//   - Seed-based scenario picking via pickSessionScenarios (matches RC pattern)
+//   - SESSION_LENGTH = 3 scenarios per session (only 1 exists today; picker
+//     returns min(desired, available) gracefully)
+//   - Progress indicator at top: "Scenario X of N · M correct"
+//   - Continue button inside model-answer panel advances to next scenario
+//   - End-of-session summary panel with score + total time
+//   - "Start a new session" button on summary re-seeds and restarts
+//   - Reset button clears CURRENT scenario only (not entire session)
+//   - All Inc 3.3 functionality preserved (validation, stuck mitigation,
+//     model answer reveal, two terminal kicker variants)
 //
 // What this PR does NOT do:
-//   - Continue button + session loop (Inc 3.4)
-//   - Firestore persistence (Inc 3.5)
+//   - Firestore session persistence (Inc 3.5; seed becomes Firebase session id)
 //   - Playwright tests (Inc 3.6)
 //
-// State machine:
+// State machine (per-scenario layer):
 //   "placing" -> "feedback" (check, not all correct, attempts remaining)
 //   "placing" -> "complete-correct" (check, all correct)
 //   "placing" -> "complete-with-help" (check on attempt 3, not all correct)
 //   "feedback" -> "placing" (user drags any phrase)
-//   "complete-*" terminal (only Reset can leave)
+//   "complete-*" -> "placing" with next scenario (Continue), OR
+//   "complete-*" -> "session-complete" (Continue at last scenario)
 //
-// See docs/sort-and-match-nei-spec.md for full Sprint 3 spec.
+// Session layer:
+//   session.outcomes records "correct" or "with-help" per scenario, written
+//   only on Continue. correctCount in summary = outcomes filtered to "correct".
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DndContext,
   PointerSensor,
@@ -41,6 +43,7 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core";
 import scenariosData from "../data/sort-and-match/scenarios.json";
+import { pickSessionScenarios } from "../lib/sort-and-match/sessionPicker";
 import { Glyph } from "./glyphs";
 import type { GlyphName } from "./glyphs";
 
@@ -70,9 +73,24 @@ interface Scenario {
   modelAnswer: ModelAnswer;
 }
 
+type Outcome = "correct" | "with-help";
+
+interface SessionState {
+  scenarios: Scenario[];
+  currentIndex: number;
+  outcomes: Outcome[];
+  startedAt: number;
+  completedAt: number | null;
+}
+
 type Location = "pool" | "N" | "E" | "I";
 type PhraseFeedback = "unchecked" | "correct" | "incorrect";
-type Status = "placing" | "feedback" | "complete-correct" | "complete-with-help";
+type Status =
+  | "placing"
+  | "feedback"
+  | "complete-correct"
+  | "complete-with-help"
+  | "session-complete";
 
 const BUCKET_LABELS: Record<"N" | "E" | "I", string> = {
   N: "Name",
@@ -81,6 +99,7 @@ const BUCKET_LABELS: Record<"N" | "E" | "I", string> = {
 };
 
 const MAX_ATTEMPTS = 3;
+const SESSION_LENGTH = 3;
 
 // ---------- DraggablePhrase ----------
 interface DraggablePhraseProps {
@@ -162,19 +181,10 @@ function Droppable({
 
 // ---------- Main component ----------
 export default function SortAndMatch(): JSX.Element {
-  const scenarios = scenariosData as Scenario[];
-  const scenario = scenarios[0];
-
+  const [session, setSession] = useState<SessionState | null>(null);
   const [phraseLocations, setPhraseLocations] = useState<
     Record<string, Location>
-  >(() => {
-    const initial: Record<string, Location> = {};
-    if (scenario) {
-      for (const p of scenario.phrases) initial[p.id] = "pool";
-    }
-    return initial;
-  });
-
+  >({});
   const [status, setStatus] = useState<Status>("placing");
   const [attemptNumber, setAttemptNumber] = useState<number>(1);
   const [phraseFeedback, setPhraseFeedback] = useState<
@@ -190,9 +200,58 @@ export default function SortAndMatch(): JSX.Element {
     })
   );
 
+  // Boot: pick scenarios for a fresh session.
+  useEffect(() => {
+    bootSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function bootSession(): void {
+    const allScenarios = scenariosData as Scenario[];
+    const seed = `local-${crypto.randomUUID()}`;
+    const picked = pickSessionScenarios(seed, allScenarios, SESSION_LENGTH);
+
+    if (picked.length === 0) {
+      // No scenarios available; nothing to render.
+      return;
+    }
+
+    setSession({
+      scenarios: picked,
+      currentIndex: 0,
+      outcomes: [],
+      startedAt: Date.now(),
+      completedAt: null,
+    });
+
+    initPhraseLocationsFor(picked[0]);
+    setPhraseFeedback({});
+    setStatus("placing");
+    setAttemptNumber(1);
+  }
+
+  function initPhraseLocationsFor(scenario: Scenario): void {
+    const initial: Record<string, Location> = {};
+    for (const p of scenario.phrases) initial[p.id] = "pool";
+    setPhraseLocations(initial);
+  }
+
+  function resetCurrentScenario(): void {
+    if (!session) return;
+    const currentScenario = session.scenarios[session.currentIndex];
+    initPhraseLocationsFor(currentScenario);
+    setPhraseFeedback({});
+    setStatus("placing");
+    setAttemptNumber(1);
+  }
+
   function handleDragEnd(event: DragEndEvent): void {
-    if (status === "complete-correct" || status === "complete-with-help") {
-      return; // terminal state; drag disabled but guard anyway
+    if (
+      status === "complete-correct" ||
+      status === "complete-with-help" ||
+      status === "session-complete"
+    ) {
+      return;
     }
 
     const { active, over } = event;
@@ -204,7 +263,6 @@ export default function SortAndMatch(): JSX.Element {
       [String(active.id)]: newLocation,
     }));
 
-    // Clear feedback and return to placing when the user starts a new attempt.
     if (status === "feedback") {
       setPhraseFeedback({});
       setStatus("placing");
@@ -212,10 +270,11 @@ export default function SortAndMatch(): JSX.Element {
   }
 
   function handleCheck(): void {
-    if (!scenario) return;
+    if (!session) return;
+    const currentScenario = session.scenarios[session.currentIndex];
     const newFeedback: Record<string, PhraseFeedback> = {};
     let allCorrect = true;
-    for (const p of scenario.phrases) {
+    for (const p of currentScenario.phrases) {
       const placedIn = phraseLocations[p.id];
       if (placedIn === p.category) {
         newFeedback[p.id] = "correct";
@@ -236,28 +295,101 @@ export default function SortAndMatch(): JSX.Element {
     }
   }
 
-  function handleReset(): void {
-    if (!scenario) return;
-    const reset: Record<string, Location> = {};
-    for (const p of scenario.phrases) reset[p.id] = "pool";
-    setPhraseLocations(reset);
+  function handleContinue(): void {
+    if (!session) return;
+    if (status !== "complete-correct" && status !== "complete-with-help") {
+      return;
+    }
+
+    const outcome: Outcome =
+      status === "complete-correct" ? "correct" : "with-help";
+    const newOutcomes: Outcome[] = [...session.outcomes, outcome];
+    const nextIndex = session.currentIndex + 1;
+
+    if (nextIndex >= session.scenarios.length) {
+      // Session complete.
+      setSession({
+        ...session,
+        outcomes: newOutcomes,
+        completedAt: Date.now(),
+      });
+      setStatus("session-complete");
+      return;
+    }
+
+    // Advance to next scenario.
+    const nextScenario = session.scenarios[nextIndex];
+    setSession({
+      ...session,
+      currentIndex: nextIndex,
+      outcomes: newOutcomes,
+    });
+    initPhraseLocationsFor(nextScenario);
     setPhraseFeedback({});
     setStatus("placing");
     setAttemptNumber(1);
   }
 
-  if (!scenario) {
+  function handleRestart(): void {
+    bootSession();
+  }
+
+  if (!session) {
     return (
       <div className="sm-sortmatch">
-        <div className="sm-sortmatch__status">No scenarios available.</div>
+        <div className="sm-sortmatch__status">Loading scenarios...</div>
       </div>
     );
   }
 
-  const phrasesIn = (loc: Location): Phrase[] =>
-    scenario.phrases.filter((p) => phraseLocations[p.id] === loc);
+  // Session-complete state: show summary, hide everything else.
+  if (status === "session-complete") {
+    const correctCount = session.outcomes.filter((o) => o === "correct").length;
+    const totalSeconds = Math.round(
+      ((session.completedAt ?? Date.now()) - session.startedAt) / 1000
+    );
 
-  const allPhrasesPlaced = scenario.phrases.every(
+    return (
+      <div className="sm-sortmatch">
+        <div className="sm-sortmatch__session-summary">
+          <p className="sm-sortmatch__session-summary-kicker">
+            SESSION COMPLETE
+          </p>
+          <div className="sm-sortmatch__session-summary-score">
+            <span className="sm-sortmatch__session-summary-score-value">
+              {correctCount}
+            </span>
+            <span className="sm-sortmatch__session-summary-score-divider">
+              /
+            </span>
+            <span className="sm-sortmatch__session-summary-score-total">
+              {session.scenarios.length}
+            </span>
+          </div>
+          <p className="sm-sortmatch__session-summary-time">
+            Total time: {totalSeconds} seconds
+          </p>
+          <button
+            type="button"
+            className="sm-sortmatch__continue"
+            onClick={handleRestart}
+          >
+            Start a new session
+          </button>
+        </div>
+        <style>{commonStyles}</style>
+      </div>
+    );
+  }
+
+  // Active session: render the current scenario.
+  const currentScenario = session.scenarios[session.currentIndex];
+  const correctSoFar = session.outcomes.filter((o) => o === "correct").length;
+
+  const phrasesIn = (loc: Location): Phrase[] =>
+    currentScenario.phrases.filter((p) => phraseLocations[p.id] === loc);
+
+  const allPhrasesPlaced = currentScenario.phrases.every(
     (p) => phraseLocations[p.id] !== "pool"
   );
 
@@ -268,11 +400,19 @@ export default function SortAndMatch(): JSX.Element {
     (f) => f === "incorrect"
   ).length;
 
+  const isLastScenario =
+    session.currentIndex + 1 >= session.scenarios.length;
+
   return (
     <div className="sm-sortmatch">
+      <p className="sm-sortmatch__progress">
+        Scenario {session.currentIndex + 1} of {session.scenarios.length} ·{" "}
+        {correctSoFar} correct
+      </p>
+
       <div className="sm-sortmatch__scenario-title">
         <p className="sm-sortmatch__scenario-kicker">SCENARIO</p>
-        <h2 className="sm-sortmatch__scenario-name">{scenario.title}</h2>
+        <h2 className="sm-sortmatch__scenario-name">{currentScenario.title}</h2>
       </div>
 
       <div
@@ -280,7 +420,7 @@ export default function SortAndMatch(): JSX.Element {
         role="list"
         aria-label="Scenario comic strip"
       >
-        {scenario.scenarioPanels.map((panel) => (
+        {currentScenario.scenarioPanels.map((panel) => (
           <div key={panel.id} className="sm-sortmatch__panel" role="listitem">
             <Glyph name={panel.glyph} size={48} />
             <p className="sm-sortmatch__panel-caption">{panel.caption}</p>
@@ -321,7 +461,7 @@ export default function SortAndMatch(): JSX.Element {
               <button
                 type="button"
                 className="sm-sortmatch__reset"
-                onClick={handleReset}
+                onClick={resetCurrentScenario}
               >
                 Reset
               </button>
@@ -393,379 +533,450 @@ export default function SortAndMatch(): JSX.Element {
           <p className="sm-sortmatch__model-answer-context">
             {status === "complete-correct"
               ? `Solved on attempt ${attemptNumber} of ${MAX_ATTEMPTS}. Read the full model answer below to see how the N·E·I structure reads as continuous prose.`
-              : `Three attempts used. Read the full model answer below and try the scenario again when you're ready.`}
+              : `Three attempts used. Read the full model answer below.`}
           </p>
 
           <section className="sm-sortmatch__model-section">
             <h3 className="sm-sortmatch__model-heading">N · Name</h3>
             <p className="sm-sortmatch__model-text">
-              {scenario.modelAnswer.name}
+              {currentScenario.modelAnswer.name}
             </p>
           </section>
 
           <section className="sm-sortmatch__model-section">
             <h3 className="sm-sortmatch__model-heading">E · Explain</h3>
             <p className="sm-sortmatch__model-text">
-              {scenario.modelAnswer.explain}
+              {currentScenario.modelAnswer.explain}
             </p>
           </section>
 
           <section className="sm-sortmatch__model-section">
             <h3 className="sm-sortmatch__model-heading">I · Impact</h3>
             <p className="sm-sortmatch__model-text">
-              {scenario.modelAnswer.impact}
+              {currentScenario.modelAnswer.impact}
             </p>
           </section>
+
+          <button
+            type="button"
+            className="sm-sortmatch__continue"
+            onClick={handleContinue}
+          >
+            {isLastScenario
+              ? "See session summary"
+              : "Continue to next scenario"}
+          </button>
         </div>
       )}
 
-      <style>{`
-        .sm-sortmatch {
-          position: relative;
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          gap: 2rem;
-        }
-
-        .sm-sortmatch__scenario-title {
-          padding: 1rem 1.25rem;
-          background: var(--void, rgba(0, 0, 0, 0.25));
-          border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-          border-left: 2px solid var(--gold, #ffd700);
-          border-radius: 2px;
-        }
-        .sm-sortmatch__scenario-kicker {
-          font-family: "JetBrains Mono", "Courier New", monospace;
-          font-size: 0.7rem;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: var(--dim, rgba(232, 237, 243, 0.55));
-          margin: 0 0 0.5rem;
-        }
-        .sm-sortmatch__scenario-name {
-          margin: 0;
-          color: var(--ink, #e8edf3);
-          font-size: 1.25rem;
-          font-weight: 600;
-        }
-
-        .sm-sortmatch__panels {
-          display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          gap: 0.75rem;
-          padding: 1rem;
-          background: var(--void, rgba(0, 0, 0, 0.25));
-          border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-          border-radius: 2px;
-        }
-        .sm-sortmatch__panel {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.75rem;
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-          border-radius: 2px;
-        }
-        .sm-sortmatch__panel-caption {
-          margin: 0;
-          font-size: 0.75rem;
-          line-height: 1.4;
-          color: var(--dim, rgba(232, 237, 243, 0.75));
-          text-align: center;
-        }
-
-        .sm-sortmatch__activity {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-        .sm-sortmatch__section-kicker {
-          font-family: "JetBrains Mono", "Courier New", monospace;
-          font-size: 0.7rem;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: var(--dim, rgba(232, 237, 243, 0.55));
-          margin: 0;
-        }
-
-        .sm-sortmatch__phrase-pool {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-        .sm-sortmatch__pool-dropzone {
-          padding: 0.75rem;
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px dashed var(--border, rgba(255, 255, 255, 0.12));
-          border-radius: 2px;
-          min-height: 60px;
-          transition: border-color 120ms ease, background 120ms ease;
-        }
-        .sm-sortmatch__pool-dropzone--over {
-          border-color: var(--green, #39ff14);
-          background: rgba(57, 255, 20, 0.05);
-        }
-        .sm-sortmatch__pool-empty {
-          margin: 0;
-          padding: 0.5rem;
-          color: var(--muted, rgba(232, 237, 243, 0.55));
-          font-size: 0.85rem;
-          text-align: center;
-          font-style: italic;
-        }
-        .sm-sortmatch__phrases {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-        .sm-sortmatch__phrase {
-          padding: 0.75rem 1rem;
-          background: var(--void, rgba(0, 0, 0, 0.45));
-          border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-          border-left: 2px solid var(--green, #39ff14);
-          border-radius: 2px;
-          color: var(--ink, #e8edf3);
-          font-size: 0.9rem;
-          line-height: 1.5;
-          user-select: none;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 0.75rem;
-          transition: border-color 160ms ease;
-        }
-        .sm-sortmatch__phrase-text {
-          flex: 1;
-        }
-        .sm-sortmatch__phrase--correct {
-          border-left-color: var(--green, #39ff14);
-          box-shadow: inset 2px 0 0 var(--green, #39ff14);
-        }
-        .sm-sortmatch__phrase--incorrect {
-          border-left-color: var(--red, #ff3b3b);
-          box-shadow: inset 2px 0 0 var(--red, #ff3b3b);
-        }
-        .sm-sortmatch__phrase-marker {
-          font-family: "JetBrains Mono", "Courier New", monospace;
-          font-size: 0.65rem;
-          letter-spacing: 0.18em;
-          padding: 0.2rem 0.5rem;
-          border-radius: 2px;
-          flex-shrink: 0;
-        }
-        .sm-sortmatch__phrase-marker--correct {
-          color: var(--green, #39ff14);
-          background: rgba(57, 255, 20, 0.1);
-          border: 1px solid rgba(57, 255, 20, 0.35);
-        }
-        .sm-sortmatch__phrase-marker--incorrect {
-          color: var(--red, #ff3b3b);
-          background: rgba(255, 59, 59, 0.1);
-          border: 1px solid rgba(255, 59, 59, 0.35);
-        }
-
-        .sm-sortmatch__bucket-group {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-        .sm-sortmatch__bucket-group-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        .sm-sortmatch__reset {
-          background: transparent;
-          color: var(--dim, rgba(232, 237, 243, 0.75));
-          border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
-          padding: 0.4rem 0.9rem;
-          font-family: "JetBrains Mono", "Courier New", monospace;
-          font-size: 0.7rem;
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          cursor: pointer;
-          border-radius: 2px;
-          transition: color 120ms ease, border-color 120ms ease;
-        }
-        .sm-sortmatch__reset:hover {
-          color: var(--ink, #e8edf3);
-          border-color: var(--green, #39ff14);
-        }
-
-        .sm-sortmatch__bucket-row {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1rem;
-        }
-        .sm-sortmatch__bucket {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 1.25rem 1rem;
-          background: var(--void, rgba(0, 0, 0, 0.25));
-          border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-          border-radius: 2px;
-          min-height: 180px;
-        }
-        .sm-sortmatch__bucket-letter {
-          font-family: "JetBrains Mono", "Courier New", monospace;
-          font-size: 2.5rem;
-          font-weight: 700;
-          color: var(--green, #39ff14);
-          line-height: 1;
-        }
-        .sm-sortmatch__bucket-label {
-          font-family: "JetBrains Mono", "Courier New", monospace;
-          font-size: 0.7rem;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: var(--dim, rgba(232, 237, 243, 0.55));
-          margin-top: 0.25rem;
-          margin-bottom: 1rem;
-        }
-        .sm-sortmatch__bucket-content {
-          flex: 1;
-          width: 100%;
-          min-height: 80px;
-          padding: 0.5rem;
-          border: 1px dashed var(--border, rgba(255, 255, 255, 0.12));
-          border-radius: 2px;
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          transition: border-color 120ms ease, background 120ms ease;
-        }
-        .sm-sortmatch__bucket-content--over {
-          border-color: var(--green, #39ff14);
-          background: rgba(57, 255, 20, 0.05);
-        }
-
-        .sm-sortmatch__attempt-banner {
-          padding: 0.875rem 1rem;
-          background: var(--void, rgba(0, 0, 0, 0.35));
-          border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-          border-left: 2px solid var(--gold, #ffd700);
-          border-radius: 2px;
-          display: flex;
-          flex-direction: column;
-          gap: 0.35rem;
-        }
-        .sm-sortmatch__attempt-banner-kicker {
-          font-family: "JetBrains Mono", "Courier New", monospace;
-          font-size: 0.7rem;
-          letter-spacing: 0.2em;
-          color: var(--gold, #ffd700);
-        }
-        .sm-sortmatch__attempt-banner-text {
-          color: var(--ink, #e8edf3);
-          font-size: 0.9rem;
-          line-height: 1.5;
-        }
-
-        .sm-sortmatch__check {
-          align-self: flex-start;
-          background: var(--green, #39ff14);
-          color: var(--void, #0a0e1a);
-          border: 0;
-          padding: 0.75rem 1.5rem;
-          font-family: "JetBrains Mono", "Courier New", monospace;
-          font-size: 0.85rem;
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          font-weight: 700;
-          cursor: pointer;
-          border-radius: 2px;
-          transition: background 120ms ease, box-shadow 120ms ease;
-        }
-        .sm-sortmatch__check:hover {
-          background: #2ed60f;
-          box-shadow: 0 0 0 4px rgba(57, 255, 20, 0.15);
-        }
-
-        .sm-sortmatch__model-answer {
-          padding: 1.5rem;
-          background: var(--void, rgba(0, 0, 0, 0.25));
-          border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-          border-left: 2px solid var(--green, #39ff14);
-          border-radius: 2px;
-          display: flex;
-          flex-direction: column;
-          gap: 1.25rem;
-        }
-        .sm-sortmatch__model-answer--with-help {
-          border-left-color: var(--gold, #ffd700);
-        }
-        .sm-sortmatch__model-answer-kicker {
-          font-family: "JetBrains Mono", "Courier New", monospace;
-          font-size: 0.75rem;
-          letter-spacing: 0.2em;
-          margin: 0;
-          color: var(--green, #39ff14);
-        }
-        .sm-sortmatch__model-answer--with-help
-          .sm-sortmatch__model-answer-kicker {
-          color: var(--gold, #ffd700);
-        }
-        .sm-sortmatch__model-answer-context {
-          margin: 0;
-          color: var(--dim, rgba(232, 237, 243, 0.75));
-          font-size: 0.9rem;
-          line-height: 1.5;
-        }
-        .sm-sortmatch__model-section {
-          padding-top: 0.75rem;
-          border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-        }
-        .sm-sortmatch__model-section:first-of-type {
-          border-top: 0;
-          padding-top: 0;
-        }
-        .sm-sortmatch__model-heading {
-          margin: 0 0 0.5rem;
-          font-family: "JetBrains Mono", "Courier New", monospace;
-          font-size: 0.8rem;
-          letter-spacing: 0.2em;
-          color: var(--green, #39ff14);
-          font-weight: 700;
-        }
-        .sm-sortmatch__model-text {
-          margin: 0;
-          color: var(--ink, #e8edf3);
-          font-size: 0.95rem;
-          line-height: 1.65;
-        }
-
-        .sm-sortmatch__status {
-          padding: 2rem;
-          text-align: center;
-          color: var(--muted, rgba(232, 237, 243, 0.55));
-          font-family: "JetBrains Mono", "Courier New", monospace;
-          font-size: 0.85rem;
-          letter-spacing: 0.1em;
-        }
-
-        @media (max-width: 768px) {
-          .sm-sortmatch__panels {
-            grid-template-columns: repeat(2, 1fr);
-          }
-          .sm-sortmatch__bucket-row {
-            grid-template-columns: 1fr;
-          }
-          .sm-sortmatch__phrase {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .sm-sortmatch__panels {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
+      <style>{commonStyles}</style>
     </div>
   );
 }
+
+// Styles are shared between the active-session and session-complete renders,
+// so kept in a constant rather than duplicated.
+const commonStyles = `
+  .sm-sortmatch {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .sm-sortmatch__progress {
+    margin: 0;
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
+  }
+
+  .sm-sortmatch__scenario-title {
+    padding: 1rem 1.25rem;
+    background: var(--void, rgba(0, 0, 0, 0.25));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-left: 2px solid var(--gold, #ffd700);
+    border-radius: 2px;
+  }
+  .sm-sortmatch__scenario-kicker {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
+    margin: 0 0 0.5rem;
+  }
+  .sm-sortmatch__scenario-name {
+    margin: 0;
+    color: var(--ink, #e8edf3);
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .sm-sortmatch__panels {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--void, rgba(0, 0, 0, 0.25));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-radius: 2px;
+  }
+  .sm-sortmatch__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-radius: 2px;
+  }
+  .sm-sortmatch__panel-caption {
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--dim, rgba(232, 237, 243, 0.75));
+    text-align: center;
+  }
+
+  .sm-sortmatch__activity {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .sm-sortmatch__section-kicker {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
+    margin: 0;
+  }
+
+  .sm-sortmatch__phrase-pool {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .sm-sortmatch__pool-dropzone {
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed var(--border, rgba(255, 255, 255, 0.12));
+    border-radius: 2px;
+    min-height: 60px;
+    transition: border-color 120ms ease, background 120ms ease;
+  }
+  .sm-sortmatch__pool-dropzone--over {
+    border-color: var(--green, #39ff14);
+    background: rgba(57, 255, 20, 0.05);
+  }
+  .sm-sortmatch__pool-empty {
+    margin: 0;
+    padding: 0.5rem;
+    color: var(--muted, rgba(232, 237, 243, 0.55));
+    font-size: 0.85rem;
+    text-align: center;
+    font-style: italic;
+  }
+  .sm-sortmatch__phrases {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .sm-sortmatch__phrase {
+    padding: 0.75rem 1rem;
+    background: var(--void, rgba(0, 0, 0, 0.45));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-left: 2px solid var(--green, #39ff14);
+    border-radius: 2px;
+    color: var(--ink, #e8edf3);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    transition: border-color 160ms ease;
+  }
+  .sm-sortmatch__phrase-text {
+    flex: 1;
+  }
+  .sm-sortmatch__phrase--correct {
+    border-left-color: var(--green, #39ff14);
+    box-shadow: inset 2px 0 0 var(--green, #39ff14);
+  }
+  .sm-sortmatch__phrase--incorrect {
+    border-left-color: var(--red, #ff3b3b);
+    box-shadow: inset 2px 0 0 var(--red, #ff3b3b);
+  }
+  .sm-sortmatch__phrase-marker {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .sm-sortmatch__phrase-marker--correct {
+    color: var(--green, #39ff14);
+    background: rgba(57, 255, 20, 0.1);
+    border: 1px solid rgba(57, 255, 20, 0.35);
+  }
+  .sm-sortmatch__phrase-marker--incorrect {
+    color: var(--red, #ff3b3b);
+    background: rgba(255, 59, 59, 0.1);
+    border: 1px solid rgba(255, 59, 59, 0.35);
+  }
+
+  .sm-sortmatch__bucket-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .sm-sortmatch__bucket-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .sm-sortmatch__reset {
+    background: transparent;
+    color: var(--dim, rgba(232, 237, 243, 0.75));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+    padding: 0.4rem 0.9rem;
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: color 120ms ease, border-color 120ms ease;
+  }
+  .sm-sortmatch__reset:hover {
+    color: var(--ink, #e8edf3);
+    border-color: var(--green, #39ff14);
+  }
+
+  .sm-sortmatch__bucket-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  .sm-sortmatch__bucket {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.25rem 1rem;
+    background: var(--void, rgba(0, 0, 0, 0.25));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-radius: 2px;
+    min-height: 180px;
+  }
+  .sm-sortmatch__bucket-letter {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--green, #39ff14);
+    line-height: 1;
+  }
+  .sm-sortmatch__bucket-label {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+  }
+  .sm-sortmatch__bucket-content {
+    flex: 1;
+    width: 100%;
+    min-height: 80px;
+    padding: 0.5rem;
+    border: 1px dashed var(--border, rgba(255, 255, 255, 0.12));
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: border-color 120ms ease, background 120ms ease;
+  }
+  .sm-sortmatch__bucket-content--over {
+    border-color: var(--green, #39ff14);
+    background: rgba(57, 255, 20, 0.05);
+  }
+
+  .sm-sortmatch__attempt-banner {
+    padding: 0.875rem 1rem;
+    background: var(--void, rgba(0, 0, 0, 0.35));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-left: 2px solid var(--gold, #ffd700);
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .sm-sortmatch__attempt-banner-kicker {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--gold, #ffd700);
+  }
+  .sm-sortmatch__attempt-banner-text {
+    color: var(--ink, #e8edf3);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .sm-sortmatch__check,
+  .sm-sortmatch__continue {
+    align-self: flex-start;
+    background: var(--green, #39ff14);
+    color: var(--void, #0a0e1a);
+    border: 0;
+    padding: 0.75rem 1.5rem;
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 120ms ease, box-shadow 120ms ease;
+  }
+  .sm-sortmatch__check:hover,
+  .sm-sortmatch__continue:hover {
+    background: #2ed60f;
+    box-shadow: 0 0 0 4px rgba(57, 255, 20, 0.15);
+  }
+
+  .sm-sortmatch__model-answer {
+    padding: 1.5rem;
+    background: var(--void, rgba(0, 0, 0, 0.25));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-left: 2px solid var(--green, #39ff14);
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .sm-sortmatch__model-answer--with-help {
+    border-left-color: var(--gold, #ffd700);
+  }
+  .sm-sortmatch__model-answer-kicker {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    margin: 0;
+    color: var(--green, #39ff14);
+  }
+  .sm-sortmatch__model-answer--with-help
+    .sm-sortmatch__model-answer-kicker {
+    color: var(--gold, #ffd700);
+  }
+  .sm-sortmatch__model-answer-context {
+    margin: 0;
+    color: var(--dim, rgba(232, 237, 243, 0.75));
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .sm-sortmatch__model-section {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  }
+  .sm-sortmatch__model-section:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .sm-sortmatch__model-heading {
+    margin: 0 0 0.5rem;
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: var(--green, #39ff14);
+    font-weight: 700;
+  }
+  .sm-sortmatch__model-text {
+    margin: 0;
+    color: var(--ink, #e8edf3);
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .sm-sortmatch__session-summary {
+    padding: 2rem 1.5rem;
+    background: var(--void, rgba(0, 0, 0, 0.25));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-left: 2px solid var(--gold, #ffd700);
+    border-radius: 2px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .sm-sortmatch__session-summary-kicker {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--gold, #ffd700);
+    margin: 0;
+  }
+  .sm-sortmatch__session-summary-score {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+  }
+  .sm-sortmatch__session-summary-score-value {
+    font-size: 4rem;
+    color: var(--ink, #e8edf3);
+    font-weight: 700;
+  }
+  .sm-sortmatch__session-summary-score-divider {
+    font-size: 2.5rem;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
+    margin: 0 0.5rem;
+  }
+  .sm-sortmatch__session-summary-score-total {
+    font-size: 2.5rem;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
+  }
+  .sm-sortmatch__session-summary-time {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.85rem;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
+    margin: 0;
+  }
+
+  .sm-sortmatch__status {
+    padding: 2rem;
+    text-align: center;
+    color: var(--muted, rgba(232, 237, 243, 0.55));
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 768px) {
+    .sm-sortmatch__panels {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .sm-sortmatch__bucket-row {
+      grid-template-columns: 1fr;
+    }
+    .sm-sortmatch__phrase {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .sm-sortmatch__session-summary-score-value {
+      font-size: 3rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .sm-sortmatch__panels {
+      grid-template-columns: 1fr;
+    }
+  }
+`;
