@@ -3,25 +3,23 @@
 // React island for the Twin Tracks Discuss-style activity.
 // Sprint 4 worked example: Hospital Remote Access (single scenario currently).
 //
-// Sprint 4 Increment 4.3 scope: PER-DROP VALIDATION, STUCK MITIGATION,
-// MODEL ANSWER REVEAL.
-//   - Immediate per-drop validation per spec Section 6.4. NO "Check" button.
-//     (This is the documented divergence from Sort & Match, which batches
-//     validation via a Check button. Spec Section 6.4 specifies immediate
-//     per-drop for both activities; SM's implementation predates the spec
-//     update and stays as-is for now.)
-//   - Diagnostic feedback per spec Section 6.3 truth table: track-right-
-//     slot-wrong, track-wrong-slot-right, both-wrong, plus stuck-revealed
-//     after 3 wrong attempts on a single phrase.
-//   - Correct drops LOCK the phrase in cell (draggable disabled).
-//   - Wrong drops snap back to the pool with the matching feedback message.
-//   - Round complete when all 6 phrases are locked. Two-track model answer
-//     reveal renders both impact paragraphs with slot-labelled blocks.
+// Sprint 4 Increment 4.4 scope: SESSION LOOP.
+//   - Seeded picker (src/lib/twin-tracks/sessionPicker.ts) returns up to
+//     SESSION_LENGTH=3 distinct scenarios per session. With one scenario
+//     in the pool (Hospital), it returns N=1 today.
+//   - Component cycles through picked scenarios: complete one round, the
+//     model answer renders with a "Continue" button that advances to the
+//     next scenario (or "See session summary" on the last round).
+//   - Session-complete view shows score (correct-on-first-attempt vs
+//     with-help breakdown), elapsed time, and a "Start a new session"
+//     button that re-picks scenarios with a fresh seed.
+//   - Per-scenario phrase state (locations, locked, wrong count, revealed,
+//     feedback) resets on every scenario advance and on session restart.
 //
 // What this PR does NOT do (per docs/sprint-4-scope.md):
-//   - Session loop and sessionPicker (Inc 4.4). The "Restart" button on the
-//     complete state is a single-scenario reset, not a session loop.
-//   - Firestore persistence and rules tests (Inc 4.5)
+//   - Firestore persistence and rules tests (Inc 4.5). Session ID seed is
+//     a local UUID for now; Inc 4.5 swaps to the Firestore session ID and
+//     persists session/attempt documents.
 //   - Playwright tests (Inc 4.6)
 
 import { useState } from "react";
@@ -37,6 +35,7 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import scenariosData from "../../data/twin-tracks/scenarios.json";
+import { pickSessionScenarios } from "../../lib/twin-tracks/sessionPicker";
 import { Glyph } from "../glyphs";
 import type { GlyphName } from "../glyphs";
 
@@ -91,7 +90,15 @@ interface Feedback {
   message: string;
 }
 
-type RoundStatus = "placing" | "complete";
+type Outcome = "correct" | "with-help";
+
+interface SessionState {
+  scenarios: Scenario[];
+  currentIndex: number;
+  outcomes: Outcome[];
+  startedAt: number;
+  completedAt: number | null;
+}
 
 const TRACKS: readonly Track[] = ["positive", "negative"] as const;
 const SLOTS: readonly Slot[] = ["introduce", "explain", "develop"] as const;
@@ -108,6 +115,7 @@ const SLOT_LABELS: Record<Slot, string> = {
 };
 
 const MAX_WRONG_ATTEMPTS = 3;
+const SESSION_LENGTH = 3;
 
 function cellId(track: Track, slot: Slot): CellId {
   return `${track}-${slot}` as CellId;
@@ -124,10 +132,22 @@ function initialLocations(phrases: Phrase[]): Record<string, Location> {
   return out;
 }
 
+function pickSession(): SessionState | null {
+  const allScenarios = scenariosData as Scenario[];
+  const seed = `local-${crypto.randomUUID()}`;
+  const picked = pickSessionScenarios(seed, allScenarios, SESSION_LENGTH);
+  if (picked.length === 0) return null;
+  return {
+    scenarios: picked,
+    currentIndex: 0,
+    outcomes: [],
+    startedAt: Date.now(),
+    completedAt: null,
+  };
+}
+
 function buildFeedback(
   phrase: Phrase,
-  droppedTrack: Track,
-  droppedSlot: Slot,
   trackCorrect: boolean,
   slotCorrect: boolean,
   triggerStuck: boolean
@@ -237,12 +257,15 @@ function Droppable({
 
 // ---------- Main component ----------
 export default function TwinTracks(): JSX.Element {
-  const scenarios = scenariosData as Scenario[];
-  const scenario = scenarios[0];
+  const [session, setSession] = useState<SessionState | null>(() =>
+    pickSession()
+  );
 
   const [phraseLocations, setPhraseLocations] = useState<
     Record<string, Location>
-  >(() => initialLocations(scenario.phrases));
+  >(() =>
+    session ? initialLocations(session.scenarios[0].phrases) : {}
+  );
   const [phraseLocked, setPhraseLocked] = useState<Record<string, boolean>>(
     {}
   );
@@ -254,11 +277,6 @@ export default function TwinTracks(): JSX.Element {
   );
   const [feedback, setFeedback] = useState<Feedback | null>(null);
 
-  const roundStatus: RoundStatus =
-    Object.keys(phraseLocked).length >= scenario.phrases.length
-      ? "complete"
-      : "placing";
-
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 4 },
@@ -268,7 +286,26 @@ export default function TwinTracks(): JSX.Element {
     })
   );
 
-  function resetScenario(): void {
+  if (!session) {
+    return (
+      <div className="tt-twintracks">
+        <div className="tt-twintracks__status">No scenarios available.</div>
+        <style>{commonStyles}</style>
+      </div>
+    );
+  }
+
+  const currentScenario = session.scenarios[session.currentIndex];
+  const isRoundComplete =
+    Object.keys(phraseLocked).length >= currentScenario.phrases.length;
+  const isSessionComplete = session.completedAt !== null;
+  const isLastScenario =
+    session.currentIndex + 1 >= session.scenarios.length;
+  const anyRevealedInRound = currentScenario.phrases.some(
+    (p) => phraseRevealed[p.id]
+  );
+
+  function resetPhraseStateFor(scenario: Scenario): void {
     setPhraseLocations(initialLocations(scenario.phrases));
     setPhraseLocked({});
     setPhraseWrongCount({});
@@ -283,11 +320,12 @@ export default function TwinTracks(): JSX.Element {
   function handleDragEnd(event: DragEndEvent): void {
     const { active, over } = event;
     if (!over) return;
+    if (!session) return;
 
     const phraseId = String(active.id);
     if (phraseLocked[phraseId]) return;
 
-    const phrase = scenario.phrases.find((p) => p.id === phraseId);
+    const phrase = currentScenario.phrases.find((p) => p.id === phraseId);
     if (!phrase) return;
 
     const dropLocation = over.id as Location;
@@ -319,24 +357,104 @@ export default function TwinTracks(): JSX.Element {
     }
 
     setFeedback(
-      buildFeedback(
-        phrase,
-        droppedTrack,
-        droppedSlot,
-        trackCorrect,
-        slotCorrect,
-        triggerStuck
-      )
+      buildFeedback(phrase, trackCorrect, slotCorrect, triggerStuck)
     );
   }
 
+  function handleContinue(): void {
+    if (!session || !isRoundComplete) return;
+
+    const outcome: Outcome = anyRevealedInRound ? "with-help" : "correct";
+    const newOutcomes: Outcome[] = [...session.outcomes, outcome];
+    const nextIndex = session.currentIndex + 1;
+
+    if (nextIndex >= session.scenarios.length) {
+      setSession({
+        ...session,
+        outcomes: newOutcomes,
+        completedAt: Date.now(),
+      });
+      return;
+    }
+
+    setSession({
+      ...session,
+      currentIndex: nextIndex,
+      outcomes: newOutcomes,
+    });
+    resetPhraseStateFor(session.scenarios[nextIndex]);
+  }
+
+  function handleStartNewSession(): void {
+    const next = pickSession();
+    setSession(next);
+    if (next) {
+      resetPhraseStateFor(next.scenarios[0]);
+    }
+  }
+
   const phrasesIn = (loc: Location): Phrase[] =>
-    scenario.phrases.filter((p) => phraseLocations[p.id] === loc);
+    currentScenario.phrases.filter((p) => phraseLocations[p.id] === loc);
 
-  const anyRevealed = Object.keys(phraseRevealed).length > 0;
+  // ---------- Session complete view ----------
+  if (isSessionComplete) {
+    const correctCount = session.outcomes.filter(
+      (o) => o === "correct"
+    ).length;
+    const withHelpCount = session.outcomes.filter(
+      (o) => o === "with-help"
+    ).length;
+    const totalSeconds = Math.round(
+      ((session.completedAt ?? Date.now()) - session.startedAt) / 1000
+    );
 
+    return (
+      <div className="tt-twintracks">
+        <div className="tt-twintracks__session-summary">
+          <p className="tt-twintracks__session-summary-kicker">
+            SESSION COMPLETE
+          </p>
+          <div className="tt-twintracks__session-summary-score">
+            <span className="tt-twintracks__session-summary-score-value">
+              {correctCount}
+            </span>
+            <span className="tt-twintracks__session-summary-score-divider">
+              /
+            </span>
+            <span className="tt-twintracks__session-summary-score-total">
+              {session.scenarios.length}
+            </span>
+          </div>
+          <p className="tt-twintracks__session-summary-breakdown">
+            {correctCount} solved without help.{" "}
+            {withHelpCount > 0
+              ? `${withHelpCount} needed the stuck-mitigation hint.`
+              : "No hints needed."}
+          </p>
+          <p className="tt-twintracks__session-summary-time">
+            Total time: {totalSeconds} seconds
+          </p>
+          <button
+            type="button"
+            className="tt-twintracks__continue"
+            onClick={handleStartNewSession}
+          >
+            Start a new session
+          </button>
+        </div>
+        <style>{commonStyles}</style>
+      </div>
+    );
+  }
+
+  // ---------- Active session view ----------
   return (
     <div className="tt-twintracks">
+      <p className="tt-twintracks__progress">
+        Scenario {session.currentIndex + 1} of {session.scenarios.length} ·{" "}
+        {session.outcomes.filter((o) => o === "correct").length} correct
+      </p>
+
       <p className="tt-twintracks__framing">
         Discuss-style answers balance one positive and one negative impact.
         For each, identify the introduction, explanation, and developed
@@ -345,7 +463,9 @@ export default function TwinTracks(): JSX.Element {
 
       <div className="tt-twintracks__scenario-title">
         <p className="tt-twintracks__scenario-kicker">SCENARIO</p>
-        <h2 className="tt-twintracks__scenario-name">{scenario.title}</h2>
+        <h2 className="tt-twintracks__scenario-name">
+          {currentScenario.title}
+        </h2>
       </div>
 
       <div
@@ -353,7 +473,7 @@ export default function TwinTracks(): JSX.Element {
         role="list"
         aria-label="Scenario comic strip"
       >
-        {scenario.scenarioPanels.map((panel) => (
+        {currentScenario.scenarioPanels.map((panel) => (
           <div
             key={panel.id}
             className="tt-twintracks__panel"
@@ -365,7 +485,7 @@ export default function TwinTracks(): JSX.Element {
         ))}
       </div>
 
-      {roundStatus === "placing" && (
+      {!isRoundComplete && (
         <DndContext
           sensors={sensors}
           onDragStart={handleDragStart}
@@ -469,17 +589,17 @@ export default function TwinTracks(): JSX.Element {
         </DndContext>
       )}
 
-      {roundStatus === "complete" && (
+      {isRoundComplete && (
         <div
           className={`tt-twintracks__model-answer${
-            anyRevealed ? " tt-twintracks__model-answer--with-help" : ""
+            anyRevealedInRound ? " tt-twintracks__model-answer--with-help" : ""
           }`}
         >
           <p className="tt-twintracks__model-answer-kicker">
-            {anyRevealed ? "MODEL ANSWER" : "SCENARIO COMPLETE"}
+            {anyRevealedInRound ? "MODEL ANSWER" : "SCENARIO COMPLETE"}
           </p>
           <p className="tt-twintracks__model-answer-context">
-            {anyRevealed
+            {anyRevealedInRound
               ? "One or more phrases needed help. Read the full model answer below to see how the structure reads as continuous prose."
               : "All six phrases placed correctly. Read the full model answer below to see how the structure reads as continuous prose."}
           </p>
@@ -498,7 +618,7 @@ export default function TwinTracks(): JSX.Element {
                     {SLOT_LABELS[slot]}
                   </span>
                   <span className="tt-twintracks__model-slot-text">
-                    {scenario.modelAnswer[track][slot]}
+                    {currentScenario.modelAnswer[track][slot]}
                   </span>
                 </p>
               ))}
@@ -507,10 +627,12 @@ export default function TwinTracks(): JSX.Element {
 
           <button
             type="button"
-            className="tt-twintracks__restart"
-            onClick={resetScenario}
+            className="tt-twintracks__continue"
+            onClick={handleContinue}
           >
-            Restart scenario
+            {isLastScenario
+              ? "See session summary"
+              : "Continue to next scenario"}
           </button>
         </div>
       )}
@@ -527,6 +649,15 @@ const commonStyles = `
     display: flex;
     flex-direction: column;
     gap: 2rem;
+  }
+
+  .tt-twintracks__progress {
+    margin: 0;
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
   }
 
   .tt-twintracks__framing {
@@ -836,7 +967,7 @@ const commonStyles = `
     display: inline;
   }
 
-  .tt-twintracks__restart {
+  .tt-twintracks__continue {
     align-self: flex-start;
     background: var(--green, #39ff14);
     color: var(--void, #0a0e1a);
@@ -851,9 +982,68 @@ const commonStyles = `
     border-radius: 2px;
     transition: background 120ms ease, box-shadow 120ms ease;
   }
-  .tt-twintracks__restart:hover {
+  .tt-twintracks__continue:hover {
     background: #2ed60f;
     box-shadow: 0 0 0 4px rgba(57, 255, 20, 0.15);
+  }
+
+  .tt-twintracks__session-summary {
+    padding: 2rem 1.5rem;
+    background: var(--void, rgba(0, 0, 0, 0.25));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-left: 2px solid var(--gold, #ffd700);
+    border-radius: 2px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .tt-twintracks__session-summary-kicker {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--gold, #ffd700);
+    margin: 0;
+  }
+  .tt-twintracks__session-summary-score {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+  }
+  .tt-twintracks__session-summary-score-value {
+    font-size: 4rem;
+    color: var(--ink, #e8edf3);
+    font-weight: 700;
+  }
+  .tt-twintracks__session-summary-score-divider {
+    font-size: 2.5rem;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
+    margin: 0 0.5rem;
+  }
+  .tt-twintracks__session-summary-score-total {
+    font-size: 2.5rem;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
+  }
+  .tt-twintracks__session-summary-breakdown {
+    margin: 0;
+    color: var(--dim, rgba(232, 237, 243, 0.75));
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 48ch;
+  }
+  .tt-twintracks__session-summary-time {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.85rem;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
+    margin: 0;
+  }
+
+  .tt-twintracks__status {
+    padding: 2rem;
+    text-align: center;
+    color: var(--muted, rgba(232, 237, 243, 0.55));
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
   }
 
   @media (max-width: 900px) {
@@ -891,6 +1081,9 @@ const commonStyles = `
       text-transform: uppercase;
       color: var(--dim, rgba(232, 237, 243, 0.55));
       margin-bottom: 0.5rem;
+    }
+    .tt-twintracks__session-summary-score-value {
+      font-size: 3rem;
     }
   }
 
