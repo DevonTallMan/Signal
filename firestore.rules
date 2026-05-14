@@ -42,7 +42,9 @@ service cloud.firestore {
       match /data/{dataKey}/sessions/{sessionId} {
         allow read: if request.auth != null
           && request.auth.uid == userId
-          && (dataKey == 'risk-classifier' || dataKey == 'sort-and-match');
+          && (dataKey == 'risk-classifier'
+              || dataKey == 'sort-and-match'
+              || dataKey == 'twin-tracks');
 
         allow create: if request.auth != null
           && request.auth.uid == userId
@@ -70,11 +72,24 @@ service cloud.firestore {
               && request.resource.data.completedAt == null
               && request.resource.data.totalScenarios == null
               && request.resource.data.score == 0)
+            ||
+            (dataKey == 'twin-tracks'
+              && request.resource.data.keys().hasAll([
+                   'startedAt', 'completedAt', 'totalScenarios',
+                   'score', 'mode', 'source'
+                 ])
+              && request.resource.data.source == 'signal'
+              && request.resource.data.mode == 'first-attempt'
+              && request.resource.data.completedAt == null
+              && request.resource.data.totalScenarios == null
+              && request.resource.data.score == 0)
           );
 
         allow update: if request.auth != null
           && request.auth.uid == userId
-          && (dataKey == 'risk-classifier' || dataKey == 'sort-and-match')
+          && (dataKey == 'risk-classifier'
+              || dataKey == 'sort-and-match'
+              || dataKey == 'twin-tracks')
           && request.resource.data.startedAt == resource.data.startedAt
           && request.resource.data.mode == resource.data.mode
           && request.resource.data.source == resource.data.source
@@ -90,7 +105,9 @@ service cloud.firestore {
         match /attempts/{attemptId} {
           allow read: if request.auth != null
             && request.auth.uid == userId
-            && (dataKey == 'risk-classifier' || dataKey == 'sort-and-match');
+            && (dataKey == 'risk-classifier'
+                || dataKey == 'sort-and-match'
+                || dataKey == 'twin-tracks');
 
           allow create: if request.auth != null
             && request.auth.uid == userId
@@ -134,6 +151,29 @@ service cloud.firestore {
                      (request.resource.data.correctCount == request.resource.data.totalPhrases)
                 && request.resource.data.timeToCheckMs is int
                 && request.resource.data.timeToCheckMs >= 0)
+              ||
+              (dataKey == 'twin-tracks'
+                && request.resource.data.keys().hasAll([
+                     'scenarioId', 'phraseId', 'correctTrack', 'correctSlot',
+                     'wrongDropCount', 'revealed', 'timeToLockMs',
+                     'attemptedAt', 'source'
+                   ])
+                && request.resource.data.source == 'signal'
+                && request.resource.data.scenarioId is string
+                && request.resource.data.phraseId is string
+                && (request.resource.data.correctTrack == 'positive'
+                    || request.resource.data.correctTrack == 'negative')
+                && (request.resource.data.correctSlot == 'introduce'
+                    || request.resource.data.correctSlot == 'explain'
+                    || request.resource.data.correctSlot == 'develop')
+                && request.resource.data.wrongDropCount is int
+                && request.resource.data.wrongDropCount >= 0
+                && request.resource.data.wrongDropCount <= 3
+                && request.resource.data.revealed is bool
+                && request.resource.data.revealed ==
+                     (request.resource.data.wrongDropCount >= 3)
+                && request.resource.data.timeToLockMs is int
+                && request.resource.data.timeToLockMs >= 0)
             );
 
           allow update, delete: if false;
