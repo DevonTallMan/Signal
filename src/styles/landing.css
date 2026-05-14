@@ -262,6 +262,95 @@ body::after {
 .p1 .paper-cta { color: var(--green); }
 .p2 .paper-cta { color: var(--gold); }
 
+/* ACTIVITIES grid (mirrors .papers-grid pattern but with a third column
+   and a green accent to match the methodology-depth framing). */
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 52px;
+}
+.activity-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  transition: all .3s;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+}
+.activity-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--green), #a8ff78);
+  opacity: 0.5;
+  transition: opacity .3s;
+}
+.activity-card:hover {
+  border-color: rgba(57,255,20,0.25);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  transform: translateY(-3px);
+}
+.activity-card:hover::before { opacity: 1; }
+.activity-eyebrow {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--green);
+  margin-bottom: 10px;
+}
+.activity-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16px;
+}
+.activity-desc {
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+.activity-drills {
+  font-size: 12px;
+  color: var(--dim);
+  font-style: italic;
+  border-left: 2px solid rgba(57,255,20,0.4);
+  padding-left: 10px;
+  margin-bottom: 18px;
+}
+.activity-cta {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--green);
+}
+.activities-followup {
+  margin-top: 36px;
+  text-align: center;
+}
+.activities-followup-link {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(57,255,20,0.3);
+  padding-bottom: 4px;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+.activities-followup-link:hover,
+.activities-followup-link:focus-visible {
+  color: var(--ink);
+  border-bottom-color: var(--green);
+}
+
 /* ANIMATIONS */
 .fade-up {
   opacity: 0; transform: translateY(24px);
@@ -280,6 +369,7 @@ body::after {
   .hero { padding: 100px 20px 60px; }
   .section { padding: 60px 20px; }
   .papers-grid { grid-template-columns: 1fr; }
+  .activities-grid { grid-template-columns: 1fr; }
   .arc-steps { grid-template-columns: 1fr; }
   .how-steps { grid-template-columns: 1fr 1fr; }
   .diagnostic-strip { grid-template-columns: 1fr; gap: 24px; }

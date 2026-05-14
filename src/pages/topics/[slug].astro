@@ -5,6 +5,8 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import TopicMeta from '~/components/TopicMeta.astro';
 import AssessmentBlock from "~/components/AssessmentBlock.astro";
 import DrillPanel from "~/components/DrillPanel.astro";
+import Breadcrumb from '~/components/Breadcrumb.astro';
+import type { Crumb } from '~/components/Breadcrumb.astro';
 
 export async function getStaticPaths() {
   const topics = await getCollection(
@@ -20,6 +22,20 @@ export async function getStaticPaths() {
 const { topic } = Astro.props;
 const { Content } = await render(topic);
 const area = await getEntry('contentAreas', topic.data.content_area);
+
+const crumbs: Crumb[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Content', href: '/content' },
+];
+if (area) {
+  const paperLabel =
+    area.data.paper === 'method' ? 'Method' : `Paper ${area.data.paper}`;
+  crumbs.push({
+    label: `${paperLabel} · ${area.data.display_code} ${area.data.title}`,
+    href: `/content-areas/${area.id}`,
+  });
+}
+crumbs.push({ label: topic.data.title });
 ---
 
 <BaseLayout
@@ -27,6 +43,7 @@ const area = await getEntry('contentAreas', topic.data.content_area);
   description={`Section ${topic.data.section_id}. ${topic.data.paper === 'method' ? 'Method.' : `Paper ${topic.data.paper}.`}`}
 >
   <main class="container">
+    <Breadcrumb crumbs={crumbs} />
     <div class="eyebrow">
       {topic.data.paper === 'method' ? 'Method' : `Paper ${topic.data.paper}`}
       {area && ` · ${area.data.display_code} ${area.data.title}`}

@@ -9,9 +9,17 @@
 // See docs/sort-and-match-nei-spec.md for full Sprint 3 spec.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SortAndMatchIsland from "../../components/SortAndMatch";
+import Breadcrumb from "../../components/Breadcrumb.astro";
 ---
 <BaseLayout title="Sort & Match | Signal">
   <main class="sort-and-match-page">
+    <Breadcrumb
+      crumbs={[
+        { label: "Home", href: "/" },
+        { label: "Activities", href: "/activities" },
+        { label: "Sort & Match" },
+      ]}
+    />
     <header class="sm-intro">
       <p class="sm-intro__kicker">N·E·I WORKED EXAMPLE</p>
       <h1 class="sm-intro__title">Sort & Match</h1>
