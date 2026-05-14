@@ -1,0 +1,188 @@
+---
+title: "Worked Examples: Defining versus Applying"
+section_id: "M.3.1"
+content_area: method
+paper: method
+status: review
+spec_version: "2024-01"
+authors:
+  - chris-morris
+reviewers: []
+learning_outcomes:
+  - Distinguish between defining a concept and applying it to a specific scenario
+  - Identify when an Explain paragraph engages with scenario details and when it falls back on generic definition
+  - "Recognise the most common cause of lost Explain marks: scenario tie-back missing or superficial"
+prerequisites:
+  - m-1-1-worked-examples-data-structures
+estimated_minutes: 15
+revision_notes: |
+  2026-05-14: Initial draft for Method section 3 (Defining versus
+  Applying). Awaiting examiner review. Phase 1 A2 follow-up content.
+library_summary: |
+  A 4-mark Paper 2 question on choosing a networking solution for a
+  no-fixed-broadband pop-up café. Three student answers contrast a
+  textbook definition of Wi-Fi with a partially scenario-tied 4G
+  router answer and a full-marks answer that engages every scenario
+  specific. The failure this topic teaches: explaining a concept
+  correctly is not the same as explaining how it fits the scenario.
+assessments: []
+---
+
+## The question you're answering
+
+A small pop-up café operates from a converted shipping container at
+outdoor weekend events. Staff need to take card payments on tablet
+devices from anywhere within a 15-metre radius of the container.
+There is no fixed broadband line at the sites the café visits.
+Recommend ONE networking solution suitable for this scenario and
+explain why it suits. (4 marks)
+
+The previous two worked examples taught you to write Impact (M.1.1)
+and to write Name (M.2.1). This one teaches you how Explain earns its
+mark.
+
+Read the question again. "Recommend ONE networking solution suitable
+for this scenario and explain why it suits." The "and explain why it
+suits" is doing the work. The mark scheme is not awarding a definition
+of whatever you name. It is awarding an explanation of why your choice
+fits *this specific café, with these specific constraints*. The
+container. The 15-metre radius. The absence of fixed broadband. The
+tablets. The weekend events.
+
+A student who explains the concept perfectly but never applies it to
+the scenario loses the Explain mark even though the explanation is
+correct. This is the pattern marker reports name most often: students
+who clearly know what a thing is but cannot show how it suits the
+situation.
+
+As in M.1.1, the answers below are highlighted to show structure
+inline. The {% role name="name" %}Name{% /role %} is tinted green, the
+{% role name="explain" %}Explain{% /role %} is tinted gold, and the
+{% role name="impact" %}Impact{% /role %} is tinted orange. A missing
+colour means the corresponding component is absent or too weak to
+earn its mark.
+
+## Answer One: the textbook definition
+
+> {% role name="name" %}Wi-Fi would be a good solution.{% /role %} {% role name="explain" %}Wi-Fi is a wireless
+> network technology that uses radio waves to connect devices to a
+> network. Wi-Fi networks are commonly used in homes, offices, and
+> public spaces, and most modern laptops, tablets, and phones can
+> connect to them automatically.{% /role %} Wi-Fi is convenient because it
+> doesn't require cables.
+
+Let me tell you what a marker sees when this reads as the answer to a
+specific-scenario question.
+
+**Name.** "Wi-Fi." A wireless networking concept, named. Mark earned,
+though the marker will note that Wi-Fi alone does not address the
+no-fixed-broadband constraint. The café needs something that
+*generates* internet at the site, not just something that rebroadcasts
+an existing connection.
+
+**Explain.** This is where the answer loses three marks. The
+explanation is correct as a definition: Wi-Fi does use radio waves, it
+is found in homes and offices, devices do connect automatically. But
+not a single sentence engages with the café. Where is the 15-metre
+radius? Where is the no-fixed-broadband constraint? Where is the
+weekend-event context? The answer could be pasted verbatim into any
+question about Wi-Fi, anywhere, regardless of scenario, and read the
+same. That's the diagnostic. If you can lift your Explain paragraph
+out of the answer and drop it into a different question without
+changing a word, it is a definition, not an explanation.
+
+**Impact.** "Wi-Fi is convenient because it doesn't require cables."
+Generic. The café isn't mentioned. The convenience of cable-free
+networking applies to every Wi-Fi setup ever. No scenario-specific
+consequence is named.
+
+Marks this would earn: 1 out of 4.
+
+## Answer Two: the partial scenario-tie
+
+> {% role name="name" %}A 4G mobile router would suit.{% /role %} {% role name="explain" %}A 4G mobile router uses
+> a SIM card to connect to a mobile network and creates a Wi-Fi
+> hotspot that nearby devices can join. The café's tablets can then
+> connect to it.{% /role %}
+
+Better than Answer One. Let's see how much better.
+
+**Name.** "4G mobile router." Clean and complete. Unlike Wi-Fi alone,
+this names a solution that actually generates internet on site
+without a fixed broadband line. Mark earned cleanly.
+
+**Explain.** Closer to a real explanation, but still partial. The
+mechanism is correct (SIM card to mobile network to Wi-Fi hotspot to
+devices), and the student has tied it to one scenario detail ("the
+café's tablets"). But four other scenario details sit in the question
+stem and never appear in the answer: the 15-metre radius, the
+container setup, the no-fixed-broadband constraint, the weekend-event
+context. Single-token scenario tie-back is closer to an explanation
+than Answer One's definition, but it is not a full one. The student
+knows they should mention the scenario; they have not yet learned to
+engage with every relevant specific.
+
+**Impact.** Missing. The answer ends on "tablets can connect", which
+is a mechanism continuation, not a consequence. What can the café now
+do that it could not otherwise? Not stated.
+
+Marks this would earn: 2 out of 4. One for Name, one for partial
+Explain, zero for Impact.
+
+## Answer Three: the full four marks
+
+> {% role name="name" %}A 4G mobile router would suit this café.{% /role %} {% role name="explain" %}The router
+> connects to a mobile network using a SIM card and rebroadcasts the
+> connection as a Wi-Fi hotspot the tablets can join, all within an
+> enclosure small enough to fit inside the shipping container and a
+> coverage range that comfortably exceeds the 15-metre radius staff
+> need to move within.{% /role %} {% role name="impact" %}This means the café can take card payments at
+> any weekend event without depending on a fixed broadband line at
+> each site, keeping the business operational every weekend without
+> setup overhead or coverage gaps that would otherwise lose sales.{% /role %}
+
+Walk through it.
+
+**Name.** "4G mobile router." Clean. Same as Answer Two.
+
+**Explain.** This is where Answer Three earns the mark Answer Two
+missed. The mechanism (SIM card to mobile network to Wi-Fi hotspot to
+tablets) is still there, but now every relevant scenario detail is
+engaged with: the container ("small enough to fit inside the shipping
+container"), the 15-metre radius ("coverage range that comfortably
+exceeds"), the tablets ("the tablets can join"), and by implication
+the no-fixed-broadband constraint (the router generates its own
+connection via SIM). The explanation is not a definition; it is a fit
+argument. Each scenario detail is touched and tied back to a property
+of the named solution.
+
+**Impact.** "The café can take card payments at any weekend event
+without depending on a fixed broadband line, keeping the business
+operational every weekend without setup overhead or coverage gaps
+that would otherwise lose sales." Concrete business consequence,
+scenario-tied (weekend events, no broadband, mobility). And it goes
+further: it names the cost of *not* having the router (lost sales).
+This is the kind of Impact that distinguishes a 3-mark answer from a
+4-mark one.
+
+Marks this would earn: 4 out of 4.
+
+## What to take from all three
+
+The lesson here is the one your future marker will most often write
+in red ink in the margin of your script: "explain why it suits *this*
+scenario."
+
+Whenever a question contains the word "explain" or "discuss" plus a
+specific business context, the Explain mark is for application, not
+for definition. The diagnostic from Answer One holds across every
+extended-answer question on either paper. If your Explain paragraph
+could be lifted out of the answer and dropped into a different
+question without changing a word, it is not an explanation, it is a
+definition.
+
+Before you commit your answer, run this test. Read your Explain
+sentence. Ask yourself: which detail from the scenario is this
+sentence engaging with? If the answer is "none," rewrite. If the
+answer is "one," look at the scenario again. There are usually three
+or four details, and a strong Explain engages with most of them.
