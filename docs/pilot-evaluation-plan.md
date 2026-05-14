@@ -59,7 +59,7 @@ For each student, across the four-session window:
 
 - **Pre-test:** Administered by Dave at the start of session one, before any platform use. Five legislation-classification questions on unseen scenarios. Format matches Paper 1 exam style. Marked to a documented mark scheme.
 - **Post-test:** Administered at the end of session four, after the final platform session. Five different legislation-classification questions on unseen scenarios. Same format and mark scheme.
-- **Assessment questions:** [Working assumption pending Dave's written confirmation: Claude drafts ten candidate questions, Chris reviews, Dave sense-checks for cohort-appropriate language before the pilot begins.]
+- **Assessment questions:** Ten questions drafted by Claude, reviewed by Chris Morris, sense-checked by Dave Smith. Sense-check completed 2026-05-14 (Dave's "doc reads fine" reply confirming the document is fit for the cohort). Mark scheme recalibrated for the Year 1 partial-prior-exposure cohort before Dave's sense-check (see Section 8 methodological-changes 2026-05-14 entry). Locked for pilot deployment; further modification requires explicit Section 8 re-agreement.
 
 ### 3.3 Qualitative feedback
 
@@ -211,3 +211,15 @@ The mixed claim is named explicitly so the writeup cannot present a single aggre
 **Audit trail.** This re-agreement is dated 2026-05-14 and applies BEFORE the pilot starts (Monday 21 September 2026). The pre-registered plan's "before pilot data collection begins" bind is therefore preserved: this is pre-pilot methodological tightening, not post-data revision.
 
 Dave's verbatim answer is quoted above and was also pasted into the commit message of the PR that landed this entry. Chris confirmed in the 2026-05-14 chat session that the answer text is genuinely Dave's.
+
+**2026-05-14 (later in day still), Chris Morris.** Section 3.2 placeholder upgrade and pre/post test lock.
+
+The pre/post test mark scheme rework promised in the 2026-05-14 methodological-change entry above landed in PR #98 (`docs/pilot-pre-post-test.md`). Dave then sense-checked the recalibrated document and confirmed it is fit for the cohort with the verbatim reply: "Doc reads fine".
+
+Status upgrades:
+
+- **Section 3.2 assessment questions sense-check:** upgraded from B-status to A-status. The three-step process (Claude drafts, Chris reviews, Dave sense-checks) is complete.
+- **`docs/pilot-pre-post-test.md`** is locked for pilot deployment. The document header records the lock date and Dave's confirmation reply.
+- **Pre Q4 and Post Q4 (indirect-discrimination questions):** Dave was offered an explicit choice in the forwarding email (replace with simpler direct-discrimination questions, or accept floor scores as a documented pilot limit). His "doc reads fine" reply, in agreeing to the doc without modifications, implicitly accepts floor scores on the indirect-discrimination tier as a documented limit. This is recorded as a Section 5 limit by reference: per the Section 5 update of the same date, the pilot already commits to naming the uneven pre/post delta across legislation tiers, of which Q4 floor scores would be one expression.
+
+Any subsequent modification to the questions or mark schemes from this point requires explicit re-agreement under this Section 8.

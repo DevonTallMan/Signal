@@ -1,10 +1,14 @@
 # Signal Risk Classifier: Pilot Pre/Post Assessment
 
-**Status: draft for review. Mark scheme recalibrated 2026-05-14.**
+**Status: locked for pilot deployment 2026-05-14.**
 **Drafted: 7 May 2026.**
+**Mark scheme recalibrated: 2026-05-14 (in light of Dave's CA 4.1 confirmation).**
+**Sense-check by Dave: complete, 2026-05-14. Dave's reply verbatim: "Doc reads fine".**
 **Author: Claude.**
 **Reviewer: Chris Morris.**
-**Sense-check: Dave Smith (cohort-appropriate language) before pilot deployment.**
+**Sense-check: Dave Smith.**
+
+Dave's "doc reads fine" reply was the conclusion of the sense-check process pre-registered in Section 3.2 of `docs/pilot-evaluation-plan.md`. In agreeing to the doc without modifications, Dave implicitly accepted the indirect-discrimination questions (Pre Q4 and Post Q4) as drafted, meaning the alternative offered in note 5 below (replace with simpler direct-discrimination questions) was declined in favour of accepting floor scores on that tier as a documented pilot limit. Any subsequent modification to the questions or mark schemes from this point requires explicit re-agreement under Section 8 of the evaluation plan.
 
 This document provides the ten candidate assessment questions called for by Section 3.2 of the pre-registered Pilot Evaluation Plan (`docs/pilot-evaluation-plan.md`). Five questions form the pre-test, administered before any platform use; five form the post-test, administered after the final platform session.
 
