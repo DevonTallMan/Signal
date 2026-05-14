@@ -117,6 +117,8 @@ This section is pre-registered so that the writeup cannot quietly omit it.
 - **It cannot tell you whether the content is pedagogically sound.** The scenarios are author-generated and not independently reviewed by a qualified examiner. Content quality is a legitimate alternative explanation for any result, positive or negative.
 - **It cannot tell you whether engagement patterns would persist beyond four sessions.** Novelty effects are known in gamified interfaces.
 - **It cannot tell you whether the post-test performance reflects mastery of the legislation framework or memory of specific scenarios seen during the pilot.** The pre- and post-tests use unseen scenarios to mitigate this, but memory effects cannot be fully ruled out.
+- **It cannot tell you whether platform performance generalises to a fully-CA-4.1-taught cohort.** The pilot cohort is Year 1 with DPA grounding plus patchy non-DPA exposure (confirmed by Dave Smith on 2026-05-14; see Section 8 methodological changes). Findings reflect that specific cohort context; cohorts that have completed CA 4.1 in lessons before encountering the platform may show different engagement and performance patterns.
+- **It cannot disentangle DPA-baseline reinforcement effects from CMA / Equality / IP introduction effects.** The pre/post test has 2 DPA + 1 CMA + 1 Equality + 1 IP per side, so per-legislation breakdowns would have N=14 per tier per pre/post side. That is too small a sample for confident sub-claim breakdowns. The headline pre/post delta will mix reinforcement on DPA with introduction-effect on the other three; the writeup will name this explicitly rather than report a single aggregate delta as if it were uniform.
 
 Any claim made in the writeup or in subsequent communications that exceeds the data listed in Section 3 violates this pre-registered plan.
 
@@ -180,4 +182,32 @@ A specific follow-up question was sent to Dave on 2026-05-14 asking which of CA 
 
 ### Methodological changes
 
-*None logged yet. The 2026-05-14 Year 1 confirmation raises a candidate for methodological re-agreement (introduction-effect vs reinforcement-effect framing) but the trigger for that re-agreement is Dave's CA 4.1 prior-teaching answer, not yet received.*
+**2026-05-14 (later in day), Chris Morris and Claude.** Methodological re-agreement triggered by Dave Smith's 2026-05-14 written answer to the CA 4.1 prior-teaching follow-up question.
+
+**Dave's answer (verbatim):** "It's something else: the cohort has had DPA plus some patchy prior exposure on one or two strands, but not secure survey-level coverage across all four. So yes, I think the pre/post test mark scheme probably does need some significant rework before you send it over for sense-check."
+
+**Reframed measurement claim.** The original evaluation plan (24 April 2026) assumed a cohort with at least some prior teaching on Content Area 4.1, where the platform acts as reinforcement. Dave's confirmation is more nuanced: the cohort has DPA grounding plus patchy non-DPA exposure, not uniform coverage. The pre/post measurement is therefore reframed:
+
+- **DPA scenarios (3 of 12 platform scenarios, 2 of 5 pre-test, 2 of 5 post-test):** reinforcement-effect measurement. The cohort has a baseline; the platform demonstrates movement against it.
+- **CMA / Equality / IP scenarios (9 of 12 platform, 3 of 5 pre-test, 3 of 5 post-test):** mostly introduction-effect measurement on a partially-warm baseline. The cohort has patchy exposure but not secure survey coverage, so pre-test scores will be uneven and post-test scores reflect mostly platform-driven recognition.
+
+The mixed claim is named explicitly so the writeup cannot present a single aggregate pre/post delta as if it represented a uniform effect.
+
+**Implications for the pre/post test mark scheme.** The mark scheme as drafted in `docs/pilot-pre-post-test.md` credits specific Article and Section citations (UK GDPR Art. 17, CMA s.1, Equality Act s.19 and s.20, CDPA 1988). For a partial-prior-exposure Year 1 cohort, this specificity is too high a bar for the non-DPA tiers and likely also for some DPA fine-print. The mark scheme will be recalibrated in a follow-up PR to credit higher-level descriptions: "data protection law" rather than "UK GDPR Article 17", "unauthorised access law" rather than "CMA s.1", etc. The naming mark (1 of 3) stays demanding (the student must name the Act). The explanation marks (2 of 3) are recalibrated to credit accurate non-Article-specific descriptions of the principle engaged. Dave pre-acknowledged this rework in his answer.
+
+**Section 5 updates.** Two new limits added:
+
+- Cannot tell you whether platform performance generalises to a fully-CA-4.1-taught cohort.
+- Cannot disentangle DPA-baseline reinforcement effects from CMA / Equality / IP introduction effects without per-legislation analysis at N=14 per tier per side (too small for confident sub-claim breakdowns).
+
+**What does NOT change:**
+
+- Section 1 (purpose of the pilot)
+- Section 3 (what gets measured) at the metric level; the metrics still apply
+- Section 4 (writeup discipline) — descriptive, non-causal, lead with limits, no retrospective threshold-setting
+- Section 6 (roles and commitments)
+- Section 7 (decision rules)
+
+**Audit trail.** This re-agreement is dated 2026-05-14 and applies BEFORE the pilot starts (Monday 21 September 2026). The pre-registered plan's "before pilot data collection begins" bind is therefore preserved: this is pre-pilot methodological tightening, not post-data revision.
+
+Dave's verbatim answer is quoted above and was also pasted into the commit message of the PR that landed this entry. Chris confirmed in the 2026-05-14 chat session that the answer text is genuinely Dave's.
