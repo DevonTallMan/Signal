@@ -43,6 +43,12 @@ import {
   writeAttempt,
   completeSession,
 } from "../../lib/twin-tracks/firestore";
+import {
+  registerTestApi,
+  unregisterTestApi,
+  type TestApiSessionState,
+  type Status,
+} from "../../lib/twin-tracks/testApi";
 import { Glyph } from "../glyphs";
 import type { GlyphName } from "../glyphs";
 
@@ -299,6 +305,69 @@ export default function TwinTracks(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    registerTestApi({
+      placePhrase: (phraseId, location) => {
+        performDrop(phraseId, location);
+      },
+      clickContinue: () => {
+        handleContinue();
+      },
+      clickStartNewSession: () => {
+        handleStartNewSession();
+      },
+      getSessionState: (): TestApiSessionState => {
+        if (!session) {
+          return {
+            status: "loading",
+            sessionId: null,
+            currentScenarioId: null,
+            currentIndex: 0,
+            totalScenarios: 0,
+            correctCount: 0,
+            withHelpCount: 0,
+            placements: {},
+            locked: {},
+            wrongDropCount: {},
+            revealed: {},
+            phrasesInScenario: [],
+          };
+        }
+        const scenario = session.scenarios[session.currentIndex];
+        const roundComplete =
+          Object.keys(phraseLocked).length >= scenario.phrases.length;
+        const sessionComplete = session.completedAt !== null;
+        const status: Status = sessionComplete
+          ? "session-complete"
+          : roundComplete
+            ? "round-complete"
+            : "placing";
+        return {
+          status,
+          sessionId: session.sessionId,
+          currentScenarioId: scenario.id,
+          currentIndex: session.currentIndex,
+          totalScenarios: session.scenarios.length,
+          correctCount: session.outcomes.filter((o) => o === "correct").length,
+          withHelpCount: session.outcomes.filter((o) => o === "with-help")
+            .length,
+          placements: phraseLocations,
+          locked: phraseLocked,
+          wrongDropCount: phraseWrongCount,
+          revealed: phraseRevealed,
+          phrasesInScenario: scenario.phrases.map((p) => ({
+            id: p.id,
+            track: p.track,
+            slot: p.slot,
+          })),
+        };
+      },
+    });
+    return () => {
+      unregisterTestApi();
+    };
+  });
+
   async function boot(): Promise<void> {
     const next = await bootNewSession();
     if (!next) return;
@@ -338,18 +407,12 @@ export default function TwinTracks(): JSX.Element {
     setFeedback(null);
   }
 
-  function handleDragEnd(event: DragEndEvent): void {
-    const { active, over } = event;
-    if (!over) return;
+  function performDrop(phraseId: string, dropLocation: Location): void {
     if (!session) return;
-
-    const phraseId = String(active.id);
     if (phraseLocked[phraseId]) return;
 
     const phrase = currentScenario.phrases.find((p) => p.id === phraseId);
     if (!phrase) return;
-
-    const dropLocation = over.id as Location;
 
     if (dropLocation === "pool") {
       setPhraseLocations((prev) => ({ ...prev, [phraseId]: "pool" }));
@@ -367,8 +430,19 @@ export default function TwinTracks(): JSX.Element {
 
       // Persist per-phrase-lock attempt (fire-and-forget). Guarded on a
       // Firestore session; ephemeral mode skips silently.
+      //
+      // wrongDropCount is capped at MAX_WRONG_ATTEMPTS for the persisted
+      // record. If a student wrong-drops beyond the stuck-mitigation
+      // threshold, the analytic value (did this phrase trip them?) is
+      // already answered; additional wrong drops are noise. The rules
+      // schema enforces wrongDropCount <= 3 plus the revealed-iff-3
+      // invariant, so the cap here keeps writeAttempt valid against rules
+      // in all scenarios.
       if (session.sessionId) {
-        const wrongDropCount = phraseWrongCount[phraseId] ?? 0;
+        const wrongDropCount = Math.min(
+          phraseWrongCount[phraseId] ?? 0,
+          MAX_WRONG_ATTEMPTS
+        );
         const revealed = phraseRevealed[phraseId] ?? false;
         const timeToLockMs = Date.now() - scenarioStartedAtRef.current;
         void writeAttempt({
@@ -398,6 +472,12 @@ export default function TwinTracks(): JSX.Element {
     setFeedback(
       buildFeedback(phrase, trackCorrect, slotCorrect, triggerStuck)
     );
+  }
+
+  function handleDragEnd(event: DragEndEvent): void {
+    const { active, over } = event;
+    if (!over) return;
+    performDrop(String(active.id), over.id as Location);
   }
 
   function handleContinue(): void {
