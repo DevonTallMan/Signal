@@ -23,14 +23,14 @@ The pilot is **not** designed to produce evidence of educational impact versus a
 ### 2.1 Cohort
 
 - **Host:** Dave Smith, teaching his T-Level Digital class at Mid-Sussex College, Crawley campus.
-- **Students:** [Working assumption pending Dave's written confirmation: 14 students on the register, expected 11 to 12 active per session, all 14 to have access].
+- **Students:** Year 1 T-Level Digital cohort, 14 students on the register. Confirmed in writing by Dave Smith on 2026-05-14. The "expected 11 to 12 active per session" working assumption from the original plan is retained pending Dave's confirmation of typical session attendance; this is a separate question from the register count and was not part of the 2026-05-14 confirmation.
 - **Consent and data handling:** Pseudonymous Firestore IDs are sufficient under Mid-Sussex College's Curriculum Delivery policy. Institutional agreement obtained. No PII collected. Confirmed by Chris Morris, 24 April 2026, on the basis of agreement with the college.
 
 ### 2.2 Timing and duration
 
 - **Format:** Four consecutive weekly sessions.
-- **Start date:** [Working assumption pending Dave's written confirmation: Monday 11 May 2026, with four consecutive weekly sessions running through to early June, ahead of student industry placements].
-- **End date:** Four calendar weeks after start date.
+- **Start date:** Monday 21 September 2026, with four consecutive weekly sessions running on Monday 21 September, Monday 28 September, Monday 5 October, and Monday 12 October 2026. Confirmed in writing by Dave Smith on 2026-05-14. (The original working assumption was Monday 11 May 2026; the slip from May to September 2026 is logged in Section 8.)
+- **End date:** Monday 12 October 2026 (session 4).
 - **Session length:** [Working assumption pending Dave's written confirmation: 30 minutes of platform time per session, scheduled in the second half of Dave's Monday morning double-period].
 
 ### 2.3 Content
@@ -161,6 +161,23 @@ Filling in `[TO CONFIRM]` placeholders is not a methodological change and does n
 
 The four B-status entries will be upgraded to A-status when Dave confirms in writing. Forwarded confirmation will be appended to this log when received.
 
+**2026-05-14, Chris Morris.** Dave Smith confirmed three items in writing. Status upgrades:
+
+- Section 2.1 cohort year group and size: **Year 1 T-Level Digital cohort, 14 students on the register**. Upgraded from B-status to A-status. The "expected 11 to 12 active per session" sub-assumption from the original 24 April fill stays B-status; it was not separately confirmed in the 2026-05-14 reply.
+- Section 2.2 start date: **Monday 21 September 2026**, with four consecutive weekly sessions running on 21 September, 28 September, 5 October, and 12 October 2026. Upgraded from B-status to A-status. This is a slip from the original Monday 11 May 2026 working assumption; the slip is methodological context, not a methodological change to the evaluation plan itself.
+- Section 2.2 session length: **stays B-status**. The 30-minute platform-time, second-half-of-double-period assumption was not part of the 2026-05-14 confirmation.
+- Section 3.2 assessment question sense-check: **stays B-status**. Dave has not yet sense-checked the pre/post test (`docs/pilot-pre-post-test.md`).
+
+Evidence: Dave's written reply forwarded by Chris in the chat session of 2026-05-14. Verbatim text in the commit message of the PR that landed this update.
+
+**Methodological flag raised in the 2026-05-14 confirmation, not yet resolved.** Dave's confirmation of a Year 1 cohort is methodologically significant. The original evaluation plan's measurement framing assumes a cohort with at least some prior teaching on Content Area 4.1 (Legislation), where the platform acts as reinforcement. A Year 1 cohort entering September 2026 will not yet have completed CA 4.1 in lessons, so the platform may act as introduction rather than reinforcement. This affects:
+
+- Pre-test floor effect (naive cohort scores near zero)
+- Pre/post delta interpretation (introduction-effect vs reinforcement-effect framing)
+- Pre/post test mark scheme calibration (current scheme credits specific Article and Section citations that Year 1s would not be expected to know)
+
+A specific follow-up question was sent to Dave on 2026-05-14 asking which of CA 4.1's four legislation areas the Year 1 cohort will have covered in lessons before the pilot starts. When that answer arrives, a follow-up Section 8 entry will document whether a methodological re-agreement is needed and what the reframed measurement claim says.
+
 ### Methodological changes
 
-*None logged yet.*
+*None logged yet. The 2026-05-14 Year 1 confirmation raises a candidate for methodological re-agreement (introduction-effect vs reinforcement-effect framing) but the trigger for that re-agreement is Dave's CA 4.1 prior-teaching answer, not yet received.*
