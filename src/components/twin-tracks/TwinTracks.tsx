@@ -3,26 +3,28 @@
 // React island for the Twin Tracks Discuss-style activity.
 // Sprint 4 worked example: Hospital Remote Access (single scenario currently).
 //
-// Sprint 4 Increment 4.4 scope: SESSION LOOP.
-//   - Seeded picker (src/lib/twin-tracks/sessionPicker.ts) returns up to
-//     SESSION_LENGTH=3 distinct scenarios per session. With one scenario
-//     in the pool (Hospital), it returns N=1 today.
-//   - Component cycles through picked scenarios: complete one round, the
-//     model answer renders with a "Continue" button that advances to the
-//     next scenario (or "See session summary" on the last round).
-//   - Session-complete view shows score (correct-on-first-attempt vs
-//     with-help breakdown), elapsed time, and a "Start a new session"
-//     button that re-picks scenarios with a fresh seed.
-//   - Per-scenario phrase state (locations, locked, wrong count, revealed,
-//     feedback) resets on every scenario advance and on session restart.
+// Sprint 4 Increment 4.5 scope: FIRESTORE PERSISTENCE.
+//   - On boot: call startSession(); use returned ID as picker seed and as
+//     the persistence key. Falls back to a local UUID seed and ephemeral
+//     mode if no auth (mirrors Sort & Match).
+//   - On each phrase-lock (correct drop): call writeAttempt() with the
+//     phrase id, the canonical correctTrack/correctSlot, the wrongDropCount
+//     accumulated before this lock, whether stuck-mitigation fired, and
+//     the elapsed time from scenario start to lock.
+//   - On session-complete transition: call completeSession() with the
+//     final score (correct outcomes count) and totalScenarios.
+//   - All writes are fire-and-forget; failure logs via console.error but
+//     does NOT break the UI (silent-failure pattern; trade-off documented
+//     in firestore.ts).
+//
+// Per-scenario timer (scenarioStartedAtRef) records the lock time on each
+// phrase. Resets on bootSession, handleContinue advance, and
+// handleStartNewSession.
 //
 // What this PR does NOT do (per docs/sprint-4-scope.md):
-//   - Firestore persistence and rules tests (Inc 4.5). Session ID seed is
-//     a local UUID for now; Inc 4.5 swaps to the Firestore session ID and
-//     persists session/attempt documents.
 //   - Playwright tests (Inc 4.6)
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   DndContext,
   PointerSensor,
@@ -36,6 +38,11 @@ import {
 } from "@dnd-kit/core";
 import scenariosData from "../../data/twin-tracks/scenarios.json";
 import { pickSessionScenarios } from "../../lib/twin-tracks/sessionPicker";
+import {
+  startSession,
+  writeAttempt,
+  completeSession,
+} from "../../lib/twin-tracks/firestore";
 import { Glyph } from "../glyphs";
 import type { GlyphName } from "../glyphs";
 
@@ -93,6 +100,7 @@ interface Feedback {
 type Outcome = "correct" | "with-help";
 
 interface SessionState {
+  sessionId: string | null;
   scenarios: Scenario[];
   currentIndex: number;
   outcomes: Outcome[];
@@ -132,12 +140,15 @@ function initialLocations(phrases: Phrase[]): Record<string, Location> {
   return out;
 }
 
-function pickSession(): SessionState | null {
+async function bootNewSession(): Promise<SessionState | null> {
   const allScenarios = scenariosData as Scenario[];
-  const seed = `local-${crypto.randomUUID()}`;
+  const sessionHandle = await startSession();
+  const seed = sessionHandle?.id ?? `local-${crypto.randomUUID()}`;
+  const sessionId = sessionHandle?.id ?? null;
   const picked = pickSessionScenarios(seed, allScenarios, SESSION_LENGTH);
   if (picked.length === 0) return null;
   return {
+    sessionId,
     scenarios: picked,
     currentIndex: 0,
     outcomes: [],
@@ -257,15 +268,10 @@ function Droppable({
 
 // ---------- Main component ----------
 export default function TwinTracks(): JSX.Element {
-  const [session, setSession] = useState<SessionState | null>(() =>
-    pickSession()
-  );
-
+  const [session, setSession] = useState<SessionState | null>(null);
   const [phraseLocations, setPhraseLocations] = useState<
     Record<string, Location>
-  >(() =>
-    session ? initialLocations(session.scenarios[0].phrases) : {}
-  );
+  >({});
   const [phraseLocked, setPhraseLocked] = useState<Record<string, boolean>>(
     {}
   );
@@ -277,6 +283,8 @@ export default function TwinTracks(): JSX.Element {
   );
   const [feedback, setFeedback] = useState<Feedback | null>(null);
 
+  const scenarioStartedAtRef = useRef<number>(0);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 4 },
@@ -286,10 +294,22 @@ export default function TwinTracks(): JSX.Element {
     })
   );
 
+  useEffect(() => {
+    void boot();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function boot(): Promise<void> {
+    const next = await bootNewSession();
+    if (!next) return;
+    setSession(next);
+    resetPhraseStateFor(next.scenarios[0]);
+  }
+
   if (!session) {
     return (
       <div className="tt-twintracks">
-        <div className="tt-twintracks__status">No scenarios available.</div>
+        <div className="tt-twintracks__status">Loading scenarios...</div>
         <style>{commonStyles}</style>
       </div>
     );
@@ -311,6 +331,7 @@ export default function TwinTracks(): JSX.Element {
     setPhraseWrongCount({});
     setPhraseRevealed({});
     setFeedback(null);
+    scenarioStartedAtRef.current = Date.now();
   }
 
   function handleDragStart(_event: DragStartEvent): void {
@@ -343,6 +364,24 @@ export default function TwinTracks(): JSX.Element {
     if (trackCorrect && slotCorrect) {
       setPhraseLocations((prev) => ({ ...prev, [phraseId]: dropLocation }));
       setPhraseLocked((prev) => ({ ...prev, [phraseId]: true }));
+
+      // Persist per-phrase-lock attempt (fire-and-forget). Guarded on a
+      // Firestore session; ephemeral mode skips silently.
+      if (session.sessionId) {
+        const wrongDropCount = phraseWrongCount[phraseId] ?? 0;
+        const revealed = phraseRevealed[phraseId] ?? false;
+        const timeToLockMs = Date.now() - scenarioStartedAtRef.current;
+        void writeAttempt({
+          sessionId: session.sessionId,
+          scenarioId: currentScenario.id,
+          phraseId: phrase.id,
+          correctTrack: phrase.track,
+          correctSlot: phrase.slot,
+          wrongDropCount,
+          revealed,
+          timeToLockMs,
+        });
+      }
       return;
     }
 
@@ -369,6 +408,15 @@ export default function TwinTracks(): JSX.Element {
     const nextIndex = session.currentIndex + 1;
 
     if (nextIndex >= session.scenarios.length) {
+      const score = newOutcomes.filter((o) => o === "correct").length;
+      const totalScenarios = session.scenarios.length;
+      if (session.sessionId) {
+        void completeSession({
+          sessionId: session.sessionId,
+          score,
+          totalScenarios,
+        });
+      }
       setSession({
         ...session,
         outcomes: newOutcomes,
@@ -386,11 +434,8 @@ export default function TwinTracks(): JSX.Element {
   }
 
   function handleStartNewSession(): void {
-    const next = pickSession();
-    setSession(next);
-    if (next) {
-      resetPhraseStateFor(next.scenarios[0]);
-    }
+    setSession(null);
+    void boot();
   }
 
   const phrasesIn = (loc: Location): Phrase[] =>
