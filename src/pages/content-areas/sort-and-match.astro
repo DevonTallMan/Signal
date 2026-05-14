@@ -1,13 +1,10 @@
 ---
-// Sort & Match — N·E·I drag-and-drop interactive module.
+// Sort & Match - N·E·I drag-and-drop interactive module.
 // Sprint 3 worked example: Six Vs and Data Quality.
 //
-// Sprint 3 Increment 3.1 scope: STATIC UI SHELL ONLY.
-//   - Renders the scenarioPanels comic strip (5 panels using Glyph component)
-//   - Renders phrase pool (5 phrases as static cards)
-//   - Renders three buckets (N, E, I) as empty containers
-//   - No drag-and-drop interaction (Inc 3.2)
-//   - No validation, no persistence, no session loop, no tests
+// Sprint 3 Increment 3.6 scope: full session loop with N·E·I validation,
+// three-attempt stuck mitigation, post-success model answer reveal, Firestore
+// persistence, Playwright smoke and full-session tests.
 //
 // See docs/sort-and-match-nei-spec.md for full Sprint 3 spec.
 import BaseLayout from "../../layouts/BaseLayout.astro";
@@ -28,8 +25,10 @@ import SortAndMatchIsland from "../../components/SortAndMatch";
     </section>
     <footer class="sm-outro">
       <p>
-        Sprint 3 Increment 3.1: static UI shell. Drag-and-drop, validation,
-        and session persistence land in subsequent increments.
+        Sprint 3 Increment 3.6: full session loop with N·E·I validation,
+        three-attempt stuck mitigation, post-success model answer reveal,
+        Firestore persistence, Playwright smoke and full-session tests. The
+        Sort & Match mechanic is now end-to-end functional.
       </p>
     </footer>
   </main>
