@@ -3,21 +3,26 @@
 // React island for the Twin Tracks Discuss-style activity.
 // Sprint 4 worked example: Hospital Remote Access (single scenario currently).
 //
-// Sprint 4 Increment 4.2 scope: TWO-DIMENSIONAL DRAG-AND-DROP.
-//   - @dnd-kit/core PointerSensor + TouchSensor wired
-//   - 6 phrase cards draggable from pool and between cells
-//   - 7 droppables: 6 cells (encoded as `${track}-${slot}`) plus the pool
-//   - Drop registers the (track, slot) pair on the phrase's local state
-//   - No validation yet. Any phrase can land in any cell.
+// Sprint 4 Increment 4.3 scope: PER-DROP VALIDATION, STUCK MITIGATION,
+// MODEL ANSWER REVEAL.
+//   - Immediate per-drop validation per spec Section 6.4. NO "Check" button.
+//     (This is the documented divergence from Sort & Match, which batches
+//     validation via a Check button. Spec Section 6.4 specifies immediate
+//     per-drop for both activities; SM's implementation predates the spec
+//     update and stays as-is for now.)
+//   - Diagnostic feedback per spec Section 6.3 truth table: track-right-
+//     slot-wrong, track-wrong-slot-right, both-wrong, plus stuck-revealed
+//     after 3 wrong attempts on a single phrase.
+//   - Correct drops LOCK the phrase in cell (draggable disabled).
+//   - Wrong drops snap back to the pool with the matching feedback message.
+//   - Round complete when all 6 phrases are locked. Two-track model answer
+//     reveal renders both impact paragraphs with slot-labelled blocks.
 //
 // What this PR does NOT do (per docs/sprint-4-scope.md):
-//   - Per-drop validation, diagnostic feedback, stuck mitigation, model
-//     answer reveal (Inc 4.3)
-//   - Session loop and sessionPicker (Inc 4.4)
+//   - Session loop and sessionPicker (Inc 4.4). The "Restart" button on the
+//     complete state is a single-scenario reset, not a session loop.
 //   - Firestore persistence and rules tests (Inc 4.5)
 //   - Playwright tests (Inc 4.6)
-//
-// See docs/sort-and-match-nei-spec.md for full Twin Tracks spec.
 
 import { useState } from "react";
 import {
@@ -29,6 +34,7 @@ import {
   useDraggable,
   useDroppable,
   type DragEndEvent,
+  type DragStartEvent,
 } from "@dnd-kit/core";
 import scenariosData from "../../data/twin-tracks/scenarios.json";
 import { Glyph } from "../glyphs";
@@ -73,6 +79,20 @@ interface Scenario {
 type CellId = `${Track}-${Slot}`;
 type Location = "pool" | CellId;
 
+type FeedbackKind =
+  | "track-right-slot-wrong"
+  | "track-wrong-slot-right"
+  | "both-wrong"
+  | "stuck-revealed";
+
+interface Feedback {
+  phraseId: string;
+  kind: FeedbackKind;
+  message: string;
+}
+
+type RoundStatus = "placing" | "complete";
+
 const TRACKS: readonly Track[] = ["positive", "negative"] as const;
 const SLOTS: readonly Slot[] = ["introduce", "explain", "develop"] as const;
 
@@ -87,8 +107,15 @@ const SLOT_LABELS: Record<Slot, string> = {
   develop: "Develop",
 };
 
+const MAX_WRONG_ATTEMPTS = 3;
+
 function cellId(track: Track, slot: Slot): CellId {
   return `${track}-${slot}` as CellId;
+}
+
+function parseCellId(id: CellId): { track: Track; slot: Slot } {
+  const [track, slot] = id.split("-") as [Track, Slot];
+  return { track, slot };
 }
 
 function initialLocations(phrases: Phrase[]): Record<string, Location> {
@@ -97,33 +124,89 @@ function initialLocations(phrases: Phrase[]): Record<string, Location> {
   return out;
 }
 
+function buildFeedback(
+  phrase: Phrase,
+  droppedTrack: Track,
+  droppedSlot: Slot,
+  trackCorrect: boolean,
+  slotCorrect: boolean,
+  triggerStuck: boolean
+): Feedback {
+  if (triggerStuck) {
+    return {
+      phraseId: phrase.id,
+      kind: "stuck-revealed",
+      message: `This phrase belongs in the ${TRACK_LABELS[phrase.track]} track, ${SLOT_LABELS[phrase.slot]} slot. Drag it there.`,
+    };
+  }
+  if (trackCorrect && !slotCorrect) {
+    return {
+      phraseId: phrase.id,
+      kind: "track-right-slot-wrong",
+      message: `Right track, wrong slot. Try ${SLOT_LABELS[phrase.slot]}.`,
+    };
+  }
+  if (!trackCorrect && slotCorrect) {
+    return {
+      phraseId: phrase.id,
+      kind: "track-wrong-slot-right",
+      message: `Right slot, wrong track. This describes a ${phrase.track} impact.`,
+    };
+  }
+  return {
+    phraseId: phrase.id,
+    kind: "both-wrong",
+    message: `Both dimensions wrong. Re-read the phrase and try again.`,
+  };
+}
+
 // ---------- DraggablePhrase ----------
 interface DraggablePhraseProps {
   phrase: Phrase;
+  locked: boolean;
+  revealed: boolean;
 }
 
-function DraggablePhrase({ phrase }: DraggablePhraseProps): JSX.Element {
+function DraggablePhrase({
+  phrase,
+  locked,
+  revealed,
+}: DraggablePhraseProps): JSX.Element {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({ id: phrase.id });
+    useDraggable({ id: phrase.id, disabled: locked });
 
   const style: React.CSSProperties = {
     transform: transform
       ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
       : undefined,
     opacity: isDragging ? 0.5 : 1,
-    cursor: isDragging ? "grabbing" : "grab",
+    cursor: locked ? "default" : isDragging ? "grabbing" : "grab",
     touchAction: "none",
   };
+
+  let stateClass = "";
+  if (locked) stateClass = " tt-twintracks__phrase--locked";
+  else if (revealed) stateClass = " tt-twintracks__phrase--revealed";
 
   return (
     <div
       ref={setNodeRef}
-      className="tt-twintracks__phrase"
+      className={`tt-twintracks__phrase${stateClass}`}
       style={style}
-      {...listeners}
+      {...(locked ? {} : listeners)}
       {...attributes}
     >
       <span className="tt-twintracks__phrase-text">{phrase.text}</span>
+      {locked && (
+        <span className="tt-twintracks__phrase-marker tt-twintracks__phrase-marker--locked">
+          LOCKED
+        </span>
+      )}
+      {!locked && revealed && (
+        <span className="tt-twintracks__phrase-marker tt-twintracks__phrase-marker--revealed">
+          HINT REVEALED
+        </span>
+      )}
     </div>
   );
 }
@@ -160,6 +243,21 @@ export default function TwinTracks(): JSX.Element {
   const [phraseLocations, setPhraseLocations] = useState<
     Record<string, Location>
   >(() => initialLocations(scenario.phrases));
+  const [phraseLocked, setPhraseLocked] = useState<Record<string, boolean>>(
+    {}
+  );
+  const [phraseWrongCount, setPhraseWrongCount] = useState<
+    Record<string, number>
+  >({});
+  const [phraseRevealed, setPhraseRevealed] = useState<Record<string, boolean>>(
+    {}
+  );
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+
+  const roundStatus: RoundStatus =
+    Object.keys(phraseLocked).length >= scenario.phrases.length
+      ? "complete"
+      : "placing";
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -170,18 +268,72 @@ export default function TwinTracks(): JSX.Element {
     })
   );
 
+  function resetScenario(): void {
+    setPhraseLocations(initialLocations(scenario.phrases));
+    setPhraseLocked({});
+    setPhraseWrongCount({});
+    setPhraseRevealed({});
+    setFeedback(null);
+  }
+
+  function handleDragStart(_event: DragStartEvent): void {
+    setFeedback(null);
+  }
+
   function handleDragEnd(event: DragEndEvent): void {
     const { active, over } = event;
     if (!over) return;
-    const newLocation = over.id as Location;
-    setPhraseLocations((prev) => ({
-      ...prev,
-      [String(active.id)]: newLocation,
-    }));
+
+    const phraseId = String(active.id);
+    if (phraseLocked[phraseId]) return;
+
+    const phrase = scenario.phrases.find((p) => p.id === phraseId);
+    if (!phrase) return;
+
+    const dropLocation = over.id as Location;
+
+    if (dropLocation === "pool") {
+      setPhraseLocations((prev) => ({ ...prev, [phraseId]: "pool" }));
+      return;
+    }
+
+    const { track: droppedTrack, slot: droppedSlot } =
+      parseCellId(dropLocation);
+    const trackCorrect = droppedTrack === phrase.track;
+    const slotCorrect = droppedSlot === phrase.slot;
+
+    if (trackCorrect && slotCorrect) {
+      setPhraseLocations((prev) => ({ ...prev, [phraseId]: dropLocation }));
+      setPhraseLocked((prev) => ({ ...prev, [phraseId]: true }));
+      return;
+    }
+
+    const nextWrongCount = (phraseWrongCount[phraseId] ?? 0) + 1;
+    const triggerStuck =
+      nextWrongCount >= MAX_WRONG_ATTEMPTS && !phraseRevealed[phraseId];
+
+    setPhraseLocations((prev) => ({ ...prev, [phraseId]: "pool" }));
+    setPhraseWrongCount((prev) => ({ ...prev, [phraseId]: nextWrongCount }));
+    if (triggerStuck) {
+      setPhraseRevealed((prev) => ({ ...prev, [phraseId]: true }));
+    }
+
+    setFeedback(
+      buildFeedback(
+        phrase,
+        droppedTrack,
+        droppedSlot,
+        trackCorrect,
+        slotCorrect,
+        triggerStuck
+      )
+    );
   }
 
   const phrasesIn = (loc: Location): Phrase[] =>
     scenario.phrases.filter((p) => phraseLocations[p.id] === loc);
+
+  const anyRevealed = Object.keys(phraseRevealed).length > 0;
 
   return (
     <div className="tt-twintracks">
@@ -213,73 +365,155 @@ export default function TwinTracks(): JSX.Element {
         ))}
       </div>
 
-      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <div className="tt-twintracks__activity">
-          <div className="tt-twintracks__grid-group">
-            <p className="tt-twintracks__section-kicker">SORT INTO</p>
-            <div
-              className="tt-twintracks__grid"
-              role="grid"
-              aria-label="Twin Tracks placement grid"
-            >
-              <div className="tt-twintracks__corner" aria-hidden="true"></div>
-              {SLOTS.map((slot) => (
+      {roundStatus === "placing" && (
+        <DndContext
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="tt-twintracks__activity">
+            <div className="tt-twintracks__grid-group">
+              <p className="tt-twintracks__section-kicker">SORT INTO</p>
+              <div
+                className="tt-twintracks__grid"
+                role="grid"
+                aria-label="Twin Tracks placement grid"
+              >
                 <div
-                  key={`header-${slot}`}
-                  className="tt-twintracks__col-header"
-                  role="columnheader"
+                  className="tt-twintracks__corner"
+                  aria-hidden="true"
+                ></div>
+                {SLOTS.map((slot) => (
+                  <div
+                    key={`header-${slot}`}
+                    className="tt-twintracks__col-header"
+                    role="columnheader"
+                  >
+                    {SLOT_LABELS[slot]}
+                  </div>
+                ))}
+                {TRACKS.flatMap((track) => [
+                  <div
+                    key={`label-${track}`}
+                    className={`tt-twintracks__row-label tt-twintracks__row-label--${track}`}
+                    role="rowheader"
+                  >
+                    {TRACK_LABELS[track]}
+                  </div>,
+                  ...SLOTS.map((slot) => {
+                    const id = cellId(track, slot);
+                    return (
+                      <Droppable
+                        key={id}
+                        id={id}
+                        className={`tt-twintracks__cell tt-twintracks__cell--${track}`}
+                        ariaLabel={`${TRACK_LABELS[track]}, ${SLOT_LABELS[slot]}`}
+                      >
+                        {phrasesIn(id).map((phrase) => (
+                          <DraggablePhrase
+                            key={phrase.id}
+                            phrase={phrase}
+                            locked={phraseLocked[phrase.id] ?? false}
+                            revealed={phraseRevealed[phrase.id] ?? false}
+                          />
+                        ))}
+                      </Droppable>
+                    );
+                  }),
+                ])}
+              </div>
+
+              {feedback && (
+                <div
+                  className={`tt-twintracks__feedback tt-twintracks__feedback--${feedback.kind}`}
+                  role="status"
+                  aria-live="polite"
                 >
-                  {SLOT_LABELS[slot]}
+                  <span className="tt-twintracks__feedback-kicker">
+                    {feedback.kind === "stuck-revealed"
+                      ? "HINT REVEALED"
+                      : "TRY AGAIN"}
+                  </span>
+                  <span className="tt-twintracks__feedback-text">
+                    {feedback.message}
+                  </span>
                 </div>
-              ))}
-              {TRACKS.flatMap((track) => [
-                <div
-                  key={`label-${track}`}
-                  className={`tt-twintracks__row-label tt-twintracks__row-label--${track}`}
-                  role="rowheader"
-                >
-                  {TRACK_LABELS[track]}
-                </div>,
-                ...SLOTS.map((slot) => {
-                  const id = cellId(track, slot);
-                  return (
-                    <Droppable
-                      key={id}
-                      id={id}
-                      className={`tt-twintracks__cell tt-twintracks__cell--${track}`}
-                      ariaLabel={`${TRACK_LABELS[track]}, ${SLOT_LABELS[slot]}`}
-                    >
-                      {phrasesIn(id).map((phrase) => (
-                        <DraggablePhrase key={phrase.id} phrase={phrase} />
-                      ))}
-                    </Droppable>
-                  );
-                }),
-              ])}
+              )}
+            </div>
+
+            <div className="tt-twintracks__phrase-pool">
+              <p className="tt-twintracks__section-kicker">PHRASE POOL</p>
+              <Droppable
+                id="pool"
+                className="tt-twintracks__pool"
+                ariaLabel="Phrase pool"
+              >
+                <div className="tt-twintracks__phrases">
+                  {phrasesIn("pool").map((phrase) => (
+                    <DraggablePhrase
+                      key={phrase.id}
+                      phrase={phrase}
+                      locked={false}
+                      revealed={phraseRevealed[phrase.id] ?? false}
+                    />
+                  ))}
+                  {phrasesIn("pool").length === 0 && (
+                    <p className="tt-twintracks__pool-empty">
+                      Pool empty. Drag phrases back here to clear a cell.
+                    </p>
+                  )}
+                </div>
+              </Droppable>
             </div>
           </div>
+        </DndContext>
+      )}
 
-          <div className="tt-twintracks__phrase-pool">
-            <p className="tt-twintracks__section-kicker">PHRASE POOL</p>
-            <Droppable
-              id="pool"
-              className="tt-twintracks__pool"
-              ariaLabel="Phrase pool"
+      {roundStatus === "complete" && (
+        <div
+          className={`tt-twintracks__model-answer${
+            anyRevealed ? " tt-twintracks__model-answer--with-help" : ""
+          }`}
+        >
+          <p className="tt-twintracks__model-answer-kicker">
+            {anyRevealed ? "MODEL ANSWER" : "SCENARIO COMPLETE"}
+          </p>
+          <p className="tt-twintracks__model-answer-context">
+            {anyRevealed
+              ? "One or more phrases needed help. Read the full model answer below to see how the structure reads as continuous prose."
+              : "All six phrases placed correctly. Read the full model answer below to see how the structure reads as continuous prose."}
+          </p>
+
+          {TRACKS.map((track) => (
+            <section
+              key={track}
+              className={`tt-twintracks__model-track tt-twintracks__model-track--${track}`}
             >
-              <div className="tt-twintracks__phrases">
-                {phrasesIn("pool").map((phrase) => (
-                  <DraggablePhrase key={phrase.id} phrase={phrase} />
-                ))}
-                {phrasesIn("pool").length === 0 && (
-                  <p className="tt-twintracks__pool-empty">
-                    Pool empty. Drag phrases back here to clear a cell.
-                  </p>
-                )}
-              </div>
-            </Droppable>
-          </div>
+              <h3 className="tt-twintracks__model-track-heading">
+                {TRACK_LABELS[track]}
+              </h3>
+              {SLOTS.map((slot) => (
+                <p key={slot} className="tt-twintracks__model-slot">
+                  <span className="tt-twintracks__model-slot-label">
+                    {SLOT_LABELS[slot]}
+                  </span>
+                  <span className="tt-twintracks__model-slot-text">
+                    {scenario.modelAnswer[track][slot]}
+                  </span>
+                </p>
+              ))}
+            </section>
+          ))}
+
+          <button
+            type="button"
+            className="tt-twintracks__restart"
+            onClick={resetScenario}
+          >
+            Restart scenario
+          </button>
         </div>
-      </DndContext>
+      )}
 
       <style>{commonStyles}</style>
     </div>
@@ -421,6 +655,35 @@ const commonStyles = `
     background: rgba(57, 255, 20, 0.05);
   }
 
+  .tt-twintracks__feedback {
+    margin-top: 1rem;
+    padding: 0.875rem 1rem;
+    background: var(--void, rgba(0, 0, 0, 0.35));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-left: 2px solid var(--gold, #ffd700);
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .tt-twintracks__feedback--stuck-revealed {
+    border-left-color: var(--red, #ff3b3b);
+  }
+  .tt-twintracks__feedback-kicker {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--gold, #ffd700);
+  }
+  .tt-twintracks__feedback--stuck-revealed .tt-twintracks__feedback-kicker {
+    color: var(--red, #ff3b3b);
+  }
+  .tt-twintracks__feedback-text {
+    color: var(--ink, #e8edf3);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
   .tt-twintracks__phrase-pool {
     display: flex;
     flex-direction: column;
@@ -460,10 +723,137 @@ const commonStyles = `
     font-size: 0.85rem;
     line-height: 1.5;
     user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
     transition: border-color 160ms ease;
+  }
+  .tt-twintracks__phrase--locked {
+    border-left-color: var(--green, #39ff14);
+    box-shadow: inset 2px 0 0 var(--green, #39ff14);
+  }
+  .tt-twintracks__phrase--revealed {
+    border-left-color: var(--red, #ff3b3b);
   }
   .tt-twintracks__phrase-text {
     display: block;
+  }
+  .tt-twintracks__phrase-marker {
+    align-self: flex-start;
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+  }
+  .tt-twintracks__phrase-marker--locked {
+    color: var(--green, #39ff14);
+    background: rgba(57, 255, 20, 0.1);
+    border: 1px solid rgba(57, 255, 20, 0.35);
+  }
+  .tt-twintracks__phrase-marker--revealed {
+    color: var(--red, #ff3b3b);
+    background: rgba(255, 59, 59, 0.1);
+    border: 1px solid rgba(255, 59, 59, 0.35);
+  }
+
+  .tt-twintracks__model-answer {
+    padding: 1.5rem;
+    background: var(--void, rgba(0, 0, 0, 0.25));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-left: 2px solid var(--green, #39ff14);
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .tt-twintracks__model-answer--with-help {
+    border-left-color: var(--gold, #ffd700);
+  }
+  .tt-twintracks__model-answer-kicker {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    margin: 0;
+    color: var(--green, #39ff14);
+  }
+  .tt-twintracks__model-answer--with-help .tt-twintracks__model-answer-kicker {
+    color: var(--gold, #ffd700);
+  }
+  .tt-twintracks__model-answer-context {
+    margin: 0;
+    color: var(--dim, rgba(232, 237, 243, 0.75));
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .tt-twintracks__model-track {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  }
+  .tt-twintracks__model-track:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .tt-twintracks__model-track-heading {
+    margin: 0 0 0.75rem;
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink, #e8edf3);
+    font-weight: 700;
+  }
+  .tt-twintracks__model-track--positive .tt-twintracks__model-track-heading {
+    color: var(--green, #39ff14);
+  }
+  .tt-twintracks__model-track--negative .tt-twintracks__model-track-heading {
+    color: var(--red, #ff3b3b);
+  }
+  .tt-twintracks__model-slot {
+    margin: 0 0 0.75rem;
+    color: var(--ink, #e8edf3);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    display: block;
+  }
+  .tt-twintracks__model-slot:last-child {
+    margin-bottom: 0;
+  }
+  .tt-twintracks__model-slot-label {
+    display: inline-block;
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
+    padding: 0.15rem 0.45rem;
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+    border-radius: 2px;
+    margin-right: 0.6rem;
+    vertical-align: baseline;
+  }
+  .tt-twintracks__model-slot-text {
+    display: inline;
+  }
+
+  .tt-twintracks__restart {
+    align-self: flex-start;
+    background: var(--green, #39ff14);
+    color: var(--void, #0a0e1a);
+    border: 0;
+    padding: 0.75rem 1.5rem;
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 120ms ease, box-shadow 120ms ease;
+  }
+  .tt-twintracks__restart:hover {
+    background: #2ed60f;
+    box-shadow: 0 0 0 4px rgba(57, 255, 20, 0.15);
   }
 
   @media (max-width: 900px) {
