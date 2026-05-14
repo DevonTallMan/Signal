@@ -3,8 +3,10 @@
 // Pivoted from EU AI Act on 24 April 2026 after spec mismatch discovered.
 // See docs/sprint-2-scope.md and src/data/risk-classifier/README.md.
 //
-// Sprint 2 Increment 5 scope: 5-scenario session loop, Continue advances, end-of-session summary, completeSession Firestore write.
-
+// Phase 1 A4: narrative wrapper around the activity. Methodology-depth
+// framing that connects the classifier to the Answer Arc (Name component)
+// and threads through to Sort & Match for the full N·E·I treatment. No
+// changes to the React island or any other code; copy-only.
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import RiskClassifierIsland from "../../components/RiskClassifier";
@@ -13,12 +15,21 @@ import RiskClassifierIsland from "../../components/RiskClassifier";
 <BaseLayout title="Risk Classifier | Signal">
   <main class="risk-classifier-page">
     <header class="rc-intro">
-     <p class="rc-intro__kicker">UK LEGISLATION INTERACTIVE</p>
+      <p class="rc-intro__kicker">UK LEGISLATION INTERACTIVE</p>
       <h1 class="rc-intro__title">Risk Classifier</h1>
       <p class="rc-intro__lede">
-        Classify workplace digital scenarios against UK legislation: Data
-        Protection, Computer Misuse, Equality, and Intellectual Property. Learn
-        by doing.
+        Five workplace digital scenarios land in front of you, one at a
+        time. For each, identify which UK Act primarily applies: Data
+        Protection, Computer Misuse, Equality, or Intellectual Property.
+        The platform tells you why you were right or where you went
+        wrong. The exam will not.
+      </p>
+      <p class="rc-intro__methodology">
+        <span class="rc-intro__methodology-kicker">// WHAT THIS DRILLS</span>
+        The <strong>Name</strong> component of the Answer Arc for Paper 1
+        legislation-application questions. Naming the correct Act is the
+        foundation step. Get it consistent here, then take the rest of
+        the answer through Sort &amp; Match.
       </p>
     </header>
 
@@ -27,10 +38,17 @@ import RiskClassifierIsland from "../../components/RiskClassifier";
     </section>
 
     <footer class="rc-outro">
+      <p class="rc-outro__kicker">// WHAT TO DO NEXT</p>
       <p>
-       Sprint 2 Increment 5: full 5-scenario session loop, end-of-session
-        summary with score and time, Firestore session completion. The pilot
-        mechanic is now end-to-end functional.
+        Risk Classifier drills legislation recognition: the Name
+        component of the Answer Arc for Paper 1 legal-context questions.
+        Once you can identify the right Act consistently, <a
+          href="/content-areas/sort-and-match"
+          class="rc-outro__link">Sort &amp; Match</a> takes you the rest
+        of the way to a full N·E·I answer. The methodology behind both
+        activities is in the <a
+          href="/content-areas/method"
+          class="rc-outro__link">Method section</a>.
       </p>
     </footer>
   </main>
@@ -62,6 +80,31 @@ import RiskClassifierIsland from "../../components/RiskClassifier";
     color: var(--dim, rgba(232, 237, 243, 0.75));
     margin: 0;
     max-width: 68ch;
+    line-height: 1.6;
+  }
+  .rc-intro__methodology {
+    margin: 1.25rem 0 0;
+    padding: 0.875rem 1rem;
+    background: var(--void, rgba(0, 0, 0, 0.25));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-left: 2px solid var(--green, #39ff14);
+    border-radius: 2px;
+    font-size: 0.95rem;
+    color: var(--dim, rgba(232, 237, 243, 0.75));
+    line-height: 1.6;
+    max-width: 68ch;
+  }
+  .rc-intro__methodology-kicker {
+    display: block;
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    color: var(--green, #39ff14);
+    margin-bottom: 0.4rem;
+  }
+  .rc-intro__methodology strong {
+    color: var(--ink, #e8edf3);
+    font-weight: 600;
   }
   .rc-game {
     margin: 2rem 0;
@@ -75,9 +118,28 @@ import RiskClassifierIsland from "../../components/RiskClassifier";
     margin-top: 3rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-    font-size: 0.85rem;
-    color: var(--muted, rgba(232, 237, 243, 0.55));
-    line-height: 1.5;
+    font-size: 0.9rem;
+    color: var(--dim, rgba(232, 237, 243, 0.75));
+    line-height: 1.6;
+    max-width: 68ch;
+  }
+  .rc-outro__kicker {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    color: var(--green, #39ff14);
+    margin: 0 0 0.6rem;
+  }
+  .rc-outro__link {
+    color: var(--green, #39ff14);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(57, 255, 20, 0.3);
+    transition: color 160ms ease, border-color 160ms ease;
+  }
+  .rc-outro__link:hover,
+  .rc-outro__link:focus-visible {
+    color: var(--ink, #e8edf3);
+    border-bottom-color: var(--green, #39ff14);
   }
   @media (max-width: 640px) {
     .risk-classifier-page { padding: 1.5rem 1rem 3rem; }
