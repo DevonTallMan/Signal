@@ -97,8 +97,52 @@ The Twin Tracks framework was committed to spec v0.3 ahead of this PR. Spec chan
 
 The framework-fit observation that originated in the Six Vs review log is now resolved: N has different semantics across question types; Twin Tracks handles the Discuss-style case.
 
+## Comic strip review (Sprint 4 Increment 4.0)
+
+**Date:** 2026-05-14
+**Author of Pass 1:** Claude (Sprint 4 Inc 4.0)
+**Conductor of Pass 2:** Claude (subagent with no prior context, simulating cold reader)
+**Activity:** Twin Tracks comic strip (Hospital Remote Access)
+
+### Pass 1: authored 6 panels
+
+Six panels drafted with intended narrative arc: 3 positive panels (setup, mechanism, clinical consequence) followed by 3 negative panels (attack-surface pivot, intrusion mechanism, regulatory consequence). Visual colour arc green (p1–p3) flipping to red (p5–p6) with p4 as the visual pivot. Panel count of 6 chosen over 4 or 5 to give each impact arc its own Setup-Mechanism-Consequence shape mirroring the Discuss question's structural balance.
+
+Glyph selections from the 17-glyph vocabulary:
+
+| # | Glyph | Track | Role |
+|---|---|---|---|
+| p1 | hospital | setup | Scenario framing |
+| p2 | network-secure | positive | Remote-access mechanism |
+| p3 | clinician | positive | Clinical-benefit consequence |
+| p4 | attacker | negative | Attack-surface pivot |
+| p5 | network-breached | negative | Intrusion mechanism |
+| p6 | breach | negative | Regulatory consequence |
+
+### Pass 2: cold-reader narrative comprehension test (PASSED)
+
+A cold reader was given the 6 panels in sequence with brief icon descriptions and no other context. The reader was asked to (1) summarise the scenario in 3 to 5 sentences, (2) identify any opposing impacts, (3) list specific named consequences.
+
+**Results:**
+- **Summary:** Reader correctly identified the hospital records scenario, the remote-access mechanism, the clinical-decision benefit, the attack-surface pivot, the credential-compromise mechanism, and the UK GDPR notifiable-breach consequence with ICO regulatory action and reputational damage. All six panels were read in correct cause-and-effect order.
+- **Opposing impacts:** Identified cleanly. Positive named as "remote authenticated access enables on-call doctors to make faster clinical decisions for patients." Negative named as "the same pathway enables attackers to impersonate legitimate users and trigger a notifiable confidentiality breach." Reader explicitly noted the green-to-red pivot at panel 4 communicated this clearly.
+- **Named consequences:** Reader extracted all major consequences accurately: clinical ("faster clinical decisions"), operational/security ("authenticate to the server as if they were a legitimate user"), legal/regulatory ("notifiable under UK GDPR", "ICO regulatory action"), and reputational ("reputational damage").
+
+### Honest notes from Pass 2 (non-blocking, logged for future authoring)
+
+The cold reader flagged two minor observations:
+
+1. **Two red panels in sequence (p5 and p6) could read as visual repetition rather than cause-and-effect.** Mitigation considered but not applied: swapping p5 to `data-exposed` would have created two distinct red-glyph beats (data exposure → breach event). Reader did NOT actually confuse the two beats in practice — captions carried the cause-and-effect distinction. Logged for future content authors weighing red-panel density in subsequent Twin Tracks scenarios.
+
+2. **The authentication nuance is implicit.** Panel 2's "authenticated connections" and panel 5's "authenticate to the server as if they were a legitimate user" rely on the reader understanding that authentication alone does not prove identity once a credential or device is compromised. This nuance is correctly addressed in the phrase pool (phrase 5: "Lost or stolen devices and phishing-compromised credentials let attackers authenticate to the server like an authorised user.") The decoupling between comic and phrase pool is working as intended: comic carries the high-level narrative, phrases drill into mechanism.
+
+### Resolution
+
+Six panels ship into `src/data/twin-tracks/scenarios.json` as authored. Zero revisions required. Pass 2 protocol completed.
+
+This closes the first outstanding item from PR #65 (scenarioPanels array empty, blocked on icon vocabulary). Icon vocabulary shipped in PR #69; the block is no longer relevant.
+
 ## Outstanding
 
-- `scenarioPanels` array empty in `scenarios.json`. Comic panels blocked on icon vocabulary design (spec v0.3 Section 8.0, Section 10 risk row 1). Will be populated when icon vocabulary is locked. Shared infrastructure with Sort and Match.
 - `modelAnswer` structured per spec v0.3 Section 5.3 (positive/negative each with introduce/explain/develop). Reveal component (when built) reads this structure directly for colour-coding.
-- Two-dimensional drag interaction (track × slot) and diagnostic feedback (Section 6.3) are net-new build work in Sprint 3. Risk row in spec v0.3 Section 10 acknowledges the cognitive load risk for mobile layouts; will be validated by pilot observation.
+- Two-dimensional drag interaction (track × slot) and diagnostic feedback (Section 6.3) are net-new build work in Sprint 4. Risk row in spec v0.3 Section 10 acknowledges the cognitive load risk for mobile layouts; will be validated by pilot observation.

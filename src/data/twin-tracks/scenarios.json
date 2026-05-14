@@ -3,7 +3,38 @@
     "id": "hospital-remote-access",
     "title": "Hospital Remote Access",
     "questionType": "discuss",
-    "scenarioPanels": [],
+    "scenarioPanels": [
+      {
+        "id": "p1",
+        "glyph": "hospital",
+        "caption": "A hospital holds sensitive patient records that must be available to authorised staff at all hours."
+      },
+      {
+        "id": "p2",
+        "glyph": "network-secure",
+        "caption": "Staff reach the server remotely from hospital-issued smartphones and laptops over authenticated connections."
+      },
+      {
+        "id": "p3",
+        "glyph": "clinician",
+        "caption": "On-call doctors retrieve records from outside the hospital and make faster clinical decisions for patients."
+      },
+      {
+        "id": "p4",
+        "glyph": "attacker",
+        "caption": "The same remote pathway widens the attack surface against the hospital's records."
+      },
+      {
+        "id": "p5",
+        "glyph": "network-breached",
+        "caption": "A lost device or phished credentials let an attacker authenticate to the server as if they were a legitimate user."
+      },
+      {
+        "id": "p6",
+        "glyph": "breach",
+        "caption": "A confidentiality breach becomes notifiable under UK GDPR, exposing the hospital to ICO regulatory action and reputational damage."
+      }
+    ],
     "phrases": [
       {
         "id": "ph1",
