@@ -100,10 +100,21 @@ Use any non-home page (for example, `/content` or
 
 - [ ] Visit `/content`.
 - [ ] Breadcrumb reads: `HOME / CONTENT`.
-- [ ] Three sections shown: `Paper 1`, `Paper 2`, `Method`.
-- [ ] Under Paper 1: cards for `5-1 …` and `6-1 …` with topic counts.
-- [ ] Under Paper 2: card for `7-2 …` with "0 published topics"
-  (expected; no Paper 2 topics exist yet).
+- [ ] **Scroll the whole page and count three H2 headings: `Paper 1`,
+  `Paper 2`, `Method`.** Do this before checking the cards under each.
+  The Method section sits below Paper 2 and is easy to miss if you stop
+  scrolling after seeing the Paper 2 cards (a real tester missed it on
+  the first run of this guide, against PR #100). If you only see two
+  H2s, that IS a regression; if you see three, proceed.
+- [ ] Under Paper 1: empty state (`"No content areas seeded yet."`)
+  is expected as of 2026-05-14 because no Paper 1 content area is
+  yet seeded. If Paper 1 content is later added, cards will appear
+  here.
+- [ ] Under Paper 2: cards for `5-1 The Business Environment`, `6-1
+  Data and Information`, and `7-2 Emerging Technologies`. Note that
+  5-1 and 6-1 are correctly classified as Paper 2 per the spec; the
+  home page Paper One card surfaces this asymmetry honestly via its
+  COMING SOON state.
 - [ ] Under Method: card for `M How to Answer` with a non-zero topic
   count.
 - [ ] Clicking any card navigates to the corresponding
@@ -113,14 +124,18 @@ Use any non-home page (for example, `/content` or
 
 ### `/content-areas/5-1`
 
-- [ ] Breadcrumb: `HOME / CONTENT / PAPER 1 · 5-1 …`.
+- [ ] Breadcrumb: `HOME / CONTENT / PAPER 2 · 5.1 THE BUSINESS
+  ENVIRONMENT`. (5.1 is classified as Paper 2 per its own content
+  body; the breadcrumb reflects that.)
 - [ ] Five topic cards listed (5-1-1 through 5-1-5).
 - [ ] Each card links to its `/topics/5-1-{slug}`.
 - [ ] "← Back to home" link at the bottom works.
 
 ### `/content-areas/6-1`
 
-- [ ] Breadcrumb: `HOME / CONTENT / PAPER 1 · 6-1 …`.
+- [ ] Breadcrumb: `HOME / CONTENT / PAPER 2 · 6.1 DATA AND
+  INFORMATION`. (6.1 is classified as Paper 2 per its own content
+  body.)
 - [ ] One topic card: 6-1-1 Data Types.
 - [ ] Card links to `/topics/6-1-1-data-types`.
 
