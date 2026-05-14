@@ -1,0 +1,205 @@
+---
+// src/components/MethodLibrary.astro
+//
+// Methodology library: collected view of worked-example topics with
+// consistent N·E·I role highlighting framing and per-topic library
+// summaries.
+//
+// Phase 1 A2: the methodology library page. Gated on A1 (inline N·E·I
+// role highlighting) shipped in #88. v1 launches with the two worked
+// examples currently in src/content/topics/m-* (Data Structures, Naming
+// versus Describing). The library is designed to scale: as more worked
+// example topics author with a library_summary field set, they appear
+// here automatically.
+//
+// Topics without library_summary are filtered out, so this component
+// is safe to reuse when more topics adopt the field over time.
+
+import type { CollectionEntry } from "astro:content";
+import NeiRole from "./NeiRole.astro";
+
+interface Props {
+  topics: CollectionEntry<"topics">[];
+}
+
+const { topics } = Astro.props;
+
+const libraryTopics = topics.filter((t) => t.data.library_summary);
+---
+
+<section class="method-library">
+  <div class="method-library__legend">
+    <p class="method-library__legend-kicker">THE ANSWER ARC</p>
+    <p class="method-library__legend-text">
+      Every extended answer travels through three components. The
+      <NeiRole name="name">Name</NeiRole> identifies the concept the
+      scenario calls for. The <NeiRole name="explain">Explain</NeiRole>
+      shows how that concept fits the specifics of this scenario. The
+      <NeiRole name="impact">Impact</NeiRole> develops what the system
+      can now do, or what it would cost not to. Below, each worked
+      example shows real student answers with these three components
+      colour-coded inline. A missing colour means a missing or weak
+      component.
+    </p>
+  </div>
+
+  <h2 class="method-library__heading">Worked examples</h2>
+
+  {
+    libraryTopics.length === 0 ? (
+      <p class="method-library__empty">
+        No worked examples have a library summary yet.
+      </p>
+    ) : (
+      <ul class="method-library__list" role="list">
+        {libraryTopics.map((topic) => (
+          <li class="method-library__item">
+            <a
+              href={`/topics/${topic.id}`}
+              class="method-library__card"
+            >
+              <div class="method-library__card-eyebrow">
+                Section {topic.data.section_id}
+                <span class="method-library__card-sep">·</span>
+                {topic.data.estimated_minutes} min
+              </div>
+              <h3 class="method-library__card-title">{topic.data.title}</h3>
+              <p class="method-library__card-summary">
+                {topic.data.library_summary}
+              </p>
+              <p class="method-library__card-cta">
+                Read the full worked example →
+              </p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</section>
+
+<style>
+  .method-library {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5, 2rem);
+    margin-top: var(--space-4, 1.5rem);
+  }
+
+  .method-library__legend {
+    padding: var(--space-3, 1rem) var(--space-4, 1.5rem);
+    background: var(--void, rgba(0, 0, 0, 0.25));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-left: 2px solid var(--gold, #ffd700);
+    border-radius: 2px;
+  }
+
+  .method-library__legend-kicker {
+    font-family: "JetBrains Mono", "Share Tech Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold, #ffd700);
+    margin: 0 0 0.5rem;
+  }
+
+  .method-library__legend-text {
+    margin: 0;
+    color: var(--ink, #e8edf3);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 72ch;
+  }
+
+  .method-library__heading {
+    margin: 0;
+    color: var(--ink, #e8edf3);
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .method-library__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3, 1rem);
+  }
+
+  .method-library__item {
+    margin: 0;
+  }
+
+  .method-library__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: var(--space-4, 1.5rem);
+    background: var(--void, rgba(0, 0, 0, 0.25));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-left: 2px solid var(--green, #39ff14);
+    border-radius: 2px;
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color 160ms ease,
+      transform 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .method-library__card:hover,
+  .method-library__card:focus-visible {
+    border-color: var(--green, #39ff14);
+    box-shadow: 0 0 0 4px rgba(57, 255, 20, 0.08);
+    transform: translateY(-1px);
+  }
+
+  .method-library__card-eyebrow {
+    font-family: "JetBrains Mono", "Share Tech Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--dim, rgba(232, 237, 243, 0.55));
+  }
+
+  .method-library__card-sep {
+    margin: 0 0.5rem;
+    opacity: 0.5;
+  }
+
+  .method-library__card-title {
+    margin: 0;
+    color: var(--ink, #e8edf3);
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .method-library__card-summary {
+    margin: 0;
+    color: var(--dim, rgba(232, 237, 243, 0.75));
+    font-size: 0.95rem;
+    line-height: 1.6;
+    max-width: 72ch;
+  }
+
+  .method-library__card-cta {
+    margin: 0;
+    font-family: "JetBrains Mono", "Share Tech Mono", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--green, #39ff14);
+  }
+
+  .method-library__empty {
+    color: var(--muted, rgba(232, 237, 243, 0.3));
+    font-style: italic;
+  }
+
+  @media (min-width: 720px) {
+    .method-library__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

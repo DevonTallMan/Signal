@@ -241,6 +241,12 @@ const topics = collection({
       multiline: true,
       description: 'Changelog. Not rendered to students.',
     }),
+    library_summary: fields.text({
+      label: 'Library Summary',
+      multiline: true,
+      description:
+        'One or two sentences shown on the methodology library card for this topic. Optional. Leave blank for topics that should not appear in the library.',
+    }),
     explanation: fields.markdoc({
       label: 'Explanation',
       description: 'The main teaching content.',

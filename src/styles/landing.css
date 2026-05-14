@@ -615,6 +615,29 @@ a:focus-visible {
 }
 .arc-inner .aarc-root { margin-top: 52px; }
 
+.arc-followup {
+  margin: 40px auto 0;
+  text-align: center;
+}
+
+.arc-followup-link {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(57, 255, 20, 0.3);
+  padding-bottom: 4px;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.arc-followup-link:hover,
+.arc-followup-link:focus-visible {
+  color: var(--ink);
+  border-bottom-color: var(--green);
+}
+
 @media (max-width: 768px) {
   .arc-section { padding: 60px 20px; }
 }
