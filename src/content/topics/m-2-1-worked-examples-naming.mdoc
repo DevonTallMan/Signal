@@ -16,10 +16,14 @@ learning_outcomes:
 prerequisites:
   - m-1-1-worked-examples-data-structures
 estimated_minutes: 15
-last_reviewed: 2026-04-19
+last_reviewed: 2026-05-14
 revision_notes: |
   2026-04-19: Initial worked example topic for Method section 2
   (Naming versus Describing).
+  2026-05-14: Phase 1 A1: applied inline N·E·I structural highlighting
+  to the three answer variants and added a colour-coding legend after
+  the intro prose. No change to the pedagogical content; presentation
+  only.
 assessments: []
 ---
 
@@ -43,13 +47,20 @@ you're proposing. If you describe the system perfectly but never
 attach a name to it, the marker cannot award you the mark for naming a
 system you did not name.
 
+As in M.1.1, the answers below are highlighted to show structure
+inline. The {% role name="name" %}Name{% /role %} is tinted green,
+the {% role name="explain" %}Explain{% /role %} is tinted gold, and
+the {% role name="impact" %}Impact{% /role %} is tinted orange. A
+missing colour means the corresponding component is absent or too
+weak to earn its mark.
+
 ## Answer One: the one that describes without naming
 
-> The business could put in place a computer system that stores all the
+> {% role name="explain" %}The business could put in place a computer system that stores all the
 > details about each customer and every time staff talk to them, so that
 > anyone answering the phone can see what has happened before. This
 > would help because staff would not have to ask the customer to repeat
-> themselves and they would know what had already been said. The
+> themselves and they would know what had already been said.{% /role %} The
 > business would look more professional and customers would be happier.
 
 Stop. Read that answer again. What did the student actually name?
@@ -92,7 +103,7 @@ Marks this would earn: 1 out of 4.
 
 ## Answer Two: the one that names and stops
 
-> The business should use a CRM system. A CRM stores customer data and
+> {% role name="name" %}The business should use a CRM system.{% /role %} A CRM stores customer data and
 > allows staff to share information. This would help the business.
 
 This is the opposite pattern to Answer One. Where Answer One described
@@ -121,16 +132,16 @@ does not name.
 
 ## Answer Three: the full four marks
 
-> The business should implement a Customer Relationship Management
-> (CRM) system. A CRM holds a single shared record for each customer
+> {% role name="name" %}The business should implement a Customer Relationship Management
+> (CRM) system.{% /role %} {% role name="explain" %}A CRM holds a single shared record for each customer
 > with every previous contact logged against it, so any member of
 > staff picking up a complaint can see the full history of prior
 > conversations without having to ask the customer to repeat
-> themselves. This means resolution times drop because staff start
+> themselves.{% /role %} {% role name="impact" %}This means resolution times drop because staff start
 > each call with the context they need rather than gathering it, and
 > customers are not forced to re-explain problems they have already
 > reported, which directly addresses the two failure modes the
-> scenario identifies.
+> scenario identifies.{% /role %}
 
 Walk through it.
 

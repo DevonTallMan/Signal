@@ -1,0 +1,31 @@
+---
+// src/components/NeiRole.astro
+//
+// Renders an inline N·E·I structural-role span used in worked-example
+// answer prose. Driven by the Markdoc `role` tag defined in
+// markdoc.config.mjs.
+//
+// Phase 1 A1: methodology-depth feature making the Answer Arc structure
+// visible inside the answers themselves, not just described in
+// commentary around them.
+
+interface Props {
+  name: "name" | "explain" | "impact";
+}
+
+const { name } = Astro.props;
+
+const labels: Record<Props["name"], string> = {
+  name: "Name",
+  explain: "Explain",
+  impact: "Impact",
+};
+---
+
+<mark
+  class={`nei-role nei-role--${name}`}
+  aria-label={`${labels[name]} component of the Answer Arc`}
+  data-nei-role={name}
+>
+  <slot />
+</mark>
