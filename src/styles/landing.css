@@ -262,6 +262,25 @@ body::after {
 .p1 .paper-cta { color: var(--green); }
 .p2 .paper-cta { color: var(--gold); }
 
+/* Placeholder paper-card variant: no link, no hover lift, muted CTA.
+   Used on the home page Paper One tile while Paper 1 content is being
+   prepared ahead of the September 2026 pilot. */
+.paper-card--placeholder {
+  cursor: default;
+}
+.paper-card--placeholder:hover {
+  border-color: var(--border);
+  box-shadow: none;
+  transform: none;
+}
+.paper-card--placeholder:hover::before {
+  opacity: 0.6;
+}
+.paper-cta--muted {
+  color: var(--muted) !important;
+  font-style: italic;
+}
+
 /* ACTIVITIES grid (mirrors .papers-grid pattern but with a third column
    and a green accent to match the methodology-depth framing). */
 .activities-grid {
