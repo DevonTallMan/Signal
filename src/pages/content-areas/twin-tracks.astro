@@ -11,9 +11,17 @@
 // See docs/sort-and-match-nei-spec.md for full Twin Tracks spec.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import TwinTracksIsland from "../../components/twin-tracks";
+import Breadcrumb from "../../components/Breadcrumb.astro";
 ---
 <BaseLayout title="Twin Tracks | Signal">
   <main class="twin-tracks-page">
+    <Breadcrumb
+      crumbs={[
+        { label: "Home", href: "/" },
+        { label: "Activities", href: "/activities" },
+        { label: "Twin Tracks" },
+      ]}
+    />
     <header class="tt-intro">
       <p class="tt-intro__kicker">DISCUSS-STYLE WORKED EXAMPLE</p>
       <h1 class="tt-intro__title">Twin Tracks</h1>

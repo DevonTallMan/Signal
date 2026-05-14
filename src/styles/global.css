@@ -1055,3 +1055,54 @@ mark.nei-role--impact {
   --nei-tint: rgba(255, 157, 58, 0.15);
   --nei-border: rgba(255, 157, 58, 0.6);
 }
+
+/* ==========================================================
+   .breadcrumb
+   Navigation aid rendered near the top of topic pages,
+   content-area pages, activity pages, and the /content and
+   /activities index pages. Driven by the Breadcrumb.astro
+   component.
+   ========================================================== */
+
+.breadcrumb {
+  margin-bottom: var(--space-3, 1rem);
+}
+
+.breadcrumb__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.breadcrumb__item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.breadcrumb__link {
+  color: var(--dim);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.breadcrumb__link:hover,
+.breadcrumb__link:focus-visible {
+  color: var(--green);
+}
+
+.breadcrumb__current {
+  color: var(--ink);
+}
+
+.breadcrumb__sep {
+  color: var(--muted);
+  margin: 0 0.55rem;
+}

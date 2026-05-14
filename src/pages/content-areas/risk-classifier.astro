@@ -10,10 +10,18 @@
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import RiskClassifierIsland from "../../components/RiskClassifier";
+import Breadcrumb from "../../components/Breadcrumb.astro";
 ---
 
 <BaseLayout title="Risk Classifier | Signal">
   <main class="risk-classifier-page">
+    <Breadcrumb
+      crumbs={[
+        { label: "Home", href: "/" },
+        { label: "Activities", href: "/activities" },
+        { label: "Risk Classifier" },
+      ]}
+    />
     <header class="rc-intro">
       <p class="rc-intro__kicker">UK LEGISLATION INTERACTIVE</p>
       <h1 class="rc-intro__title">Risk Classifier</h1>

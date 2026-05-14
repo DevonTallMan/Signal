@@ -1,0 +1,99 @@
+---
+// src/pages/activities.astro
+//
+// Landing page listing the three interactive activities. Mirrors the
+// pattern of /content.astro (which lists content areas). Linked from
+// the BaseLayout nav and the home page so each activity is reachable
+// in one click from anywhere in the site.
+
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Breadcrumb from "~/components/Breadcrumb.astro";
+
+interface Activity {
+  href: string;
+  title: string;
+  eyebrow: string;
+  description: string;
+  drillsLine: string;
+}
+
+const activities: Activity[] = [
+  {
+    href: "/content-areas/risk-classifier",
+    title: "Risk Classifier",
+    eyebrow: "UK Legislation",
+    description:
+      "Classify workplace digital scenarios into one of four UK legislation tiers: Data Protection, Computer Misuse, Equality, or Intellectual Property. Five scenarios per session, marker-style feedback on every classification.",
+    drillsLine:
+      "Drills the Name component of the Answer Arc for Paper 1 legislation-application questions.",
+  },
+  {
+    href: "/content-areas/sort-and-match",
+    title: "Sort & Match",
+    eyebrow: "N·E·I Recognition",
+    description:
+      "Drag whole-sentence phrases into Name, Explain, and Impact buckets for worked examples. Three-attempt stuck mitigation with a model-answer reveal on success or after the third try.",
+    drillsLine:
+      "Drills full Answer Arc recognition for concept-explanation and legislation-application questions.",
+  },
+  {
+    href: "/content-areas/twin-tracks",
+    title: "Twin Tracks",
+    eyebrow: "Discuss-Style Recognition",
+    description:
+      "Drag phrases into a six-cell grid: positive impact and negative impact across Introduce, Explain, and Develop. Per-drop diagnostic feedback distinguishes track-error from slot-error.",
+    drillsLine:
+      "Drills two-dimensional analytical structure for Discuss-style questions.",
+  },
+];
+---
+
+<BaseLayout
+  title="Activities"
+  description="Interactive drills for the Answer Arc methodology across legislation classification, N·E·I recognition, and Discuss-style structure."
+>
+  <main class="container">
+    <Breadcrumb
+      crumbs={[
+        { label: "Home", href: "/" },
+        { label: "Activities" },
+      ]}
+    />
+
+    <div class="eyebrow">T-Level Digital Study Platform</div>
+    <h1>Activities</h1>
+    <p class="prose" style="color: var(--dim);">
+      Three interactive drills. Each one targets a different shape of
+      extended-answer question. Work through them in any order. Per-attempt
+      data is logged to your Signal account so progress is preserved
+      across sessions.
+    </p>
+
+    <section style="margin-top: var(--space-5);">
+      {
+        activities.map((activity) => (
+          <a
+            href={activity.href}
+            class="card"
+            style="display: block; border-bottom: 1px solid var(--border);"
+          >
+            <div class="eyebrow">{activity.eyebrow}</div>
+            <h3 style="margin: 0;">{activity.title}</h3>
+            <p
+              class="prose"
+              style="margin-top: var(--space-2); color: var(--dim);"
+            >
+              {activity.description}
+            </p>
+            <p
+              class="meta"
+              style="margin-top: var(--space-2); color: var(--green);"
+            >
+              {activity.drillsLine}
+            </p>
+          </a>
+        ))
+      }
+    </section>
+  </main>
+</BaseLayout>

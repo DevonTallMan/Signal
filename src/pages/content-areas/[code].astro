@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import MethodLibrary from '~/components/MethodLibrary.astro';
+import Breadcrumb from '~/components/Breadcrumb.astro';
 
 export async function getStaticPaths() {
   const areas = await getCollection('contentAreas');
@@ -25,6 +26,9 @@ const topics = (await getCollection('topics'))
 // (worked-example cards with summaries) instead of the generic topic
 // list. Phase 1 A2.
 const isMethodLibrary = area.id === 'method';
+
+const paperLabel =
+  area.data.paper === 'method' ? 'Method' : `Paper ${area.data.paper}`;
 ---
 
 <BaseLayout
@@ -32,8 +36,15 @@ const isMethodLibrary = area.id === 'method';
   description={`${area.data.paper === 'method' ? 'Method' : `Paper ${area.data.paper}`}, Content Area ${area.data.display_code}`}
 >
   <main class="container">
+    <Breadcrumb
+      crumbs={[
+        { label: 'Home', href: '/' },
+        { label: 'Content', href: '/content' },
+        { label: `${paperLabel} · ${area.data.display_code} ${area.data.title}` },
+      ]}
+    />
     <div class="eyebrow">
-      {area.data.paper === 'method' ? 'Method' : `Paper ${area.data.paper}`} · Area {area.data.display_code}
+      {paperLabel} · Area {area.data.display_code}
     </div>
     <h1>{area.data.title}</h1>
 

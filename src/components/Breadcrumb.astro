@@ -1,0 +1,48 @@
+---
+// src/components/Breadcrumb.astro
+//
+// Renders a breadcrumb trail across the top of a page. Used on topic
+// pages, content-area pages, activity pages, and the /content and
+// /activities index pages so the user always knows where they are in
+// the site structure and can navigate back up.
+//
+// Each crumb is either a link (anchor) or a current-page label (span
+// with aria-current="page"). The component renders <nav>/<ol>/<li>
+// for accessibility per WAI-ARIA breadcrumb pattern.
+
+export interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  crumbs: Crumb[];
+}
+
+const { crumbs } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    {
+      crumbs.map((crumb, i) => (
+        <li class="breadcrumb__item">
+          {crumb.href ? (
+            <a class="breadcrumb__link" href={crumb.href}>
+              {crumb.label}
+            </a>
+          ) : (
+            <span class="breadcrumb__current" aria-current="page">
+              {crumb.label}
+            </span>
+          )}
+          {i < crumbs.length - 1 && (
+            <span class="breadcrumb__sep" aria-hidden="true">
+              /
+            </span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

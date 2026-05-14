@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumb from '~/components/Breadcrumb.astro';
 
 const allAreas = await getCollection('contentAreas');
 const allTopics = await getCollection('topics');
@@ -23,6 +24,12 @@ const topicCount = (areaCode: string) =>
   description="All content areas and topics published on Signal."
 >
   <main class="container">
+    <Breadcrumb
+      crumbs={[
+        { label: 'Home', href: '/' },
+        { label: 'Content' },
+      ]}
+    />
     <div class="eyebrow">T-Level Digital Study Platform</div>
     <h1>Content Areas</h1>
     <p class="prose" style="color: var(--dim);">
