@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
+import MethodLibrary from '~/components/MethodLibrary.astro';
 
 export async function getStaticPaths() {
   const areas = await getCollection('contentAreas');
@@ -19,6 +20,11 @@ const topics = (await getCollection('topics'))
       t.data.content_area === area.id && t.data.status === 'published'
   )
   .sort((a, b) => a.data.section_id.localeCompare(b.data.section_id));
+
+// The "method" content area renders as the methodology library
+// (worked-example cards with summaries) instead of the generic topic
+// list. Phase 1 A2.
+const isMethodLibrary = area.id === 'method';
 ---
 
 <BaseLayout
@@ -35,25 +41,30 @@ const topics = (await getCollection('topics'))
       <Content />
     </div>
 
-    <h2>Topics</h2>
-
     {
-      topics.length === 0 ? (
-        <p style="color: var(--muted);">No published topics in this area yet.</p>
+      isMethodLibrary ? (
+        <MethodLibrary topics={topics} />
       ) : (
-        topics.map((topic) => (
-          <a
-            href={`/topics/${topic.id}`}
-            class="card"
-            style="display: block;"
-          >
-            <div class="eyebrow">Section {topic.data.section_id}</div>
-            <h3 style="margin: 0;">{topic.data.title}</h3>
-            <p class="meta" style="margin-top: var(--space-2);">
-              {topic.data.estimated_minutes} min
-            </p>
-          </a>
-        ))
+        <>
+          <h2>Topics</h2>
+          {topics.length === 0 ? (
+            <p style="color: var(--muted);">No published topics in this area yet.</p>
+          ) : (
+            topics.map((topic) => (
+              <a
+                href={`/topics/${topic.id}`}
+                class="card"
+                style="display: block;"
+              >
+                <div class="eyebrow">Section {topic.data.section_id}</div>
+                <h3 style="margin: 0;">{topic.data.title}</h3>
+                <p class="meta" style="margin-top: var(--space-2);">
+                  {topic.data.estimated_minutes} min
+                </p>
+              </a>
+            ))
+          )}
+        </>
       )
     }
 

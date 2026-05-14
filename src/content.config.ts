@@ -87,6 +87,7 @@ const topics = defineCollection({
     estimated_minutes: z.number().default(25),
     last_reviewed: z.coerce.date().optional(),
     revision_notes: z.string().optional(),
+    library_summary: z.string().optional(),
     assessments: z.array(z.union([mcqSchema, neiSchema])).default([]),
     drill: z
       .array(
