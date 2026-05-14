@@ -3,17 +3,33 @@
 // React island for the Twin Tracks Discuss-style activity.
 // Sprint 4 worked example: Hospital Remote Access (single scenario currently).
 //
-// Sprint 4 Increment 4.1 scope: STATIC UI SHELL ONLY.
-//   - Renders the scenarioPanels comic strip (6 panels using Glyph)
-//   - Renders phrase pool (6 phrases as static cards)
-//   - Renders 6-cell grid (positive top, negative bottom; introduce/explain/develop)
-//   - One-line framing caption per spec Section 4.2
-//   - No drag-and-drop (Inc 4.2)
-//   - No validation, persistence, session loop, or tests (later increments)
+// Sprint 4 Increment 4.2 scope: TWO-DIMENSIONAL DRAG-AND-DROP.
+//   - @dnd-kit/core PointerSensor + TouchSensor wired
+//   - 6 phrase cards draggable from pool and between cells
+//   - 7 droppables: 6 cells (encoded as `${track}-${slot}`) plus the pool
+//   - Drop registers the (track, slot) pair on the phrase's local state
+//   - No validation yet. Any phrase can land in any cell.
+//
+// What this PR does NOT do (per docs/sprint-4-scope.md):
+//   - Per-drop validation, diagnostic feedback, stuck mitigation, model
+//     answer reveal (Inc 4.3)
+//   - Session loop and sessionPicker (Inc 4.4)
+//   - Firestore persistence and rules tests (Inc 4.5)
+//   - Playwright tests (Inc 4.6)
 //
 // See docs/sort-and-match-nei-spec.md for full Twin Tracks spec.
-// See docs/sprint-4-scope.md for increment breakdown.
 
+import { useState } from "react";
+import {
+  DndContext,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  useDraggable,
+  useDroppable,
+  type DragEndEvent,
+} from "@dnd-kit/core";
 import scenariosData from "../../data/twin-tracks/scenarios.json";
 import { Glyph } from "../glyphs";
 import type { GlyphName } from "../glyphs";
@@ -54,6 +70,9 @@ interface Scenario {
   modelAnswer: ModelAnswer;
 }
 
+type CellId = `${Track}-${Slot}`;
+type Location = "pool" | CellId;
+
 const TRACKS: readonly Track[] = ["positive", "negative"] as const;
 const SLOTS: readonly Slot[] = ["introduce", "explain", "develop"] as const;
 
@@ -68,9 +87,101 @@ const SLOT_LABELS: Record<Slot, string> = {
   develop: "Develop",
 };
 
+function cellId(track: Track, slot: Slot): CellId {
+  return `${track}-${slot}` as CellId;
+}
+
+function initialLocations(phrases: Phrase[]): Record<string, Location> {
+  const out: Record<string, Location> = {};
+  for (const p of phrases) out[p.id] = "pool";
+  return out;
+}
+
+// ---------- DraggablePhrase ----------
+interface DraggablePhraseProps {
+  phrase: Phrase;
+}
+
+function DraggablePhrase({ phrase }: DraggablePhraseProps): JSX.Element {
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({ id: phrase.id });
+
+  const style: React.CSSProperties = {
+    transform: transform
+      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+      : undefined,
+    opacity: isDragging ? 0.5 : 1,
+    cursor: isDragging ? "grabbing" : "grab",
+    touchAction: "none",
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      className="tt-twintracks__phrase"
+      style={style}
+      {...listeners}
+      {...attributes}
+    >
+      <span className="tt-twintracks__phrase-text">{phrase.text}</span>
+    </div>
+  );
+}
+
+// ---------- Droppable ----------
+interface DroppableProps {
+  id: Location;
+  children: React.ReactNode;
+  className: string;
+  ariaLabel: string;
+}
+
+function Droppable({
+  id,
+  children,
+  className,
+  ariaLabel,
+}: DroppableProps): JSX.Element {
+  const { isOver, setNodeRef } = useDroppable({ id });
+  const overClass = isOver ? `${className} ${className}--over` : className;
+
+  return (
+    <div ref={setNodeRef} className={overClass} aria-label={ariaLabel}>
+      {children}
+    </div>
+  );
+}
+
+// ---------- Main component ----------
 export default function TwinTracks(): JSX.Element {
   const scenarios = scenariosData as Scenario[];
   const scenario = scenarios[0];
+
+  const [phraseLocations, setPhraseLocations] = useState<
+    Record<string, Location>
+  >(() => initialLocations(scenario.phrases));
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 4 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 120, tolerance: 5 },
+    })
+  );
+
+  function handleDragEnd(event: DragEndEvent): void {
+    const { active, over } = event;
+    if (!over) return;
+    const newLocation = over.id as Location;
+    setPhraseLocations((prev) => ({
+      ...prev,
+      [String(active.id)]: newLocation,
+    }));
+  }
+
+  const phrasesIn = (loc: Location): Phrase[] =>
+    scenario.phrases.filter((p) => phraseLocations[p.id] === loc);
 
   return (
     <div className="tt-twintracks">
@@ -102,61 +213,73 @@ export default function TwinTracks(): JSX.Element {
         ))}
       </div>
 
-      <div className="tt-twintracks__activity">
-        <div className="tt-twintracks__grid-group">
-          <p className="tt-twintracks__section-kicker">SORT INTO</p>
-          <div
-            className="tt-twintracks__grid"
-            role="grid"
-            aria-label="Twin Tracks placement grid"
-          >
-            <div className="tt-twintracks__corner" aria-hidden="true"></div>
-            {SLOTS.map((slot) => (
-              <div
-                key={`header-${slot}`}
-                className="tt-twintracks__col-header"
-                role="columnheader"
-              >
-                {SLOT_LABELS[slot]}
-              </div>
-            ))}
-            {TRACKS.flatMap((track) => [
-              <div
-                key={`label-${track}`}
-                className={`tt-twintracks__row-label tt-twintracks__row-label--${track}`}
-                role="rowheader"
-              >
-                {TRACK_LABELS[track]}
-              </div>,
-              ...SLOTS.map((slot) => (
+      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <div className="tt-twintracks__activity">
+          <div className="tt-twintracks__grid-group">
+            <p className="tt-twintracks__section-kicker">SORT INTO</p>
+            <div
+              className="tt-twintracks__grid"
+              role="grid"
+              aria-label="Twin Tracks placement grid"
+            >
+              <div className="tt-twintracks__corner" aria-hidden="true"></div>
+              {SLOTS.map((slot) => (
                 <div
-                  key={`${track}-${slot}`}
-                  className={`tt-twintracks__cell tt-twintracks__cell--${track}`}
-                  role="gridcell"
-                  aria-label={`${TRACK_LABELS[track]}, ${SLOT_LABELS[slot]}`}
+                  key={`header-${slot}`}
+                  className="tt-twintracks__col-header"
+                  role="columnheader"
                 >
-                  {/* Drop targets wire in Inc 4.2 */}
-                </div>
-              )),
-            ])}
-          </div>
-        </div>
-
-        <div className="tt-twintracks__phrase-pool">
-          <p className="tt-twintracks__section-kicker">PHRASE POOL</p>
-          <div className="tt-twintracks__pool">
-            <div className="tt-twintracks__phrases">
-              {scenario.phrases.map((phrase) => (
-                <div key={phrase.id} className="tt-twintracks__phrase">
-                  <span className="tt-twintracks__phrase-text">
-                    {phrase.text}
-                  </span>
+                  {SLOT_LABELS[slot]}
                 </div>
               ))}
+              {TRACKS.flatMap((track) => [
+                <div
+                  key={`label-${track}`}
+                  className={`tt-twintracks__row-label tt-twintracks__row-label--${track}`}
+                  role="rowheader"
+                >
+                  {TRACK_LABELS[track]}
+                </div>,
+                ...SLOTS.map((slot) => {
+                  const id = cellId(track, slot);
+                  return (
+                    <Droppable
+                      key={id}
+                      id={id}
+                      className={`tt-twintracks__cell tt-twintracks__cell--${track}`}
+                      ariaLabel={`${TRACK_LABELS[track]}, ${SLOT_LABELS[slot]}`}
+                    >
+                      {phrasesIn(id).map((phrase) => (
+                        <DraggablePhrase key={phrase.id} phrase={phrase} />
+                      ))}
+                    </Droppable>
+                  );
+                }),
+              ])}
             </div>
           </div>
+
+          <div className="tt-twintracks__phrase-pool">
+            <p className="tt-twintracks__section-kicker">PHRASE POOL</p>
+            <Droppable
+              id="pool"
+              className="tt-twintracks__pool"
+              ariaLabel="Phrase pool"
+            >
+              <div className="tt-twintracks__phrases">
+                {phrasesIn("pool").map((phrase) => (
+                  <DraggablePhrase key={phrase.id} phrase={phrase} />
+                ))}
+                {phrasesIn("pool").length === 0 && (
+                  <p className="tt-twintracks__pool-empty">
+                    Pool empty. Drag phrases back here to clear a cell.
+                  </p>
+                )}
+              </div>
+            </Droppable>
+          </div>
         </div>
-      </div>
+      </DndContext>
 
       <style>{commonStyles}</style>
     </div>
@@ -288,9 +411,14 @@ const commonStyles = `
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    transition: border-color 120ms ease, background 120ms ease;
   }
   .tt-twintracks__cell--negative {
     margin-top: 0.5rem;
+  }
+  .tt-twintracks__cell--over {
+    border-color: var(--green, #39ff14);
+    background: rgba(57, 255, 20, 0.05);
   }
 
   .tt-twintracks__phrase-pool {
@@ -302,6 +430,20 @@ const commonStyles = `
     background: rgba(255, 255, 255, 0.02);
     border: 1px dashed var(--border, rgba(255, 255, 255, 0.12));
     border-radius: 2px;
+    min-height: 80px;
+    transition: border-color 120ms ease, background 120ms ease;
+  }
+  .tt-twintracks__pool--over {
+    border-color: var(--green, #39ff14);
+    background: rgba(57, 255, 20, 0.05);
+  }
+  .tt-twintracks__pool-empty {
+    margin: 0;
+    padding: 0.5rem;
+    color: var(--muted, rgba(232, 237, 243, 0.55));
+    font-size: 0.85rem;
+    text-align: center;
+    font-style: italic;
   }
   .tt-twintracks__phrases {
     display: flex;
@@ -318,6 +460,7 @@ const commonStyles = `
     font-size: 0.85rem;
     line-height: 1.5;
     user-select: none;
+    transition: border-color 160ms ease;
   }
   .tt-twintracks__phrase-text {
     display: block;
