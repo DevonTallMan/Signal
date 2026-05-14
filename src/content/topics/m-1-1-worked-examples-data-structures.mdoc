@@ -37,10 +37,17 @@ structure.
 If you miss that the scenario matters, you'll write a textbook
 definition of an array and wonder why you got two marks instead of four.
 
+Throughout the three answers below, the prose is highlighted to show
+the Answer Arc structure inline. The {% role name="name" %}Name{% /role %}
+is tinted green, the {% role name="explain" %}Explain{% /role %} is
+tinted gold, and the {% role name="impact" %}Impact{% /role %} is
+tinted orange. Where a colour is missing, the corresponding component
+is missing or weak in that answer.
+
 ## Answer One: the one that leaves marks on the table
 
-> A list could be used to store the data because lists can hold lots of
-> items and you can add and remove things from them easily. Lists are
+> {% role name="name" %}A list could be used to store the data{% /role %} {% role name="explain" %}because lists can hold lots of
+> items and you can add and remove things from them easily.{% /role %} Lists are
 > useful in programming and most languages support them.
 
 Let me tell you what a marker sees when they read this.
@@ -70,11 +77,11 @@ Marks this would earn: 1 out of 4.
 
 ## Answer Two: the one that gets close and stops
 
-> An array of records would be suitable. An array is a structure that
+> {% role name="name" %}An array of records would be suitable.{% /role %} {% role name="explain" %}An array is a structure that
 > stores many items of the same type indexed by position, and a record
 > stores several fields together under one name. So you would have
 > 10,000 records in the array, each record holding the code, name,
-> price, and quantity for one item.
+> price, and quantity for one item.{% /role %}
 
 Better. Much better. Let's see what it's doing.
 
@@ -102,15 +109,15 @@ Marks this would earn: 3 out of 4.
 
 ## Answer Three: the full four marks
 
-> An array of records is suitable. An array holds many values indexed
+> {% role name="name" %}An array of records is suitable.{% /role %} {% role name="explain" %}An array holds many values indexed
 > by position, and a record groups several fields of different types
 > under one name, so you would have 10,000 records in the array with
 > each record holding the four fields (code, name, price, quantity)
-> for one SKU. This means the stock management system can iterate over
+> for one SKU.{% /role %} {% role name="impact" %}This means the stock management system can iterate over
 > all items in a single loop to perform bulk operations like stock
 > valuation, low-stock detection, or reorder triggers, which would be
 > impossible to manage with 40,000 separate variables and would
-> require changing the source code every time a new SKU was added.
+> require changing the source code every time a new SKU was added.{% /role %}
 
 Walk through it with me.
 

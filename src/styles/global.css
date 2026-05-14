@@ -1019,3 +1019,39 @@ samp {
 .arc-clause--impact .arc-clause__label {
   color: #ff9d3a;
 }
+
+/* ==========================================================
+   .nei-role
+   Phase 1 A1: inline structural highlighting on worked-example
+   answer prose. Driven by the Markdoc `role` tag (see
+   markdoc.config.mjs) which wraps spans of student-answer prose
+   in mark.nei-role--{name|explain|impact}.
+
+   Colour convention matches .arc-clause and .exemplar-arc:
+   name=green, explain=gold, impact=#ff9d3a. Subtle background
+   tint plus a coloured underline so the structure is visible
+   inline without dominating the prose.
+   ========================================================== */
+
+mark.nei-role {
+  background-color: var(--nei-tint, transparent);
+  color: inherit;
+  padding: 0 0.2em;
+  border-radius: 2px;
+  border-bottom: 2px solid var(--nei-border, transparent);
+}
+
+mark.nei-role--name {
+  --nei-tint: rgba(57, 255, 20, 0.13);
+  --nei-border: rgba(57, 255, 20, 0.6);
+}
+
+mark.nei-role--explain {
+  --nei-tint: rgba(255, 215, 0, 0.15);
+  --nei-border: rgba(255, 215, 0, 0.6);
+}
+
+mark.nei-role--impact {
+  --nei-tint: rgba(255, 157, 58, 0.15);
+  --nei-border: rgba(255, 157, 58, 0.6);
+}
