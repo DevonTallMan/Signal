@@ -190,11 +190,11 @@ All ten scenarios are distinct from the twelve platform scenarios in `src/data/r
 
 The author has tried to use cohort-appropriate language throughout, but the following items would benefit from your read on whether they will land for Mid-Sussex College T-Level Digital learners:
 
-1. **Reading load.** Each scenario is 2-3 sentences. Total per test: roughly 5-6 minutes of reading + 9-12 minutes of writing for explanations = roughly 15-18 minutes. Tight but realistic in a 30-minute pre/post window.
+1. **Reading load.** Each scenario is 2-3 sentences. Total per test: roughly 5-6 minutes of reading + 9-12 minutes of writing for explanations + 3-5 minutes admin (paper distribution, instructions, collection) = roughly 17-23 minutes per administration.
 
 2. **Cultural references.** Smartphone-only portal in Pre Q4 and Photoshop in Post Q5. Are either going to confuse the cohort or feel dated?
 
-3. **Time budget.** The estimate above is 15-18 minutes for 5 questions × 3 marks of writing in a 30-minute window. That's tight. Realistic for your cohort, or should we cut to 4 questions per side?
+3. **Time budget against your lesson slot.** The 17-23 minute administration estimated in note 1 runs in your lesson time *around* the 30-minute platform window, not against it. Per the evaluation plan Section 2.2, the 30 minutes is platform time scheduled in the second half of your Monday double-period, so the pre-test fits in the non-platform half of session 1 and the post-test fits in the non-platform half of session 4. Is 17-23 minutes realistic for the slot you can give us, accounting for register, late arrivals, technical setup, and any post-test debrief? If the slot is too tight, flag and we'll discuss reducing the question count — though cutting from 5 to 4 questions per side would unbalance the legislation distribution (currently 2 DPA + 1 CMA + 1 Equality + 1 IP per side), so we would want to think about which axis to compress.
 
 4. **Section vs Article numbers.** The mark scheme references specific sections of CMA and Equality Act, plus specific articles of UK GDPR. If your teaching has not gone to that level of specificity, please flag — the mark scheme can be adjusted to credit higher-level descriptions without specific citations.
 
