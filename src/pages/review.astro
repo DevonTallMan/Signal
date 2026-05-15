@@ -1,0 +1,104 @@
+---
+// src/pages/review.astro
+//
+// Dedicated review surface for the Sprint 6 spaced-return mechanism.
+// Loads the drill catalogue from all published topics at build time and
+// hands it to the ReviewSession React island. The island reads the
+// logged-in user's drillRatings, intersects with the catalogue, and
+// presents due cards one at a time.
+
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import ReviewSession from "../components/DrillReview/ReviewSession.tsx";
+import type { DrillCardMeta } from "../components/DrillReview/ReviewSession.tsx";
+
+const topics = await getCollection(
+  "topics",
+  (t) => t.data.status === "published",
+);
+const catalog: DrillCardMeta[] = topics.flatMap((topic) =>
+  topic.data.drill.map((item) => ({
+    topicId: topic.id,
+    termId: item.id,
+    cue: item.cue,
+    answer: item.answer,
+    topicTitle: topic.data.title,
+    topicSlug: topic.id,
+  })),
+);
+---
+
+<BaseLayout title="Review | Signal">
+  <main class="review-page">
+    <Breadcrumb crumbs={[{ label: "Home", href: "/" }, { label: "Review" }]} />
+    <header class="review-intro">
+      <p class="review-intro__kicker">// SPACED RETURN</p>
+      <h1 class="review-intro__title">Review</h1>
+      <p class="review-intro__lede">
+        Cards you have already rated come back here on a schedule. Got it
+        once, see it again in a few days. Get it consistently and the
+        interval grows. Miss it and the card resets.
+      </p>
+    </header>
+    <section class="review-stage">
+      <ReviewSession catalog={catalog} client:only="react" />
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .review-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+  }
+  .review-intro { margin-bottom: 2rem; }
+  .review-intro__kicker {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    color: var(--green, #39ff14);
+    margin: 0 0 0.6rem;
+  }
+  .review-intro__title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--ink, #e8edf3);
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.01em;
+  }
+  .review-intro__lede {
+    font-size: 1rem;
+    color: var(--dim, rgba(232, 237, 243, 0.75));
+    margin: 0;
+    max-width: 60ch;
+    line-height: 1.6;
+  }
+  .review-stage {
+    margin: 2rem 0;
+    min-height: 360px;
+    background: var(--panel, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-radius: 4px;
+    padding: 1.5rem;
+  }
+  .review-loading,
+  .review-empty,
+  .review-unauthenticated {
+    text-align: center;
+    color: var(--dim, rgba(232, 237, 243, 0.75));
+    padding: 2rem 1rem;
+    line-height: 1.6;
+  }
+  .review-summary__next {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: var(--dim, rgba(232, 237, 243, 0.75));
+  }
+  @media (max-width: 640px) {
+    .review-page { padding: 1.5rem 1rem 3rem; }
+    .review-intro__title { font-size: 2rem; }
+    .review-stage { padding: 1rem; }
+  }
+</style>
