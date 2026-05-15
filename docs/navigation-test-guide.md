@@ -43,7 +43,7 @@ captures things to specifically look out for during the walkthrough.
 
 - [ ] Two cards: `// CORE PAPER ONE` and `// CORE PAPER TWO`.
 - [ ] Hovering each card produces a subtle lift (border colour, shadow).
-- [ ] Paper One card links to `/content-areas/6-1`.
+- [ ] Paper One card links to `/content-areas/4-1`.
 - [ ] Paper Two card links to `/content-areas/7-2`.
 
 ### Activities section
@@ -106,15 +106,11 @@ Use any non-home page (for example, `/content` or
   scrolling after seeing the Paper 2 cards (a real tester missed it on
   the first run of this guide, against PR #100). If you only see two
   H2s, that IS a regression; if you see three, proceed.
-- [ ] Under Paper 1: empty state (`"No content areas seeded yet."`)
-  is expected as of 2026-05-14 because no Paper 1 content area is
-  yet seeded. If Paper 1 content is later added, cards will appear
-  here.
+- [ ] Under Paper 1: card for `4-1 Legislation` with a non-zero
+  topic count (four published topics: DPA, CMA, Equality, IP).
 - [ ] Under Paper 2: cards for `5-1 The Business Environment`, `6-1
   Data and Information`, and `7-2 Emerging Technologies`. Note that
-  5-1 and 6-1 are correctly classified as Paper 2 per the spec; the
-  home page Paper One card surfaces this asymmetry honestly via its
-  COMING SOON state.
+  5-1 and 6-1 are correctly classified as Paper 2 per the spec.
 - [ ] Under Method: card for `M How to Answer` with a non-zero topic
   count.
 - [ ] Clicking any card navigates to the corresponding
@@ -252,8 +248,9 @@ following pages in at most three clicks. Verify the path works.
   section card).
 - [ ] `/content-areas/sort-and-match` — 1 click.
 - [ ] `/content-areas/twin-tracks` — 1 click.
-- [ ] `/content-areas/6-1` — 1 click (home papers-grid).
-- [ ] `/content-areas/7-2` — 1 click.
+- [ ] `/content-areas/4-1` — 1 click (home papers-grid Paper One card).
+- [ ] `/content-areas/7-2` — 1 click (home papers-grid Paper Two card).
+- [ ] `/content-areas/6-1` — 2 clicks (home → Content nav → 6-1 card).
 - [ ] `/content-areas/method` — 1 click (home answer-arc follow-up).
 - [ ] `/content-areas/5-1` — 2 clicks (home → any BaseLayout page →
   Content nav → 5-1 card).
