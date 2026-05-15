@@ -26,6 +26,11 @@ service cloud.firestore {
 
       match /drillRatings/{ratingId} {
         allow read: if request.auth != null && request.auth.uid == userId;
+        // Sprint 6 extends this block with optional spaced-return scheduler fields.
+        // The five legacy fields remain required so existing saveDrillRating writes
+        // pass; new fields (boxLevel, nextReviewDate, firstRatedAt, lastRatedAt,
+        // history) are validated only when present, so a write without them still
+        // succeeds. Wiring of the scheduler write path lands in Inc 6.1 / 6.4.
         allow create, update: if request.auth != null
           && request.auth.uid == userId
           && request.resource.data.keys().hasAll([
@@ -35,7 +40,22 @@ service cloud.firestore {
           && request.resource.data.topicId is string
           && request.resource.data.termId is string
           && (request.resource.data.outcome == 'got'
-              || request.resource.data.outcome == 'miss');
+              || request.resource.data.outcome == 'miss')
+          && (!('boxLevel' in request.resource.data)
+              || (request.resource.data.boxLevel is int
+                  && request.resource.data.boxLevel >= 0
+                  && request.resource.data.boxLevel <= 4))
+          && (!('nextReviewDate' in request.resource.data)
+              || (request.resource.data.nextReviewDate is timestamp
+                  && request.resource.data.nextReviewDate
+                       <= request.time + duration.value(60, 'd')))
+          && (!('firstRatedAt' in request.resource.data)
+              || request.resource.data.firstRatedAt is timestamp)
+          && (!('lastRatedAt' in request.resource.data)
+              || request.resource.data.lastRatedAt is timestamp)
+          && (!('history' in request.resource.data)
+              || (request.resource.data.history is list
+                  && request.resource.data.history.size() <= 10));
         allow delete: if false;
       }
 
