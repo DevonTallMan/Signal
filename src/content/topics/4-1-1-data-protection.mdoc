@@ -1,0 +1,383 @@
+---
+title: Data Protection Law
+section_id: "4.1.1"
+content_area: 4-1
+paper: "1"
+status: published
+spec_version: "2024-01"
+authors:
+  - chris-morris
+reviewers:
+  - chris-morris
+learning_outcomes:
+  - Recognise when the Data Protection Act 2018 and UK GDPR apply to a scenario
+  - Name the seven data protection principles and identify which is engaged in a given scenario
+  - Identify which lawful basis an organisation is relying on, or should be relying on, when processing personal data
+  - Name the data subject rights and recognise scenarios where each one applies
+prerequisites: []
+estimated_minutes: 30
+last_reviewed: 2026-05-15
+revision_notes: |
+  2026-05-15: Initial draft. First Paper 1 topic authored after the home-page
+  Paper One COMING SOON workaround (PR #102). Drill, MCQ and NEI calibrated
+  against the Paper 1 legislation-recognition pattern that the pre/post test
+  also follows.
+assessments:
+  - discriminant: mcq
+    value:
+      id: 411-mcq-01
+      prompt: "A hospital appointment system stores patient phone numbers in a shared spreadsheet that any administrator can email externally without further authorisation. No external incident has yet occurred. Which Act is the hospital most clearly failing to comply with?"
+      options:
+        - The Computer Misuse Act 1990
+        - The Data Protection Act 2018 and UK GDPR
+        - The Equality Act 2010
+        - The Copyright, Designs and Patents Act 1988
+      correct_index: 1
+      feedback_correct: |
+        Correct. The hospital is the data controller for highly sensitive
+        personal data (patient contact information attached to medical
+        appointments). Allowing any administrator to email it externally
+        without further authorisation breaches the integrity and
+        confidentiality principle, which requires appropriate security
+        measures. The breach exists whether or not the data has actually
+        leaked yet.
+      feedback_incorrect: |
+        The answer is the Data Protection Act 2018 and UK GDPR. The
+        Computer Misuse Act is about unauthorised access to a computer
+        system, which has not happened here. The Equality Act and the
+        Copyright, Designs and Patents Act are not engaged at all.
+        The hospital is the data controller and its weak security
+        arrangement breaches the integrity and confidentiality principle
+        before any external incident occurs.
+      difficulty: foundation
+  - discriminant: nei
+    value:
+      id: 411-nei-01
+      stimulus: |
+        An online retailer holds an active marketing email list of 80,000
+        customers. About 12,000 of them ticked an opt-out box at checkout
+        six months ago, but the marketing team has continued sending them
+        weekly promotional emails because filtering the list each week is
+        considered "too much hassle".
+      question: |
+        Name the legislation the retailer is breaching, explain which part
+        of it is engaged, and describe the impact on both the retailer
+        and the affected customers.
+      max_marks: 4
+      mark_scheme:
+        name_expected: |
+          The Data Protection Act 2018 and the UK GDPR. Credit answers
+          that name either, or that say "data protection law" with a
+          clear reference to consent. The most precise answer also
+          names the specific principle engaged: lawfulness of processing,
+          or the right to object to direct marketing.
+        explain_expected: |
+          Direct marketing requires either consent or a soft opt-in derived
+          from a prior purchase, and consent under UK GDPR must be specific,
+          informed and freely given. Once a customer has actively opted
+          out, consent is withdrawn and the retailer no longer has a
+          lawful basis for marketing to that customer. Continuing to send
+          emails also ignores the data subject's right to object to direct
+          marketing (Article 21), which must always be honoured.
+      impact_expected: |
+          For the affected customers, the impact is loss of control over
+          their inbox and their personal data, and a need to raise
+          complaints or block the sender to stop the contact. For the
+          retailer, the Information Commissioner's Office can issue
+          monetary penalties up to the higher UK GDPR tier (the greater
+          of £17.5 million or 4% of annual global turnover), individuals
+          can lodge complaints and seek compensation, and the retailer
+          must purge the 12,000 opt-out records from the active marketing
+          list immediately and put in place a workflow that respects
+          opt-outs going forward.
+      exemplar_answer: |
+        The retailer is breaching the Data Protection Act 2018 and the
+        UK GDPR. The specific issue is that the lawful basis for sending
+        marketing emails to the 12,000 opted-out customers no longer
+        exists. Direct marketing relies on consent (or a narrow soft
+        opt-in for existing customers), and consent under UK GDPR must
+        be a specific, informed and freely-given indication of agreement.
+        When a customer ticks an opt-out box, they are withdrawing that
+        consent and exercising their right to object to direct marketing
+        under Article 21, which must be honoured. The retailer's
+        reluctance to filter the list is not a defence. The impact for
+        customers is loss of control over their personal data and unwanted
+        contact they have explicitly refused. The impact for the retailer
+        is exposure to ICO enforcement (with fines up to £17.5 million
+        or 4% of global turnover at the higher tier), to individual
+        complaints and compensation claims, and to reputational damage
+        if the breach becomes public. The retailer must remove the 12,000
+        records from the active marketing list and rebuild the workflow
+        so that opt-outs are honoured automatically.
+drill:
+  - id: 411-drill-01
+    cue: Any information relating to an identified or identifiable living individual.
+    answer: Personal data
+  - id: 411-drill-02
+    cue: The organisation that decides why and how personal data is processed.
+    answer: Data controller (or controller)
+  - id: 411-drill-03
+    cue: The organisation that processes personal data on behalf of a controller.
+    answer: Data processor (or processor)
+  - id: 411-drill-04
+    cue: The individual whose personal data is being processed.
+    answer: Data subject
+  - id: 411-drill-05
+    cue: The UK GDPR principle requiring personal data to be limited to what is necessary for the stated purpose, and no more.
+    answer: Data minimisation
+  - id: 411-drill-06
+    cue: The UK GDPR principle requiring personal data to be kept no longer than is necessary for the purpose for which it was collected.
+    answer: Storage limitation
+  - id: 411-drill-07
+    cue: The UK GDPR principle requiring personal data to be processed in a manner that ensures appropriate security against unauthorised processing, loss or damage.
+    answer: Integrity and confidentiality (or security)
+  - id: 411-drill-08
+    cue: The lawful basis where the data subject has actively agreed to a specific processing activity through a clear affirmative action.
+    answer: Consent
+  - id: 411-drill-09
+    cue: The data subject right that allows an individual to obtain a copy of the personal data an organisation holds about them.
+    answer: Right of access (subject access request)
+  - id: 411-drill-10
+    cue: The UK regulator that enforces the Data Protection Act 2018 and the UK GDPR and issues monetary penalties for serious breaches.
+    answer: The Information Commissioner's Office (ICO)
+---
+
+## Why this topic matters
+
+Data protection is the legal tier you will see most often in Paper 1
+scenarios because almost every digital system processes personal data
+about somebody. A booking system stores customer names. An HR portal
+stores employee records. A school's reporting tool stores pupil grades.
+A delivery app holds addresses and order histories. The moment a system
+holds information that can be tied back to a living individual, data
+protection law applies.
+
+A Paper 1 answer that fails to name data protection in a clear data
+protection scenario loses the Name mark, which usually drags the Explain
+mark down with it because the rest of the answer is anchored to the
+wrong rule. The path through this topic mirrors the Answer Arc: get the
+recognition automatic, then build out the rules that earn the Explain
+marks.
+
+## What the law actually is
+
+The UK's current data protection regime sits on two documents that work
+together. The UK General Data Protection Regulation (UK GDPR) is the
+substantive rulebook: it sets out the principles, the lawful bases, the
+data subject rights and the rules on transfers. The Data Protection Act
+2018 (DPA 2018) is the domestic Act that implements UK GDPR and adds
+UK-specific provisions, including some additional offences and the
+exemptions framework. When you write about "data protection law" in an
+exam you can refer to either, but the precise phrasing is "the Data
+Protection Act 2018 and the UK GDPR".
+
+The law applies whenever an organisation in the UK is processing
+personal data, and to organisations outside the UK that offer goods or
+services to people in the UK or monitor their behaviour. "Processing"
+is defined very broadly: it covers collecting, storing, using, sharing,
+combining and deleting personal data, so almost any operation on the
+data counts.
+
+"Personal data" means any information relating to an identified or
+identifiable living individual. A name, an email address, an IP address
+that can be tied back to a household, a customer reference number that
+links to a real account, and a photograph in which someone is
+recognisable are all personal data. Truly anonymous statistics (where
+no individual can be re-identified) are not personal data and fall
+outside the law.
+
+## The roles the law assigns
+
+The law gives every organisation handling personal data one of two
+roles.
+
+A **data controller** is an organisation that decides why personal data
+is being processed and how. The decisions about purpose and means make
+it the controller. A retailer that runs its own customer database is
+the controller of that data. A school that holds pupil records is the
+controller of those records.
+
+A **data processor** processes personal data on behalf of a controller,
+following the controller's instructions. A payroll bureau that runs the
+salary calculations for a small business is a processor. A cloud
+storage provider that hosts customer data for the retailer above is a
+processor. Processors carry some legal obligations directly (notably
+security and breach notification to the controller) but the controller
+remains primarily accountable.
+
+The **data subject** is the individual whose personal data is being
+processed. Data subjects have rights, listed below. The data subject is
+the person the law is written to protect.
+
+## The seven principles
+
+UK GDPR Article 5 sets out the principles that every act of processing
+must comply with. Examiners reward students who can name the principle
+that is engaged in a scenario, not just say "the data has been mishandled".
+
+1. **Lawfulness, fairness and transparency.** Processing must have one
+   of the lawful bases set out in Article 6 (see below), must be fair
+   to the data subject, and must be explained to them clearly through
+   a privacy notice.
+
+2. **Purpose limitation.** Personal data may only be collected for
+   specified, explicit and legitimate purposes and must not be used
+   later for a different incompatible purpose. Collecting addresses to
+   ship orders and then using them to send unrelated marketing to
+   non-customers breaches this principle.
+
+3. **Data minimisation.** Personal data must be adequate, relevant and
+   limited to what is necessary for the purpose. Collecting a date of
+   birth on a form that only needs to confirm someone is over eighteen
+   is a minimisation breach.
+
+4. **Accuracy.** Personal data must be accurate and kept up to date.
+   Inaccurate data must be corrected or erased without delay.
+
+5. **Storage limitation.** Personal data must be kept in identifiable
+   form for no longer than is necessary. CCTV footage kept indefinitely
+   when a thirty-day retention policy would be enough is a storage
+   limitation breach.
+
+6. **Integrity and confidentiality.** Personal data must be processed
+   in a manner that ensures appropriate security, including protection
+   against unauthorised processing, accidental loss, destruction or
+   damage. This is the principle engaged by weak passwords, unencrypted
+   laptops, unlocked filing cabinets and over-permissive access controls.
+
+7. **Accountability.** The controller is responsible for compliance and
+   must be able to demonstrate it through records, policies, training
+   and (for high-risk processing) data protection impact assessments.
+   Accountability is the wrap-around principle that ties the others
+   together.
+
+## The lawful bases
+
+Every act of processing must rest on one of the six lawful bases in
+Article 6. Picking the wrong basis, or picking no basis at all, is a
+breach of the first principle.
+
+- **Consent.** The data subject has given a clear, specific, informed
+  and freely-given indication of agreement through a positive action.
+  Pre-ticked boxes are not consent. Consent can be withdrawn at any
+  time.
+
+- **Contract.** Processing is necessary to perform a contract with the
+  data subject (or to take steps to enter one at the data subject's
+  request). Storing a delivery address to ship a customer's order
+  rests on this basis.
+
+- **Legal obligation.** Processing is necessary to comply with a legal
+  obligation imposed on the controller. Reporting income tax data to
+  HMRC rests on this basis.
+
+- **Vital interests.** Processing is necessary to protect the data
+  subject's life or someone else's life. Hospitals rely on this in
+  emergencies where the patient cannot consent.
+
+- **Public task.** Processing is necessary to perform a task carried
+  out in the public interest or in the exercise of official authority.
+  Public sector organisations frequently rely on this basis.
+
+- **Legitimate interests.** Processing is necessary for the legitimate
+  interests of the controller or a third party, provided those
+  interests are not overridden by the rights of the data subject. This
+  basis requires a balancing exercise to be documented in advance.
+
+For "special category data" (data revealing racial or ethnic origin,
+political opinions, religious or philosophical beliefs, trade union
+membership, health,
+sex life, sexual orientation, genetic data or biometric data used for
+identification) an additional condition under Article 9 is needed on
+top of the Article 6 basis.
+
+## Data subject rights
+
+Articles 12 to 22 give data subjects a set of rights they can exercise
+against the controller. Each one has scenarios where it commonly bites:
+
+- **Right to be informed.** The controller must give a clear privacy
+  notice describing what data is held, why, on what basis, for how
+  long, and with whom it is shared.
+
+- **Right of access.** A data subject can submit a subject access
+  request and the controller must respond within one month, providing
+  a copy of the data and surrounding information.
+
+- **Right to rectification.** Inaccurate personal data must be corrected
+  on request.
+
+- **Right to erasure (the "right to be forgotten").** In specified
+  circumstances (such as where consent has been withdrawn and there is
+  no other lawful basis) the data must be deleted.
+
+- **Right to restrict processing.** The data subject can require the
+  controller to stop processing while a dispute is resolved.
+
+- **Right to data portability.** Where processing is based on consent
+  or contract and is carried out by automated means, the data subject
+  can receive their data in a structured, commonly-used format and
+  transmit it to another controller.
+
+- **Right to object.** The data subject can object to processing based
+  on legitimate interests or public task, and can object to direct
+  marketing at any time. Objections to direct marketing must always be
+  honoured.
+
+- **Rights related to automated decision-making.** The data subject has
+  the right not to be subject to a decision based solely on automated
+  processing (including profiling) that produces legal or similarly
+  significant effects, except in limited circumstances.
+
+## Enforcement and consequences
+
+The Information Commissioner's Office (ICO) is the UK regulator. It
+investigates complaints, issues guidance, audits controllers, and where
+necessary takes enforcement action. The headline sanction is a
+monetary penalty. UK GDPR sets a two-tier maximum: the lower tier (for
+example, failure to keep records or to notify a personal data breach)
+is up to £8.7 million or 2% of annual global turnover, whichever is
+higher. The higher tier (for example, breaching the principles or the
+lawful bases, or infringing data subject rights) is up to £17.5 million
+or 4% of annual global turnover, whichever is higher.
+
+The DPA 2018 adds criminal offences that sit alongside the regulatory
+regime. Section 170 makes it a criminal offence to knowingly or
+recklessly obtain, disclose or procure personal data without the
+controller's consent. Section 171 covers re-identification of
+de-identified data. Section 173 covers altering personal data to
+frustrate a subject access request. These offences attach to
+individuals (including employees), not just the organisation.
+
+Individuals can also claim compensation in court for material or
+non-material damage caused by an infringement.
+
+## What Paper 1 expects
+
+When a Paper 1 question gives you a scenario that involves personal
+data, the path through the answer is:
+
+1. **Name the law.** "The Data Protection Act 2018 and the UK GDPR."
+   Where the question rewards a more specific Name, also name the
+   principle, lawful basis or right that is engaged.
+
+2. **Explain what the relevant rule actually requires.** Quote the
+   principle or right in your own words. If the scenario is about a
+   weak security arrangement, the rule is the integrity and
+   confidentiality principle. If it is about ignoring an opt-out, the
+   rule is the right to object to direct marketing (or the withdrawal
+   of consent).
+
+3. **Apply the rule to the scenario.** Tie the requirement back to the
+   specific facts you were given. The strongest answers quote the
+   scenario explicitly: "because the hospital allows any administrator
+   to email patient data externally..."
+
+The same path applies to longer extended-response questions, with the
+Impact section drawing out consequences for the data subject, the
+controller and any wider system (such as public trust in the service).
+
+The worked examples in the Method section, particularly the ones that
+demonstrate Name versus Describing and Defining versus Applying, show
+this path running on real past-paper questions. Once you have practised
+the assessment below, come back to those.
