@@ -1,0 +1,318 @@
+---
+title: Computer Misuse
+section_id: "4.1.2"
+content_area: 4-1
+paper: "1"
+status: published
+spec_version: "2024-01"
+authors:
+  - chris-morris
+reviewers:
+  - chris-morris
+learning_outcomes:
+  - Recognise when the Computer Misuse Act 1990 applies to a scenario, including scenarios where another Act might appear to apply at first glance
+  - Identify which section of the Act has been engaged (s1, s2, s3, s3ZA or s3A) and explain the difference between them
+  - Define what "unauthorised access" means under the Act, including the task-specific nature of authorisation
+  - Recognise that the Act is technology-agnostic and applies to any computer system regardless of device type
+prerequisites: []
+estimated_minutes: 30
+last_reviewed: 2026-05-15
+revision_notes: |
+  2026-05-15: Initial draft. Second Paper 1 topic in CA 4.1 (Inc 5.1).
+  Drill, MCQ and NEI calibrated against the Paper 1 legislation-recognition
+  pattern. MCQ uses a dual-Act distractor (DPA) to drill the recognition
+  step at the boundary where most students slip.
+assessments:
+  - discriminant: mcq
+    value:
+      id: 412-mcq-01
+      prompt: "An employee at a retail company guesses their line manager's password and logs into the manager's email account to read messages about an upcoming promotion decision. The employee then logs out without sending or altering anything. Which Act has the employee primarily breached?"
+      options:
+        - The Computer Misuse Act 1990
+        - The Data Protection Act 2018 and UK GDPR
+        - The Equality Act 2010
+        - The Copyright, Designs and Patents Act 1988
+      correct_index: 0
+      feedback_correct: |
+        Correct. The employee has committed an offence under section 1 of
+        the Computer Misuse Act 1990: unauthorised access to computer
+        material. The offence is complete at the point of access; reading
+        without copying or altering is enough. The fact that the employee
+        works for the same company is irrelevant because authorisation is
+        task-specific, and the employee was not authorised to access the
+        manager's account.
+      feedback_incorrect: |
+        The answer is the Computer Misuse Act 1990. Many candidates pick
+        the Data Protection Act because the manager's email contains
+        personal data. The DPA is engaged for the company (as data
+        controller it may have failed to enforce access controls) but the
+        primary statutory offence committed by the employee is the CMA
+        section 1 offence of unauthorised access to computer material.
+        The Equality Act and the Copyright, Designs and Patents Act are
+        not engaged at all.
+      difficulty: standard
+  - discriminant: nei
+    value:
+      id: 412-nei-01
+      stimulus: |
+        An IT support worker at a secondary school is authorised to access
+        teacher email accounts in order to reset forgotten passwords as
+        part of their job. One evening, after a workplace dispute with
+        the headteacher, the same worker logs in from home to the
+        headteacher's email account and reads through several weeks of
+        private messages. Nothing is copied, altered or shared.
+      question: |
+        Name the Act and the specific section the IT worker has breached,
+        explain why the worker's existing access privileges do not protect
+        them, and describe the impact for the worker and the school.
+      max_marks: 4
+      mark_scheme:
+        name_expected: |
+          The Computer Misuse Act 1990, section 1 (unauthorised access to
+          computer material). Credit answers that name the Act and
+          identify the basic offence even if the section number is not
+          given.
+        explain_expected: |
+          Authorisation under the CMA is task-specific, not
+          person-specific. The IT worker was authorised to access teacher
+          mailboxes for the specific purpose of password resets as part of
+          their support role. Using those same technical credentials to
+          read the headteacher's private correspondence for a personal
+          reason is outside the scope of the authorisation, and the
+          worker knew it was outside that scope, so the access is
+          unauthorised. The section 1 offence is complete at the point of
+          access; no copying, altering or sharing is required to commit
+          the offence.
+      impact_expected: |
+          For the worker, the impact is criminal liability under section 1
+          (summary or indictable conviction, up to two years' imprisonment,
+          a fine, or both), almost certain dismissal for gross misconduct,
+          permanent professional reference damage, and likely bar from
+          future safeguarding-relevant roles. For the school, the impact
+          is a likely Data Protection Act 2018 exposure as data controller
+          (insufficient access controls allowed misuse of legitimate
+          credentials), loss of trust within the staff body, a need to
+          rebuild the IT access policy with stricter logging and auditing,
+          the cost of a forensic review of what the worker accessed
+          during the unauthorised session, and possible ICO scrutiny if
+          the incident is reported.
+      exemplar_answer: |
+        The IT worker has breached the Computer Misuse Act 1990, section
+        1 (unauthorised access to computer material). Although the worker
+        holds legitimate technical access to teacher email accounts for
+        the purpose of password resets, authorisation under the CMA is
+        task-specific. Using the same credentials to read the
+        headteacher's private email out of personal interest, after a
+        workplace dispute, is outside the scope of the authorisation, and
+        the worker plainly knows it. That brings the act inside section 1,
+        which requires only knowing unauthorised access to computer
+        material to be complete. The fact that nothing was copied or
+        shared is irrelevant. The impact for the worker is criminal
+        liability of up to two years' imprisonment under section 1,
+        dismissal for gross misconduct, lasting reputational damage, and
+        likely exclusion from future roles requiring trust. The impact
+        for the school is a parallel Data Protection Act exposure for
+        weak access controls, loss of internal trust, an obligation to
+        rebuild the IT access policy with proper auditing, and possible
+        ICO action if the incident is reported.
+drill:
+  - id: 412-drill-01
+    cue: The offence of accessing computer material without authorisation, knowing the access to be unauthorised.
+    answer: Computer Misuse Act 1990, section 1 (the basic offence)
+  - id: 412-drill-02
+    cue: The offence of unauthorised access with the intent to commit or facilitate a further criminal offence.
+    answer: Computer Misuse Act 1990, section 2
+  - id: 412-drill-03
+    cue: The offence of doing an unauthorised act with the intent to impair the operation of a computer, or recklessness as to whether it is impaired.
+    answer: Computer Misuse Act 1990, section 3
+  - id: 412-drill-04
+    cue: The offence of doing an unauthorised act that causes or creates a significant risk of serious damage of a material kind (added by the Serious Crime Act 2015).
+    answer: Computer Misuse Act 1990, section 3ZA
+  - id: 412-drill-05
+    cue: The offence of making, supplying or obtaining articles (such as malware or hacking tools) for use in a CMA section 1, 2 or 3 offence.
+    answer: Computer Misuse Act 1990, section 3A
+  - id: 412-drill-06
+    cue: The principle that authorisation under the Computer Misuse Act is tied to the purpose of access, not to whether a person holds login credentials.
+    answer: Task-specific authorisation (exceeding authorisation is unauthorised access)
+  - id: 412-drill-07
+    cue: The mental element required for a section 1 offence under the Computer Misuse Act.
+    answer: Knowledge that the access is unauthorised (mens rea)
+  - id: 412-drill-08
+    cue: The reason the Computer Misuse Act 1990 does not define the word "computer".
+    answer: The Act was drafted deliberately broadly so it applies to any computing device (including phones, smartcards and IoT devices), regardless of technology generation
+  - id: 412-drill-09
+    cue: The maximum sentence available under section 3ZA of the Computer Misuse Act 1990, in cases involving damage to human welfare or national security.
+    answer: Life imprisonment
+  - id: 412-drill-10
+    cue: The 1988 House of Lords decision that exposed the gap in English law and led directly to the Computer Misuse Act 1990.
+    answer: R v Gold and Schifreen (1988), which held that hacking by deception was not covered by the Forgery and Counterfeiting Act 1981
+---
+
+## Why this topic matters
+
+The Computer Misuse Act 1990 is the tier of CA 4.1 most often confused
+with data protection law, and the confusion is what costs students Paper
+1 marks. Many scenarios that look like data protection breaches at first
+glance are actually computer misuse offences, and the distinction comes
+down to which party is doing what.
+
+The shortcut is to look at who is acting and what they are doing. If an
+organisation is failing to handle personal data properly, the lead Act
+is usually data protection. If an individual is accessing a system they
+should not be accessing, the lead Act is usually computer misuse.
+Scenarios often engage both, but the Name mark goes to whichever offence
+matches the act being described.
+
+## What the law actually is
+
+The Computer Misuse Act 1990 was enacted after the 1988 House of Lords
+decision in R v Gold and Schifreen, where two journalists had used
+guessed credentials to access a BT Prestel service and view the Duke of
+Edinburgh's mailbox. The prosecution tried to fit the conduct under the
+Forgery and Counterfeiting Act 1981. The Lords held that no forgery had
+been committed because the false credentials existed only momentarily
+inside the machine. Parliament accepted the gap in English law and
+passed the CMA 1990 to close it.
+
+The Act has been amended twice in ways students should recognise:
+
+- The Police and Justice Act 2006 raised the section 1 maximum sentence
+  from six months to two years, added section 3A (making and supplying
+  articles for use in offences), and broadened section 3.
+- The Serious Crime Act 2015 added section 3ZA to deal with acts that
+  cause or risk serious damage to human welfare, the environment, the
+  economy or national security.
+
+The current Act covers five distinct offences, set out in sections 1, 2,
+3, 3ZA and 3A.
+
+## The five offences
+
+### Section 1: unauthorised access to computer material
+
+The basic offence. A person commits an offence if they cause a computer
+to perform any function with intent to secure access to programs or data
+held in any computer, where the access is unauthorised and the person
+knows it is unauthorised at the time. No further damage, copying or
+sharing is required for the offence to be complete. Maximum sentence is
+two years' imprisonment.
+
+### Section 2: unauthorised access with intent
+
+A more serious version of section 1. The person commits a section 1
+offence and at the time of that access intends to commit (or to
+facilitate the commission of) a further offence punishable by
+imprisonment, such as fraud or blackmail. Maximum sentence is five
+years' imprisonment.
+
+### Section 3: unauthorised acts with intent to impair, or recklessness
+
+The offence of doing an unauthorised act in relation to a computer where
+the person intends to impair the operation of any computer, prevent or
+hinder access to programs or data, impair the operation of any program,
+or where the person is reckless as to whether any of those consequences
+will occur. This is the section that covers releasing malware,
+distributed denial-of-service attacks, deliberate data deletion and
+ransomware deployment. Maximum sentence is ten years' imprisonment.
+
+### Section 3ZA: unauthorised acts causing serious damage
+
+Added in 2015 to deal with the most serious computer attacks. The
+offence applies where an unauthorised section 3 act causes or creates a
+significant risk of serious damage of a material kind: damage to human
+welfare in a country (including loss of life, injury, illness or
+disruption of essential supplies), damage to the environment, damage to
+the economy, or damage to national security. Maximum sentence is life
+imprisonment where the damage relates to human welfare or national
+security, fourteen years otherwise.
+
+### Section 3A: making, supplying or obtaining articles
+
+A wrapper offence for the tools used in CMA offences. Making, adapting,
+supplying or offering to supply an article (typically a piece of malware
+or a hacking tool) for use in a section 1, 2 or 3 offence
+is itself an offence. So is obtaining the article with a view to its
+use. Maximum sentence is two years' imprisonment.
+
+## What "unauthorised" actually means
+
+The single most common misunderstanding in CMA scenarios is treating
+authorisation as a property of the person rather than of the task. A
+person who has been given a username and password is authorised to do
+some things with that login. They are not necessarily authorised to do
+everything that the login technically allows.
+
+The Act treats access as unauthorised if the person is not entitled to
+control access of the kind in question, and does not have consent from
+someone who is entitled to give that consent. A bank employee who is
+authorised to view customer accounts for processing legitimate enquiries
+is not authorised to view the account of a celebrity client out of
+curiosity. A police officer who is authorised to query the Police
+National Computer for operational reasons is not authorised to query a
+neighbour's record because they are nosy. Both have lawful credentials.
+Both commit the section 1 offence the moment they exceed the
+task-specific scope and know they are exceeding it.
+
+This task-specific reading is the part of the Act that most often
+catches insiders rather than outside attackers, and is the part Paper 1
+scenarios most often test.
+
+## What "computer" actually means
+
+The Act does not define the word "computer". This is deliberate. The
+1990 drafters anticipated that defining the term would date the
+legislation as technology evolved, and the courts have since applied
+the Act to anything that processes data digitally. Smartphones, smart
+cards, payment terminals, networked appliances and embedded devices
+have all been treated as computers under the Act.
+
+For Paper 1 purposes, treat any device that processes digital
+information as a computer for CMA purposes, regardless of what the
+scenario calls it.
+
+## Enforcement and consequences
+
+CMA offences are prosecuted by the Crown Prosecution Service (or by
+specialist units such as the National Crime Agency's National Cyber
+Crime Unit for serious cases). Sentences vary by section as set out
+above. The Act has extraterritorial reach: an offence can be prosecuted
+in the UK where there is a significant link to the UK, whether that
+link is established through the location of the perpetrator, the
+location of the targeted computer, the location of the affected
+parties, or the nationality of any of them.
+
+Beyond criminal liability, a CMA conviction has practical consequences
+that scenarios often ask students to identify: dismissal from current
+employment, lasting damage to professional references, exclusion from
+safeguarding-relevant or regulated roles, and difficulty obtaining
+clearance for future technical work.
+
+## What Paper 1 expects
+
+When a Paper 1 scenario shows someone accessing or interfering with a
+computer system, the path through the answer is:
+
+1. **Name the Act and the section.** "The Computer Misuse Act 1990,
+   section [1 / 2 / 3 / 3ZA / 3A]." Where the question rewards a more
+   specific Name, also state which kind of offence the section
+   describes.
+
+2. **Explain what the section actually requires.** State the elements
+   of the offence (unauthorised access, knowledge of unauthorisation,
+   plus any intent or recklessness requirement) in your own words.
+
+3. **Apply the elements to the scenario.** Tie each element to a fact
+   in the scenario. The strongest answers quote the scenario explicitly:
+   "because the worker was only authorised to reset passwords, not to
+   read the headteacher's email..."
+
+Recognising CMA versus data protection at the boundary is the recurring
+trap. When the question is about an individual exceeding their access,
+the Act is almost always the CMA. When the question is about an
+organisation handling personal data badly, the Act is almost always the
+DPA. Many real scenarios involve both, and the strongest answers name
+both, but the primary Name follows the act being described.
+
+The worked examples in the Method section show this path running on
+past-paper questions. Once you have practised the assessment below,
+come back to those.
