@@ -1,0 +1,381 @@
+---
+title: Equality
+section_id: "4.1.3"
+content_area: 4-1
+paper: "1"
+status: published
+spec_version: "2024-01"
+authors:
+  - chris-morris
+reviewers:
+  - chris-morris
+learning_outcomes:
+  - Recognise when the Equality Act 2010 applies to a digital scenario, including scenarios involving algorithmic decisions and accessibility
+  - Name the nine protected characteristics and identify which one is engaged in a given scenario
+  - Distinguish direct discrimination from indirect discrimination and explain when the objective-justification defence may apply
+  - Recognise the disability-specific duty to make reasonable adjustments and apply it to accessibility scenarios
+prerequisites: []
+estimated_minutes: 30
+last_reviewed: 2026-05-15
+revision_notes: |
+  2026-05-15: Initial draft. Third Paper 1 topic in CA 4.1 (Inc 5.2).
+  Drill, MCQ and NEI calibrated against the Paper 1 legislation-recognition
+  pattern. NEI scenario built around indirect discrimination plus a parallel
+  reasonable-adjustments duty, since the indirect-discrimination concept is
+  where Paper 1 candidates most often floor out.
+assessments:
+  - discriminant: mcq
+    value:
+      id: 413-mcq-01
+      prompt: "A national supermarket chain runs a recruitment campaign for store managers and includes in its job advert that applicants 'should be at the start of their career to fit the dynamic culture'. Two applicants in their 50s with extensive retail management experience are not invited to interview despite meeting the formal criteria. Which Act has the supermarket most clearly breached?"
+      options:
+        - The Computer Misuse Act 1990
+        - The Data Protection Act 2018 and UK GDPR
+        - The Equality Act 2010
+        - The Copyright, Designs and Patents Act 1988
+      correct_index: 2
+      feedback_correct: |
+        Correct. The Equality Act 2010 protects against direct
+        discrimination on grounds of age (section 13, age being one of
+        the nine protected characteristics). The job advert wording acts
+        as a less-favourable selection criterion against older
+        applicants, and the decision not to invite the over-50
+        applicants is a direct consequence. The supermarket may attempt
+        an "objective justification" defence (uniquely available for age
+        among the protected characteristics) but the burden is on the
+        employer to show the criterion is a proportionate means of
+        achieving a legitimate aim, and "dynamic culture" is unlikely
+        to meet that test.
+      feedback_incorrect: |
+        The answer is the Equality Act 2010. The CMA, DPA and CDPA are
+        not engaged here. The Act lists age as one of the nine protected
+        characteristics, and the job-advert wording plus the
+        non-invitation of the over-50 applicants is a textbook direct
+        age discrimination scenario under section 13.
+      difficulty: foundation
+  - discriminant: nei
+    value:
+      id: 413-nei-01
+      stimulus: |
+        A bank launches a digital-only current account aimed at younger
+        customers. The only way to open an account is to complete a
+        live video-call identity check, which requires uninterrupted
+        use of a smartphone camera, a stable internet connection and
+        clear lighting. The bank does not offer any alternative
+        identity-check route. Several older customers without
+        smartphones, and several customers with severe motor
+        impairments who cannot reliably hold a phone steady, are unable
+        to complete the process.
+      question: |
+        Name the legislation the bank is at risk of breaching, explain
+        which forms of discrimination are engaged, and describe the
+        impact for the customers and for the bank.
+      max_marks: 4
+      mark_scheme:
+        name_expected: |
+          The Equality Act 2010. The strongest answers name two distinct
+          routes: indirect discrimination (section 19) on the grounds of
+          age and disability, and failure to make reasonable adjustments
+          (sections 20-22) on the grounds of disability. Credit one
+          route fully named.
+        explain_expected: |
+          The requirement to complete a smartphone-only video-call
+          identity check is a "provision, criterion or practice" (PCP)
+          that applies neutrally on its face but puts older customers
+          and customers with motor impairments at a particular
+          disadvantage compared to younger non-disabled customers. To
+          defend this as lawful, the bank must show the PCP is a
+          proportionate means of achieving a legitimate aim. Verifying
+          identity is a legitimate aim, but proportionality is
+          questionable because cheaper and well-established alternative
+          checks exist (in-branch, document upload, supported video
+          call). Separately, under sections 20-22 the bank owes a
+          positive duty to disabled customers to make reasonable
+          adjustments where a PCP puts them at substantial disadvantage,
+          and a refusal to offer any alternative process is very
+          unlikely to satisfy that duty.
+        impact_expected: |
+          For affected customers, the impact is exclusion from the
+          banking service, loss of access to a product they are
+          entitled to access on equal terms, the effort of pursuing a
+          complaint or claim, and the wider message that the financial
+          product is not designed for them. For the bank, affected
+          individuals can bring a discrimination claim in the County
+          Court under section 114, with available remedies including
+          declarations, injunctions to change the process, and damages
+          for injury to feelings. The Equality and Human Rights
+          Commission can investigate. There is reputational damage in
+          the press, regulatory attention from the Financial Conduct
+          Authority on inclusive design grounds, and the cost of
+          rebuilding the onboarding flow to include accessible
+          alternatives.
+      exemplar_answer: |
+        The bank is at clear risk of breaching the Equality Act 2010
+        through two distinct routes. The first is indirect
+        discrimination under section 19. The requirement to complete a
+        live smartphone video-call identity check is a "provision,
+        criterion or practice" that applies neutrally but puts older
+        customers and customers with motor impairments at a particular
+        disadvantage compared to younger non-disabled customers,
+        engaging the age and disability protected characteristics. The
+        bank can only defend this if it shows the PCP is a proportionate
+        means of achieving a legitimate aim, and although verifying
+        identity is a legitimate aim, proportionality fails because
+        well-established alternative checks (in-branch verification,
+        postal document checks) exist and would meet the same aim
+        without the disadvantage. The second route is the disability
+        duty under sections 20-22, which positively requires the bank
+        to make reasonable adjustments where its standard PCP puts
+        disabled customers at substantial disadvantage. Refusing to
+        offer any alternative process is unlikely to satisfy that
+        duty. The impact for customers is exclusion from a financial
+        product they are entitled to access on equal terms, the time
+        and effort of pursuing a complaint, and the deterrent effect on
+        engaging with the service at all. The impact for the bank is
+        exposure to County Court claims under section 114 (with damages
+        for injury to feelings available), Equality and Human Rights
+        Commission investigation, reputational harm, regulatory
+        scrutiny on inclusive-design grounds, and the cost of
+        rebuilding the onboarding flow.
+drill:
+  - id: 413-drill-01
+    cue: The number of protected characteristics listed in section 4 of the Equality Act 2010, and the foundational structure on which the rest of the Act rests.
+    answer: Nine (age, disability, gender reassignment, marriage and civil partnership, pregnancy and maternity, race, religion or belief, sex, sexual orientation)
+  - id: 413-drill-02
+    cue: Treating a person less favourably because of a protected characteristic, under section 13 of the Equality Act 2010.
+    answer: Direct discrimination
+  - id: 413-drill-03
+    cue: Applying a provision, criterion or practice that applies neutrally on its face but puts those sharing a protected characteristic at a particular disadvantage, and which cannot be objectively justified.
+    answer: Indirect discrimination (Equality Act 2010, section 19)
+  - id: 413-drill-04
+    cue: Unwanted conduct related to a protected characteristic that has the purpose or effect of violating a person's dignity or creating an intimidating, hostile, degrading, humiliating or offensive environment.
+    answer: Harassment (Equality Act 2010, section 26)
+  - id: 413-drill-05
+    cue: Subjecting a person to a detriment because they have done a protected act (such as raising a discrimination complaint or giving evidence in a discrimination case).
+    answer: Victimisation (Equality Act 2010, section 27)
+  - id: 413-drill-06
+    cue: The disability-specific positive duty to make reasonable adjustments where a provision, a physical feature or the absence of an auxiliary aid puts a disabled person at a substantial disadvantage.
+    answer: The reasonable adjustments duty (Equality Act 2010, sections 20-22)
+  - id: 413-drill-07
+    cue: The defence available against an indirect-discrimination claim when the employer or service provider can show the PCP is necessary for a real and serious purpose.
+    answer: Objective justification (a proportionate means of achieving a legitimate aim)
+  - id: 413-drill-08
+    cue: Treating a person less favourably because of a protected characteristic that the person is perceived to have, even if they do not actually have it, or because of a protected characteristic of someone they are associated with.
+    answer: Discrimination by perception or by association
+  - id: 413-drill-09
+    cue: The UK regulator that promotes and enforces the Equality Act 2010 and can carry out investigations and issue unlawful-act notices.
+    answer: The Equality and Human Rights Commission (EHRC)
+  - id: 413-drill-10
+    cue: The court route for discrimination claims in goods, facilities and services cases (as distinct from employment cases, which go to the Employment Tribunal).
+    answer: The County Court, under section 114 of the Equality Act 2010
+---
+
+## Why this topic matters
+
+The Equality Act 2010 is the Act that bites whenever a digital scenario
+involves a decision about a person, where that decision can be linked
+to one of the nine protected characteristics. That covers job adverts
+worded to exclude older applicants, recruitment AI trained on biased
+historical data, customer-service flows that fail older or disabled
+users, and access to goods and services delivered through digital
+products.
+
+Many of these scenarios will not look like "equality" cases at first
+glance because the bias is implicit in a technical choice rather than
+explicit in a decision-maker's words. Paper 1 rewards students who can
+see through the surface neutrality of an algorithm or a process and
+identify the protected characteristic that is being disadvantaged.
+
+## What the law actually is
+
+The Equality Act 2010 is the consolidating statute that replaced nine
+earlier pieces of UK anti-discrimination legislation, including the
+Race Relations Act 1976, the Sex Discrimination Act 1975, the
+Disability Discrimination Act 1995 and the Equal Pay Act 1970. The
+2010 Act brings these strands into one statute and adds protections
+that the earlier law did not contain.
+
+The Act covers protection in employment (Part 5), services and public
+functions (Part 3), premises (Part 4), education (Part 6) and
+associations (Part 7). For digital scenarios the most common parts
+engaged are employment (covering recruitment processes, AI screening,
+workplace systems and post-employment matters such as references) and
+services and public functions (any digital product
+offered to customers or the public).
+
+The Act also imposes the Public Sector Equality Duty under section 149.
+This duty requires public authorities (and bodies exercising public
+functions) to have due regard to eliminating discrimination, advancing
+equality of opportunity, and fostering good relations between people
+who share a protected characteristic and those who do not. The PSED is
+the reason equality impact assessments are routinely required when
+public bodies procure or build digital systems.
+
+## The nine protected characteristics
+
+Section 4 of the Act lists nine protected characteristics. Memorising
+them as a set is the foundation of every Equality Act answer, because
+the first move in any scenario is to identify which characteristic is
+engaged.
+
+1. **Age**
+2. **Disability**
+3. **Gender reassignment**
+4. **Marriage and civil partnership**
+5. **Pregnancy and maternity**
+6. **Race**, defined to include colour, nationality and ethnic or
+   national origin
+7. **Religion or belief**, including the absence of religion or belief
+8. **Sex**
+9. **Sexual orientation**
+
+Some characteristics have nuance. Age can be defined by a specific age
+or by an age range. Disability has a statutory definition under section
+6 that requires a physical or mental impairment with a substantial,
+long-term and adverse effect on normal day-to-day activities. Race
+covers nationality and ethnic origin as well as colour. Religion or
+belief covers a lack of religion or belief.
+
+## The forms of prohibited conduct
+
+The Act lists several distinct ways in which conduct can be unlawful.
+Recognising which one applies to a scenario is the second move after
+identifying the characteristic.
+
+### Direct discrimination (section 13)
+
+A person treats another less favourably because of a protected
+characteristic. The "because of" is wide: it covers both characteristics
+the victim actually has and characteristics the victim is perceived
+to have, and it covers situations where the less favourable treatment
+arises because of someone the victim is associated with. Direct
+discrimination usually cannot be justified, with one important
+exception: direct age discrimination can be justified if the
+discrimination is a proportionate means of achieving a legitimate aim.
+
+### Indirect discrimination (section 19)
+
+A "provision, criterion or practice" (PCP) is applied to everyone, but
+it puts persons sharing a protected characteristic at a particular
+disadvantage compared with others, and the person to whom the PCP is
+applied is themselves disadvantaged. Indirect discrimination is the
+form that catches surface-neutral rules: dress codes that
+disproportionately affect women, fitness tests that disproportionately
+affect older workers, voice-recognition systems that disproportionately
+affect users with strong regional accents.
+
+Indirect discrimination is defensible if the PCP is a proportionate
+means of achieving a legitimate aim. The burden of proving this falls
+on the party applying the PCP, and the test is whether the aim is real
+and serious, and whether the PCP is no more discriminatory than is
+necessary to achieve it. Convenience alone almost never meets the
+test.
+
+### Harassment (section 26)
+
+Unwanted conduct related to a protected characteristic that has the
+purpose or effect of violating dignity or creating an intimidating,
+hostile, degrading, humiliating or offensive environment. Harassment
+does not require malice on the part of the perpetrator; the effect on
+the victim is what counts (assessed objectively given the
+circumstances).
+
+### Victimisation (section 27)
+
+Subjecting a person to a detriment because they have done, or are
+suspected of doing, a protected act. Protected acts include bringing
+proceedings under the Act, giving evidence in such proceedings, making
+an allegation that someone has contravened the Act, and doing anything
+else for the purposes of or in connection with the Act.
+Victimisation can be committed by anyone in any capacity.
+
+## The disability-specific duty: reasonable adjustments
+
+Sections 20 to 22 impose a positive duty on employers and service
+providers to make reasonable adjustments where a provision, a physical
+feature, or the absence of an auxiliary aid puts a disabled person at
+a substantial disadvantage compared to non-disabled people. The duty
+is anticipatory in the services context: it is owed before any
+specific disabled customer turns up, so the service must be designed
+with accessibility built in.
+
+Failure to comply with the reasonable adjustments duty is itself
+unlawful discrimination under section 21. For digital products this
+duty most often surfaces as a requirement to provide alternative
+input methods (text alongside voice, keyboard alongside mouse), to
+support screen readers, to meet contrast and font-scaling standards,
+and to offer a non-digital fallback for users who cannot complete the
+digital flow.
+
+## Where the Act applies in digital scenarios
+
+For Paper 1, two parts of the Act are dominant.
+
+**Employment (Part 5).** Covers recruitment (job adverts, shortlisting,
+application processes, interview decisions), terms of employment,
+promotion,
+training, dismissal, and post-employment situations such as
+references. Algorithmic recruitment screening that filters CVs against
+historical hiring patterns is the textbook example: even when the
+algorithm is not given the protected characteristic as a feature, it
+can reproduce the bias of the historical data.
+
+**Services and public functions (Part 3).** Covers any service offered
+to the public or a section of the public, including services offered
+by digital products. This is where most consumer-facing digital
+discrimination cases sit. Banking, retail, customer service,
+ticketing, education platforms and government digital services all
+fall under Part 3.
+
+## Enforcement and consequences
+
+The Equality and Human Rights Commission (EHRC) is the regulator. It
+can carry out formal investigations, issue unlawful-act notices, enter
+into agreements with bodies that have breached the Act, and bring
+judicial review proceedings on questions of public-sector equality
+duty.
+
+Individuals affected by discrimination can also bring their own
+claims. Employment cases go to the Employment Tribunal. Services and
+goods cases go to the County Court under section 114. Remedies
+include declarations, injunctions requiring changes to processes or
+products, orders to take specific steps to remedy the discrimination,
+and damages including damages for injury to feelings (which have
+established bands). There is no statutory cap on Equality Act damages.
+
+For public bodies, breach of the Public Sector Equality Duty under
+section 149 is grounds for judicial review. Procurement decisions and
+major digital deployments by public bodies are routinely challenged on
+PSED grounds.
+
+## What Paper 1 expects
+
+When a Paper 1 scenario shows a decision, process or product that
+disadvantages a group, the path through the answer is:
+
+1. **Name the Act and the characteristic.** "The Equality Act 2010,
+   on the grounds of [age / disability / sex / race / ...]." Where the
+   scenario engages more than one characteristic, name the most central
+   one and note any others.
+
+2. **Explain the form of discrimination.** State whether the conduct
+   is direct (section 13), indirect (section 19), harassment (section
+   26), victimisation (section 27) or a failure to make reasonable
+   adjustments (section 21). Define the relevant test in your own
+   words.
+
+3. **Apply the test to the scenario.** Tie the elements of the
+   relevant section to the facts. For indirect discrimination, identify
+   the PCP and the disadvantaged group, and assess whether the
+   objective justification defence is plausible on the facts.
+
+The recurring trap is the surface-neutral algorithm or process. A
+process that does not mention a protected characteristic on its face
+can still be unlawful if it puts a group sharing that characteristic
+at a particular disadvantage. The strongest Paper 1 answers spell out
+the PCP, name the disadvantage and assess justification on its merits
+rather than accepting the defendant's framing.
+
+The worked examples in the Method section show this path running on
+past-paper questions. Once you have practised the assessment below,
+come back to those.
