@@ -9,6 +9,7 @@
 
 import NEISubmission from './NEISubmission';
 import MCQRunner from './MCQRunner';
+import MCQSummary from './MCQSummary';
 
 type MCQValue = {
   id: string;
@@ -51,6 +52,10 @@ const { topicId, assessments } = Astro.props;
 
 const mcqCount = assessments.filter((a) => a.discriminant === 'mcq').length;
 const neiCount = assessments.filter((a) => a.discriminant === 'nei').length;
+
+const mcqQuestionIds = assessments
+  .filter((a): a is { discriminant: 'mcq'; value: MCQValue } => a.discriminant === 'mcq')
+  .map((a) => a.value.id);
 ---
 
 <section class="card" style="margin-top: var(--space-5);">
@@ -66,6 +71,14 @@ const neiCount = assessments.filter((a) => a.discriminant === 'nei').length;
           <span class="tag tag--green">{mcqCount} MCQ</span>
           <span class="tag tag--gold">{neiCount} NEI</span>
         </p>
+
+        {mcqCount > 0 && (
+          <MCQSummary
+            client:load
+            topicId={topicId}
+            questionIds={mcqQuestionIds}
+          />
+        )}
 
         {assessments.map((a) => {
           if (a.discriminant === 'mcq') {
