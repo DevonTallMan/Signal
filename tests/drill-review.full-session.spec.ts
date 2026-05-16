@@ -98,13 +98,20 @@ test.describe("Drill review full session", () => {
     );
     await page.locator('[data-review-action="miss"]').click();
 
+    // The final "done" transition awaits a getAllCardStates query
+    // before flipping phase, which on slow staging Firestore can
+    // exceed 5s. PR #122 widened this to 15s; PR #124's
+    // async-before-done refactor reduced the window but did not
+    // eliminate it. Restoring the 15s ceiling here matches the
+    // PR #122 mitigation. (Test-only change; not a product
+    // regression.)
     await page.waitForFunction(
       () => {
         const el = document.querySelector("[data-review-state]");
         return el?.getAttribute("data-review-state") === "done";
       },
       undefined,
-      { timeout: 5_000 },
+      { timeout: 15_000 },
     );
 
     const got = await page.locator("[data-review-got-count]").innerText();
