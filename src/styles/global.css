@@ -315,6 +315,81 @@ samp {
   padding-top: 0;
 }
 
+/* MCQ runner (Sprint 7B Inc 7B.1) */
+
+.mcq-runner {
+  margin-top: var(--space-3);
+}
+.mcq-runner__prompt {
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.mcq-runner__options {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-3) 0;
+}
+.mcq-runner__option {
+  margin: 0 0 8px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg, transparent);
+}
+.mcq-runner__option label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  line-height: 1.45;
+}
+.mcq-runner__option label input[disabled] {
+  cursor: default;
+}
+.mcq-runner__option--picked {
+  border-color: var(--green, #39ff14);
+}
+.mcq-runner__option--correct {
+  border-color: var(--green, #39ff14);
+  background: rgba(57, 255, 20, 0.06);
+}
+.mcq-runner__option--wrong {
+  border-color: var(--danger, #b00020);
+  background: rgba(176, 0, 32, 0.05);
+}
+.mcq-runner__submit,
+.mcq-runner__retry {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-2, #f6f6f8);
+  cursor: pointer;
+}
+.mcq-runner__submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.mcq-runner__verdict {
+  margin-top: var(--space-3);
+  font-weight: 700;
+}
+.mcq-runner__verdict--correct {
+  color: var(--green, #39ff14);
+}
+.mcq-runner__verdict--incorrect {
+  color: var(--danger, #b00020);
+}
+.mcq-runner__feedback {
+  margin-top: 6px;
+  margin-bottom: var(--space-3);
+  line-height: 1.55;
+}
+.mcq-runner__retry {
+  margin-top: var(--space-2);
+}
+
 /* NEI submission form */
 
 .nei-submission {
