@@ -6,9 +6,12 @@
 import { describe, it, expect } from "vitest";
 import {
   summariseStudent,
+  summariseTopic,
+  expandStudentByTopic,
   formatLastSeen,
   type DrillRatingDoc,
   type ActivitySessionDoc,
+  type CohortMemberRatings,
 } from "./aggregate";
 
 const ts = (ms: number) => ({ toMillis: () => ms });
@@ -121,5 +124,129 @@ describe("formatLastSeen", () => {
 
   it("under 1 minute clamps to 1m ago", () => {
     expect(formatLastSeen(now - 30_000, now)).toBe("1m ago");
+  });
+});
+
+describe("summariseTopic", () => {
+  it("empty cohort yields zeros and null passRate", () => {
+    const s = summariseTopic("t1", []);
+    expect(s).toEqual({
+      topicId: "t1",
+      studentsEngaged: 0,
+      totalRatings: 0,
+      gotCount: 0,
+      missCount: 0,
+      passRatePercent: null,
+      cardsInQueue: 0,
+      cardsGraduated: 0,
+    });
+  });
+
+  it("studentsEngaged counts unique members with at least one rating", () => {
+    const cohort: CohortMemberRatings[] = [
+      {
+        uid: "a",
+        drillRatings: [{ topicId: "t1", termId: "1", outcome: "got" }],
+      },
+      {
+        uid: "b",
+        drillRatings: [
+          { topicId: "t1", termId: "1", outcome: "got" },
+          { topicId: "t1", termId: "2", outcome: "miss" },
+        ],
+      },
+      {
+        uid: "c",
+        drillRatings: [{ topicId: "t2", termId: "1", outcome: "got" }],
+      },
+    ];
+    const s = summariseTopic("t1", cohort);
+    expect(s.studentsEngaged).toBe(2);
+    expect(s.totalRatings).toBe(3);
+    expect(s.gotCount).toBe(2);
+    expect(s.missCount).toBe(1);
+    expect(s.passRatePercent).toBe(67);
+  });
+
+  it("filters out ratings for other topics", () => {
+    const cohort: CohortMemberRatings[] = [
+      {
+        uid: "a",
+        drillRatings: [
+          { topicId: "t1", termId: "1", outcome: "got" },
+          { topicId: "t2", termId: "1", outcome: "miss" },
+        ],
+      },
+    ];
+    const s = summariseTopic("t1", cohort);
+    expect(s.totalRatings).toBe(1);
+    expect(s.passRatePercent).toBe(100);
+  });
+
+  it("graduated vs in-queue split per topic", () => {
+    const cohort: CohortMemberRatings[] = [
+      {
+        uid: "a",
+        drillRatings: [
+          { topicId: "t1", termId: "1", outcome: "got", boxLevel: 4 },
+          { topicId: "t1", termId: "2", outcome: "got", boxLevel: 2 },
+          { topicId: "t1", termId: "3", outcome: "got" }, // legacy
+        ],
+      },
+    ];
+    const s = summariseTopic("t1", cohort);
+    expect(s.cardsGraduated).toBe(1);
+    expect(s.cardsInQueue).toBe(2);
+  });
+});
+
+describe("expandStudentByTopic", () => {
+  it("returns one row per requested topicId even when zero activity", () => {
+    const rows = expandStudentByTopic([], ["t1", "t2", "t3"]);
+    expect(rows).toHaveLength(3);
+    for (const row of rows) {
+      expect(row.cardsRated).toBe(0);
+      expect(row.cardsInQueue).toBe(0);
+      expect(row.cardsGraduated).toBe(0);
+      expect(row.gotCount).toBe(0);
+      expect(row.missCount).toBe(0);
+      expect(row.lastSeenMs).toBeNull();
+    }
+  });
+
+  it("aggregates per-topic ratings correctly", () => {
+    const ratings: DrillRatingDoc[] = [
+      { topicId: "t1", termId: "1", outcome: "got", boxLevel: 4 },
+      { topicId: "t1", termId: "2", outcome: "miss", boxLevel: 0 },
+      { topicId: "t2", termId: "1", outcome: "got", boxLevel: 1 },
+    ];
+    const rows = expandStudentByTopic(ratings, ["t1", "t2"]);
+    expect(rows[0]).toEqual({
+      topicId: "t1",
+      cardsRated: 2,
+      cardsInQueue: 1,
+      cardsGraduated: 1,
+      gotCount: 1,
+      missCount: 1,
+      lastSeenMs: null,
+    });
+    expect(rows[1]).toEqual({
+      topicId: "t2",
+      cardsRated: 1,
+      cardsInQueue: 1,
+      cardsGraduated: 0,
+      gotCount: 1,
+      missCount: 0,
+      lastSeenMs: null,
+    });
+  });
+
+  it("topic ordering follows the requested topicIds list", () => {
+    const ratings: DrillRatingDoc[] = [
+      { topicId: "t2", termId: "1", outcome: "got" },
+    ];
+    const rows = expandStudentByTopic(ratings, ["t2", "t1"]);
+    expect(rows[0].topicId).toBe("t2");
+    expect(rows[1].topicId).toBe("t1");
   });
 });

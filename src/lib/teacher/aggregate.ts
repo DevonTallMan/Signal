@@ -2,13 +2,12 @@
 //
 // Pure aggregation helpers for the teacher dashboard. Given the raw
 // per-student documents read from Firestore (drillRatings + activity
-// sessions), produce the per-student summary row the cohort tab
-// renders. Pure functions so they unit-test cleanly without an
-// emulator dependency.
+// sessions), produce the summary rows the dashboard tabs render. Pure
+// functions so they unit-test cleanly without an emulator dependency.
 //
-// v1 (Inc 7.1) ships the cohort-level summary. Per-topic and
-// per-student breakdowns land in Inc 7.2 and reuse the same input
-// shape.
+// Inc 7.1 ships the cohort-level summary (summariseStudent).
+// Inc 7.2 adds per-topic aggregation (summariseTopic) and per-student
+// expanded breakdown (expandStudentByTopic).
 
 export interface DrillRatingDoc {
   topicId: string;
@@ -34,6 +33,27 @@ export interface StudentSummary {
   cardsGraduated: number;
   sessionsStarted: number;
   sessionsCompleted: number;
+  lastSeenMs: number | null;
+}
+
+export interface TopicSummary {
+  topicId: string;
+  studentsEngaged: number;
+  totalRatings: number;
+  gotCount: number;
+  missCount: number;
+  passRatePercent: number | null;
+  cardsInQueue: number;
+  cardsGraduated: number;
+}
+
+export interface StudentTopicBreakdown {
+  topicId: string;
+  cardsRated: number;
+  cardsInQueue: number;
+  cardsGraduated: number;
+  gotCount: number;
+  missCount: number;
   lastSeenMs: number | null;
 }
 
@@ -84,6 +104,90 @@ export function summariseStudent(
     sessionsCompleted,
     lastSeenMs,
   };
+}
+
+export interface CohortMemberRatings {
+  uid: string;
+  drillRatings: readonly DrillRatingDoc[];
+}
+
+// summariseTopic aggregates drill activity across the cohort for a
+// single topicId. studentsEngaged counts unique cohort members with at
+// least one rating for the topic. passRatePercent is null when no
+// ratings exist (don't divide by zero; display as "—" in the UI).
+export function summariseTopic(
+  topicId: string,
+  cohort: readonly CohortMemberRatings[],
+): TopicSummary {
+  let studentsEngaged = 0;
+  let totalRatings = 0;
+  let gotCount = 0;
+  let missCount = 0;
+  let cardsInQueue = 0;
+  let cardsGraduated = 0;
+
+  for (const member of cohort) {
+    const ratingsForTopic = member.drillRatings.filter((r) => r.topicId === topicId);
+    if (ratingsForTopic.length === 0) continue;
+    studentsEngaged += 1;
+    for (const r of ratingsForTopic) {
+      totalRatings += 1;
+      if (r.outcome === "got") gotCount += 1;
+      else if (r.outcome === "miss") missCount += 1;
+      if ((r.boxLevel ?? 0) >= 4) cardsGraduated += 1;
+      else cardsInQueue += 1;
+    }
+  }
+
+  const passRatePercent =
+    totalRatings === 0 ? null : Math.round((gotCount / totalRatings) * 100);
+
+  return {
+    topicId,
+    studentsEngaged,
+    totalRatings,
+    gotCount,
+    missCount,
+    passRatePercent,
+    cardsInQueue,
+    cardsGraduated,
+  };
+}
+
+// expandStudentByTopic returns a per-topic breakdown for one student.
+// The topicIds list controls the output rows so topics with zero
+// activity still appear in the table (helps Dave spot untouched
+// topics).
+export function expandStudentByTopic(
+  drillRatings: readonly DrillRatingDoc[],
+  topicIds: readonly string[],
+): StudentTopicBreakdown[] {
+  return topicIds.map((topicId) => {
+    const forTopic = drillRatings.filter((r) => r.topicId === topicId);
+    const cardsRated = forTopic.length;
+    const cardsGraduated = forTopic.filter((r) => (r.boxLevel ?? 0) >= 4).length;
+    const cardsInQueue = cardsRated - cardsGraduated;
+    const gotCount = forTopic.filter((r) => r.outcome === "got").length;
+    const missCount = forTopic.filter((r) => r.outcome === "miss").length;
+
+    let lastSeenMs: number | null = null;
+    for (const r of forTopic) {
+      const t = toMillis(r.lastRatedAt) ?? toMillis(r.ratedAt);
+      if (t != null && (lastSeenMs == null || t > lastSeenMs)) {
+        lastSeenMs = t;
+      }
+    }
+
+    return {
+      topicId,
+      cardsRated,
+      cardsInQueue,
+      cardsGraduated,
+      gotCount,
+      missCount,
+      lastSeenMs,
+    };
+  });
 }
 
 export function formatLastSeen(lastSeenMs: number | null, nowMs: number): string {
