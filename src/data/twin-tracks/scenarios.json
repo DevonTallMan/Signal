@@ -85,5 +85,92 @@
         "develop": "This creates the risk of a confidentiality breach affecting patient medical records, which would be a notifiable data breach under UK GDPR and could expose the hospital to regulatory action from the Information Commissioner's Office and significant reputational damage that undermines patient trust in how their data is handled."
       }
     }
+  },
+  {
+    "id": "ai-recruitment",
+    "title": "AI in recruitment",
+    "questionType": "discuss",
+    "scenarioPanels": [
+      {
+        "id": "p1",
+        "glyph": "office",
+        "caption": "A national retailer receives over 80,000 graduate-role applications a year and the recruitment team cannot read every CV."
+      },
+      {
+        "id": "p2",
+        "glyph": "data-centre",
+        "caption": "An AI screening tool scores each application against criteria derived from the past five years of successful hires."
+      },
+      {
+        "id": "p3",
+        "glyph": "employee",
+        "caption": "Recruiters receive a ranked shortlist and focus their time on engaging top candidates rather than reading every CV."
+      },
+      {
+        "id": "p4",
+        "glyph": "warning",
+        "caption": "The training data reflects who was hired before, so any historical preference for one demographic shows up as a learned scoring rule."
+      },
+      {
+        "id": "p5",
+        "glyph": "data-exposed",
+        "caption": "Applicants from protected groups are scored lower for reasons unrelated to merit, never reaching the human-review stage."
+      },
+      {
+        "id": "p6",
+        "glyph": "breach",
+        "caption": "Indirect discrimination under Equality Act 2010 s.19 plus a solely-automated decision restricted by UK GDPR Article 22: two simultaneous statutory exposures."
+      }
+    ],
+    "phrases": [
+      {
+        "id": "ph1",
+        "text": "One positive impact for the retailer is the operational efficiency of automated CV screening at scale.",
+        "track": "positive",
+        "slot": "introduce"
+      },
+      {
+        "id": "ph2",
+        "text": "Because AI can sift through tens of thousands of applications in minutes against the same scoring criteria, the recruitment team is freed from the most time-consuming part of the early funnel.",
+        "track": "positive",
+        "slot": "explain"
+      },
+      {
+        "id": "ph3",
+        "text": "This lets recruiters spend more time on shortlisted-candidate engagement and reduces the time-to-hire, both of which improve the retailer's competitiveness for talent and the candidate experience for those who progress.",
+        "track": "positive",
+        "slot": "develop"
+      },
+      {
+        "id": "ph4",
+        "text": "One negative impact is the risk of indirect discrimination against applicants in protected groups.",
+        "track": "negative",
+        "slot": "introduce"
+      },
+      {
+        "id": "ph5",
+        "text": "AI trained on the retailer's historical hiring data inherits patterns of who has been hired before, so any historical preference for one demographic over another shows up as a learned scoring rule that disadvantages similar candidates today.",
+        "track": "negative",
+        "slot": "explain"
+      },
+      {
+        "id": "ph6",
+        "text": "This creates simultaneous exposure under the Equality Act 2010 (likely indirect discrimination under section 19, since the screening rule applies uniformly but disadvantages protected groups) and under the UK GDPR (Article 22 restricts solely automated decisions producing legal or similarly significant effects on data subjects, with required safeguards including human review and the right to challenge).",
+        "track": "negative",
+        "slot": "develop"
+      }
+    ],
+    "modelAnswer": {
+      "positive": {
+        "introduce": "One positive impact for the retailer is the operational efficiency of automated CV screening at scale.",
+        "explain": "Because the AI can sift through tens of thousands of applications in minutes against the same scoring criteria, the recruitment team is freed from the most time-consuming part of the early funnel and is no longer the bottleneck.",
+        "develop": "This lets recruiters spend more time on shortlisted-candidate engagement, reduces the time-to-hire, and produces a more consistent applicant experience for those who progress, all of which improve the retailer's competitiveness for talent."
+      },
+      "negative": {
+        "introduce": "One negative impact is the risk of indirect discrimination against applicants in protected groups.",
+        "explain": "AI trained on the retailer's historical hiring data inherits the patterns of who has been hired before, so any historical preference for one demographic over another, even one that was unintentional, shows up as a learned scoring rule that disadvantages similar candidates today.",
+        "develop": "This creates simultaneous exposure under two Acts. Under the Equality Act 2010 it is likely to be indirect discrimination under section 19, because the screening rule applies uniformly but puts protected groups at a particular disadvantage. Under the UK GDPR, Article 22 restricts solely automated decisions producing legal or similarly significant effects on data subjects, requiring safeguards such as meaningful human review and a right to challenge the outcome."
+      }
+    }
   }
 ]
