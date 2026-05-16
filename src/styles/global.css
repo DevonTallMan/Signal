@@ -1106,3 +1106,85 @@ mark.nei-role--impact {
   color: var(--muted);
   margin: 0 0.55rem;
 }
+
+/* ===== Topic-page section-break illustrations =====
+   Rendered by src/components/TopicIllo.astro via the
+   {% illo panel="..." /%} Markdoc tag. Currently used only on the CA
+   4.1 Data Protection topic; pattern is reusable for other topics. */
+
+.topic-illo {
+  margin: 2rem 0 1.5rem;
+  padding: 0;
+  position: relative;
+  background: transparent;
+  border: none;
+}
+.topic-illo__frame {
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  padding: 1.25rem 1.25rem 1rem;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.topic-illo__frame::before,
+.topic-illo__frame::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: #39ff14;
+  border-style: solid;
+}
+.topic-illo__frame::before {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+}
+.topic-illo__frame::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 2px 2px 0;
+}
+.topic-illo__frame svg {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+}
+.topic-illo__caption {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+  padding: 0 0.25rem;
+  font-family: "JetBrains Mono", "Courier New", monospace;
+}
+.topic-illo__num {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: #ffd700;
+  text-transform: uppercase;
+}
+.topic-illo__tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  color: rgba(232, 237, 243, 0.6);
+  text-transform: uppercase;
+}
+.topic-illo__tag::before {
+  content: "> ";
+  color: #39ff14;
+}
+@media (max-width: 640px) {
+  .topic-illo__frame {
+    padding: 1rem 0.85rem 0.85rem;
+    min-height: 150px;
+  }
+  .topic-illo__caption {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
