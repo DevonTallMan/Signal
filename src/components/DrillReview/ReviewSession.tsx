@@ -188,19 +188,28 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
       ...prev,
       { topicId: current.topicId, termId: current.termId, outcome },
     ]);
-    try {
-      const db = getFirestore(app);
-      await saveDrillRatingWithScheduler(
-        db,
-        user.uid,
-        current.topicId,
-        current.termId,
-        outcome,
-      );
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.warn("Scheduler rating save failed:", err);
-    }
+    // Fire the scheduler write in the background. Don't block the
+    // phase transition on the Firestore round-trip. PR #124 moved
+    // the getAllCardStates read out of the await chain; this commit
+    // does the same for the saveDrillRatingWithScheduler write.
+    // Without this, slow staging Firestore can push the phase=done
+    // transition past the test timeout (surfaced repeatedly on PR
+    // #134 and #135).
+    void (async () => {
+      try {
+        const db = getFirestore(app);
+        await saveDrillRatingWithScheduler(
+          db,
+          user.uid,
+          current.topicId,
+          current.termId,
+          outcome,
+        );
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.warn("Scheduler rating save failed:", err);
+      }
+    })();
     const next = cursor + 1;
     if (next >= queue.length) {
       const start = sessionStartedAtRef.current;
