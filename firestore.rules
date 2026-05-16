@@ -63,17 +63,24 @@ service cloud.firestore {
 
       match /mcqSubmissions/{submissionId} {
         // Sprint 7B Inc 7B.0: per-question MCQ submission records.
-        // Student-only on both read and write paths. Teachers DO NOT
-        // read MCQ submissions in v1 — this mirrors the NEI prose
-        // boundary at /submissions. Widening this rule to grant
-        // teacher cross-user reads requires a Section 8 entry in
-        // docs/sprint-7b-scope.md.
+        //
+        // Sprint 7C Inc 7C.0 (2026-05-16) widened the read rule to
+        // grant allowlisted teachers cross-user READ access, mirroring
+        // the drillRatings and activity-session read predicates. The
+        // NEI prose boundary at /submissions is NOT widened; Sort &
+        // Match and Twin Tracks scenario-level attempts are NOT
+        // widened. See docs/sprint-7c-scope.md §3.2 for the named
+        // boundaries this widening does and does not affect.
+        //
+        // Writes remain student-only. Delete remains denied. Teachers
+        // have no write or delete capability anywhere.
         //
         // Upsert semantics: create and update both allowed under the
         // same predicates. Re-attempting an MCQ overwrites the
         // previous submission. No attempt history; the latest answer
-        // is the unit of measurement per scope §3.2.
-        allow read: if request.auth != null && request.auth.uid == userId;
+        // is the unit of measurement per Sprint 7B scope §3.2.
+        allow read: if request.auth != null
+          && (request.auth.uid == userId || isTeacher());
         allow create, update: if request.auth != null
           && request.auth.uid == userId
           && request.resource.data.keys().hasAll([
