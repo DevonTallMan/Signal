@@ -10,7 +10,14 @@
 // surfaces immediately.
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { doc, getDoc, getFirestore, Timestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getFirestore,
+  serverTimestamp,
+  setDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { useAuth } from "../../lib/useAuth";
 import { app } from "../../lib/firebase";
 import { getAllCardStates } from "../../lib/drillScheduler/queries";
@@ -147,6 +154,28 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
             : null;
         return { boxLevel, nextReviewDate };
       },
+      async seedCardWithDueDate(topicId, termId, boxLevel, nextReviewDateIso) {
+        const db = getFirestore(app);
+        const compositeId = `${topicId}__${termId}`;
+        const ref = doc(db, "users", user.uid, "drillRatings", compositeId);
+        const nowTimestamp = Timestamp.now();
+        const data: Record<string, unknown> = {
+          topicId,
+          termId,
+          outcome: "got",
+          ratedAt: serverTimestamp(),
+          source: "signal",
+          boxLevel,
+          firstRatedAt: nowTimestamp,
+          lastRatedAt: nowTimestamp,
+          history: [],
+        };
+        if (nextReviewDateIso !== null) {
+          data.nextReviewDate = Timestamp.fromDate(new Date(nextReviewDateIso));
+        }
+        await setDoc(ref, data);
+        setReloadCounter((n) => n + 1);
+      },
     });
     return () => unregisterDrillSchedulerTestApi();
   }, [user]);
@@ -257,7 +286,11 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
   if (!current) return null;
   const total = queue.length;
   return (
-    <div className="drill" data-review-state={phase}>
+    <div
+      className="drill"
+      data-review-state={phase}
+      data-review-queue-length={queue.length}
+    >
       <div className="drill__progress">
         <span className="drill__counter">
           {cursor + 1} of {total}

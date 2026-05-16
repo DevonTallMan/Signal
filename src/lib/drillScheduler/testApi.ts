@@ -31,6 +31,26 @@ export interface DrillSchedulerTestApiHandlers {
     | { boxLevel: number; nextReviewDate: string | null }
     | null
   >;
+  // Test-only seed method. Bypasses the scheduler's nextState
+  // computation and writes a card document directly with the desired
+  // box level and nextReviewDate. Used by Playwright specs that need
+  // past-due cards to drive the rate UX. Page.clock.install conflicts
+  // with Firebase auth token validation (tokens carry server-side
+  // iat/exp claims that the SDK validates against the local clock;
+  // mocking the clock breaks token refresh), so clock-mocking is not
+  // a viable substitute.
+  //
+  // Not part of scope Section 3.7's named API surface; added as a
+  // deferred Inc 6.2 follow-up to satisfy the "user can rate each
+  // one" done-when criterion at full UI-drive fidelity. Production
+  // safety is preserved by the import.meta.env.DEV gate in
+  // registerDrillSchedulerTestApi.
+  seedCardWithDueDate: (
+    topicId: string,
+    termId: string,
+    boxLevel: number,
+    nextReviewDateIso: string | null,
+  ) => Promise<void>;
 }
 
 declare global {
