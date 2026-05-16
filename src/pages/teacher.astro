@@ -4,14 +4,33 @@
 // Teacher dashboard route. Static-built shell that mounts the
 // TeacherView React island. The island handles auth, allowlist check
 // and the cohort-data fetch client-side; this Astro page only
-// provides the page chrome.
+// provides the page chrome and passes the topic catalogue as a prop
+// so the per-topic tab can list every topic, including those with
+// zero cohort activity.
 //
-// Sprint 7A Inc 7.1: cohort tab only. Per-topic and per-student
-// detail land in Inc 7.2. Export endpoint lands in Inc 7.3.
+// Sprint 7A Inc 7.1 shipped the cohort tab. Inc 7.2 adds per-topic
+// and per-student tabs on the same island. Export endpoint lands in
+// Inc 7.3.
 
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
-import TeacherView from "../components/Teacher/TeacherView.tsx";
+import TeacherView, {
+  type TopicMeta,
+} from "../components/Teacher/TeacherView.tsx";
+
+const topics = await getCollection(
+  "topics",
+  (t) => t.data.status === "published",
+);
+const topicCatalog: TopicMeta[] = topics
+  .map((t) => ({
+    id: t.id,
+    title: t.data.title,
+    sectionId: t.data.section_id,
+    contentArea: t.data.content_area,
+  }))
+  .sort((a, b) => a.sectionId.localeCompare(b.sectionId));
 
 const crumbs = [
   { label: "Home", href: "/" },
@@ -32,7 +51,7 @@ const crumbs = [
       gated by the Firestore teacher allowlist.
     </p>
 
-    <TeacherView client:only="react" />
+    <TeacherView topics={topicCatalog} client:only="react" />
   </main>
 </BaseLayout>
 
@@ -44,6 +63,46 @@ const crumbs = [
     font-family: monospace;
     color: var(--text-muted, #6a7090);
     margin-bottom: var(--space-3);
+  }
+  .teacher__tabs {
+    display: flex;
+    gap: 4px;
+    margin: var(--space-3) 0;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+  }
+  .teacher__tab {
+    background: transparent;
+    border: none;
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-muted, #6a7090);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+  }
+  .teacher__tab:hover {
+    color: inherit;
+  }
+  .teacher__tab--active {
+    color: inherit;
+    border-bottom-color: currentColor;
+    font-weight: 600;
+  }
+  .teacher__picker {
+    margin: var(--space-3) 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .teacher__picker label {
+    font-size: 14px;
+    color: var(--text-muted, #6a7090);
+  }
+  .teacher__picker select {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 4px 8px;
   }
   .teacher__table {
     width: 100%;
