@@ -20,8 +20,11 @@
 // not a destination in itself.
 
 import { useMemo, useState } from 'react';
+import { getFirestore } from 'firebase/firestore';
 import { useAuth } from '../lib/useAuth';
 import { saveDrillRating, type DrillOutcome } from '../lib/drillStore';
+import { saveDrillRatingWithScheduler } from '../lib/drillScheduler/firestore';
+import { app } from '../lib/firebase';
 
 export interface DrillItem {
   id: string;
@@ -68,13 +71,38 @@ export default function TerminologyDrill({
     // Fire-and-forget save. Failure is silent on purpose; a broken save
     // should not interrupt the drill. We log to the console so problems
     // are discoverable during development.
+    //
+    // Sprint 6 Inc 6.4: scheduler write is the primary path. The wrapper
+    // does a transactional read-modify-write that subsumes the legacy
+    // 5-field save and adds the Leitner scheduler state. If the wrapper
+    // throws (network, contention beyond retry, rules rejection) we fall
+    // back to the legacy saveDrillRating so the rating still lands.
+    // Risk 5 in docs/sprint-6-scope.md: the drill UX must keep working
+    // even if the scheduler is broken.
     if (user) {
-      saveDrillRating(user.uid, topicId, current.id, outcome).catch(
-        (err) => {
+      const db = getFirestore(app);
+      const uid = user.uid;
+      const termId = current.id;
+      void (async () => {
+        try {
+          await saveDrillRatingWithScheduler(db, uid, topicId, termId, outcome);
+        } catch (err) {
           // eslint-disable-next-line no-console
-          console.warn('Drill rating save failed:', err);
-        },
-      );
+          console.warn(
+            'Scheduler write failed; falling back to legacy save:',
+            err,
+          );
+          try {
+            await saveDrillRating(uid, topicId, termId, outcome);
+          } catch (fallbackErr) {
+            // eslint-disable-next-line no-console
+            console.warn(
+              'Legacy drill rating save also failed:',
+              fallbackErr,
+            );
+          }
+        }
+      })();
     }
 
     const next = cursor + 1;
