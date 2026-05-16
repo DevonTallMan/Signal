@@ -315,6 +315,31 @@ samp {
   padding-top: 0;
 }
 
+/* MCQ summary (Sprint 7B Inc 7B.2) */
+
+.mcq-summary {
+  margin: var(--space-3) 0 var(--space-4) 0;
+  padding: var(--space-3);
+  border-left: 3px solid var(--border);
+  background: var(--bg-2, transparent);
+}
+.mcq-summary p {
+  margin: 0;
+  line-height: 1.5;
+}
+.mcq-summary--partial {
+  border-left-color: var(--gold, #ffd700);
+}
+.mcq-summary--all-correct {
+  border-left-color: var(--green, #39ff14);
+}
+.mcq-summary--mixed {
+  border-left-color: var(--gold, #ffd700);
+}
+.mcq-summary--all-wrong {
+  border-left-color: var(--danger, #b00020);
+}
+
 /* MCQ runner (Sprint 7B Inc 7B.1) */
 
 .mcq-runner {
