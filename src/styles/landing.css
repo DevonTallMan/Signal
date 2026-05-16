@@ -785,3 +785,172 @@ a:focus-visible {
   outline: 2px solid var(--green);
   outline-offset: 2px;
 }
+
+/* ===== Sprint 6 Inc 6.3: home-page review surface =====
+   Two stacked elements rendered by HomeReviewWidget:
+   - Soft session-opener banner (gold accent)
+   - Review widget with due count + CTA (green accent)
+   Hidden entirely for anonymous users and empty queues. */
+
+.review-surface {
+  position: relative;
+  z-index: 1;
+  padding: 32px 48px 0;
+}
+.review-surface__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.session-opener {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 20px;
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.05), transparent 80%);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--gold);
+  border-radius: 3px;
+}
+.session-opener__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.session-opener__tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+.session-opener__question {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  color: var(--ink);
+}
+.session-opener__question strong {
+  color: var(--gold);
+  font-weight: 700;
+}
+.session-opener__actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+  align-items: center;
+}
+.session-opener__accept {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--void);
+  background: var(--gold);
+  padding: 9px 16px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.25);
+  white-space: nowrap;
+}
+.session-opener__accept:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(255, 215, 0, 0.4);
+}
+.session-opener__dismiss {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  color: var(--dim);
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 9px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+.session-opener__dismiss:hover {
+  color: var(--ink);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.session-opener__dismiss:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.review-widget {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--green);
+  border-radius: 3px;
+}
+.review-widget__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.review-widget__eyebrow {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--green);
+}
+.review-widget__count {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  color: var(--ink);
+}
+.review-widget__count strong {
+  color: var(--green);
+  font-weight: 700;
+}
+.review-widget__cta {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--void);
+  background: var(--green);
+  padding: 9px 16px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.25);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.review-widget__cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.4);
+}
+
+@media (max-width: 768px) {
+  .review-surface {
+    padding: 24px 24px 0;
+  }
+  .session-opener,
+  .review-widget {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .session-opener__actions {
+    width: 100%;
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+  .session-opener__accept,
+  .session-opener__dismiss,
+  .review-widget__cta {
+    width: 100%;
+    text-align: center;
+  }
+}
