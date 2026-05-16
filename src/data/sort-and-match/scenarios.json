@@ -61,5 +61,68 @@
       "explain": "Volume measures the sheer amount of data, typically in terabytes or petabytes. Variety covers the range of sources and formats, including structured database records, semi-structured CSV files, and unstructured content such as text, images, and video. Velocity is the speed at which data is generated, transmitted, and processed in real time. Variability is how quickly the data itself changes over the period of analysis. Value is whether the data, after processing, actually meets the predefined goal of the analysis. Veracity is how trustworthy the data is, which typically declines as volume rises.",
       "impact": "Each V threatens data quality if mishandled, producing a Garbage In, Garbage Out (GIGO) effect: low-quality input on any V produces low-quality decisions regardless of how sophisticated the analysis is. High volume without sufficient storage causes processing bottlenecks. High variety without normalisation produces inconsistent analysis. High velocity without real-time tools means decisions are made on stale data. High variability undermines findings by the time they reach a decision-maker. Low value wastes processing effort. Low veracity destroys confidence in conclusions. Strategic, tactical, and operational decisions all depend on the Six Vs being well-managed; when they are not, decisions misfire and stakeholders lose trust."
     }
+  },
+  {
+    "id": "computer-misuse-insider-access",
+    "title": "Computer Misuse Act and insider access",
+    "scenarioPanels": [
+      {
+        "id": "p1",
+        "glyph": "office",
+        "caption": "A bank issues every employee a username and password so they can do their job on the customer records system."
+      },
+      {
+        "id": "p2",
+        "glyph": "employee",
+        "caption": "An employee logs in with valid credentials at the start of their shift, exactly as their role requires."
+      },
+      {
+        "id": "p3",
+        "glyph": "network-secure",
+        "caption": "While legitimately logged in, the employee queries the account of a celebrity client out of curiosity. No data is copied or shared."
+      },
+      {
+        "id": "p4",
+        "glyph": "warning",
+        "caption": "Authorisation is a property of the task. Curiosity is not part of the task; the query is unauthorised the moment it happens."
+      },
+      {
+        "id": "p5",
+        "glyph": "breach",
+        "caption": "Section 1 offence committed. Up to two years' imprisonment. Employer faces parallel ICO enforcement and the employee's career in regulated sectors is permanently affected."
+      }
+    ],
+    "phrases": [
+      {
+        "id": "ph1",
+        "text": "The Computer Misuse Act 1990 is the UK legislation governing unauthorised access to computer material, with section 1 as the basic unauthorised-access offence.",
+        "category": "N"
+      },
+      {
+        "id": "ph2",
+        "text": "The Act treats authorisation as a property of the task being performed, not of the person.",
+        "category": "E"
+      },
+      {
+        "id": "ph3",
+        "text": "Section 1 is satisfied by the unauthorised access itself; no further misuse of the data is required for the offence to be complete.",
+        "category": "E"
+      },
+      {
+        "id": "ph4",
+        "text": "A bank employee viewing a celebrity client's records out of curiosity, despite holding legitimate credentials, commits a section 1 offence.",
+        "category": "I"
+      },
+      {
+        "id": "ph5",
+        "text": "The maximum sentence under section 1 is two years' imprisonment, and the same conduct can simultaneously expose the employer to Information Commissioner's Office enforcement under UK GDPR.",
+        "category": "I"
+      }
+    ],
+    "modelAnswer": {
+      "name": "The Computer Misuse Act 1990 is the UK legislation governing unauthorised access to computer material, with section 1 as the basic unauthorised-access offence. Sections 2 and 3 deal with more serious variants: section 2 is a section 1 access committed with intent to commit a further offence, and section 3 is an unauthorised act intended to impair the operation of the computer, such as releasing malware or deleting data.",
+      "explain": "The Act treats authorisation as a property of the task being performed, not of the person. An employee who holds a valid username and password is authorised to do some things with that login, namely the tasks their role requires, but not everything that the credentials technically allow them to access. Access becomes 'unauthorised' the moment the employee acts outside their task-specific scope and knows that they are exceeding it. Section 1 is satisfied by the unauthorised access itself; no further misuse of the data is required for the offence to be complete.",
+      "impact": "This task-specific reading catches insiders who would not consider themselves attackers. A bank employee viewing a celebrity client's records out of curiosity, despite holding legitimate credentials, commits a section 1 offence the moment they query the account. The maximum sentence under section 1 is two years' imprisonment, and the same conduct can simultaneously expose the employer to Information Commissioner's Office enforcement under the integrity and confidentiality principle of UK GDPR Article 5(1)(f), because the employer has failed to maintain appropriate access controls. A criminal record from a section 1 conviction also permanently affects the individual's future employment in regulated sectors such as finance, healthcare and policing."
+    }
   }
 ]
