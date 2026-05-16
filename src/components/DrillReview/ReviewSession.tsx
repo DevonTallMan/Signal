@@ -286,7 +286,11 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
   if (!current) return null;
   const total = queue.length;
   return (
-    <div className="drill" data-review-state={phase}>
+    <div
+      className="drill"
+      data-review-state={phase}
+      data-review-queue-length={queue.length}
+    >
       <div className="drill__progress">
         <span className="drill__counter">
           {cursor + 1} of {total}

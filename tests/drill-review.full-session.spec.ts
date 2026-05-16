@@ -52,12 +52,18 @@ test.describe("Drill review full session", () => {
       { topicId: TOPIC_ID, termA: TERM_A, termB: TERM_B, dueAtA, dueAtB },
     );
 
-    // After seeding, ReviewSession should re-fetch and settle into
-    // the cue phase with a non-empty queue.
+    // After seeding, ReviewSession re-fetches the queue. Because
+    // seedCardWithDueDate increments the reload counter after each
+    // seed, the first re-fetch can fire BEFORE the second seed
+    // commits, briefly putting the queue at length 1. We wait for
+    // the queue to settle at length 2 before driving the UI, so the
+    // rate() closure captures queue.length = 2 and routes through
+    // the second card rather than transitioning to 'done' early.
     await page.waitForFunction(
       () => {
         const el = document.querySelector("[data-review-state]");
-        return el?.getAttribute("data-review-state") === "cue";
+        if (el?.getAttribute("data-review-state") !== "cue") return false;
+        return el?.getAttribute("data-review-queue-length") === "2";
       },
       undefined,
       { timeout: 10_000 },
