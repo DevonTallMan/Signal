@@ -1,0 +1,41 @@
+---
+// Single comic panel with optional illustration, eyebrow tag, headline
+// and body slot. The headline string may contain [bracketed] segments,
+// which render with the .hl highlight span.
+
+import ComicIllo from "./ComicIllo.astro";
+
+interface Props {
+  id?: string;
+  num: string;
+  eyebrow: string;
+  headline: string;
+  illo?: string;
+}
+
+const { id, num, eyebrow, headline, illo } = Astro.props;
+
+const parts = headline.split(/(\[[^\]]+\])/);
+---
+
+<article class="comic-panel" id={id}>
+  {illo && (
+    <div class="comic-panel__illo">
+      <ComicIllo panel={illo} />
+    </div>
+  )}
+  <div class="comic-panel__num">{num}</div>
+  <p class="comic-panel__tag">{eyebrow}</p>
+  <h2 class="comic-panel__headline">
+    {parts.map((p) =>
+      p.startsWith("[") && p.endsWith("]") ? (
+        <span class="hl">{p.slice(1, -1)}</span>
+      ) : (
+        p
+      ),
+    )}
+  </h2>
+  <div class="comic-panel__body">
+    <slot />
+  </div>
+</article>

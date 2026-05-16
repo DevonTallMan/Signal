@@ -1,0 +1,471 @@
+/*
+ * src/styles/comic.css
+ *
+ * Cyberpunk-comic topic page styling. EVERY rule is scoped under the
+ * .comic-topic wrapper so this stylesheet cannot bleed into prose topic
+ * pages or any other surface. Loaded only on topic pages whose frontmatter
+ * has display_style: "comic".
+ *
+ * Palette tokens use the --neon-* prefix to coexist with the existing
+ * Orbitron landing palette (--green, --gold, --amber, etc.). None of the
+ * existing tokens are overwritten.
+ */
+
+.comic-topic {
+  --neon-bg: #06070a;
+  --neon-bg-2: #0d0f15;
+  --neon-ink: #e8eaf0;
+  --neon-muted: #6a7090;
+  --neon-cyan: #00f0ff;
+  --neon-magenta: #ff2d70;
+  --neon-yellow: #fff03a;
+  --neon-green: #00ff88;
+  --neon-grid: rgba(0, 240, 255, 0.05);
+
+  background: var(--neon-bg);
+  color: var(--neon-ink);
+  font-family: "Chakra Petch", sans-serif;
+  line-height: 1.55;
+  background-image:
+    linear-gradient(var(--neon-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--neon-grid) 1px, transparent 1px),
+    radial-gradient(circle at 25% 15%, rgba(0, 240, 255, 0.06), transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 45, 112, 0.06), transparent 50%);
+  background-size: 56px 56px, 56px 56px, 100% 100%, 100% 100%;
+  padding: 32px 20px 80px;
+  position: relative;
+}
+
+.comic-topic .comic-eyebrow {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.35em;
+  color: var(--neon-magenta);
+  margin-bottom: 22px;
+  text-transform: uppercase;
+}
+.comic-topic .comic-eyebrow::before {
+  content: "// ";
+  color: var(--neon-cyan);
+}
+
+.comic-topic h1 {
+  font-family: "Major Mono Display", monospace;
+  font-weight: 400;
+  font-size: clamp(42px, 9vw, 108px);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: lowercase;
+  color: var(--neon-ink);
+  text-shadow: -2px 0 var(--neon-magenta), 2px 0 var(--neon-cyan);
+  margin: 0 0 28px;
+}
+
+.comic-topic .comic-lede {
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 17px;
+  color: var(--neon-ink);
+  opacity: 0.85;
+  max-width: 660px;
+  margin: 0 0 32px;
+  border-left: 2px solid var(--neon-cyan);
+  padding-left: 16px;
+}
+
+.comic-topic .comic-divider {
+  margin: 48px 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.comic-topic .comic-divider .line {
+  flex: 1;
+  height: 1px;
+  background: var(--neon-cyan);
+  position: relative;
+}
+.comic-topic .comic-divider .line::before,
+.comic-topic .comic-divider .line::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  background: var(--neon-cyan);
+}
+.comic-topic .comic-divider .line::before { left: 0; }
+.comic-topic .comic-divider .line::after { right: 0; }
+.comic-topic .comic-divider .tag {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--neon-cyan);
+  white-space: nowrap;
+}
+
+.comic-topic .comic-panels {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+}
+@media (min-width: 720px) {
+  .comic-topic .comic-panels {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+@media (min-width: 1020px) {
+  .comic-topic .comic-panels {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.comic-topic .comic-panel {
+  background: var(--neon-bg-2);
+  color: var(--neon-ink);
+  padding: 0 22px 24px;
+  position: relative;
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 0 0 1px rgba(0, 240, 255, 0.05) inset,
+    0 14px 40px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(0, 240, 255, 0.08);
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.55s ease-out,
+    transform 0.55s ease-out,
+    border-color 0.25s,
+    box-shadow 0.25s;
+  overflow: hidden;
+}
+.comic-topic .comic-panel.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+.comic-topic .comic-panel:hover {
+  border-color: var(--neon-cyan);
+  box-shadow:
+    0 0 0 1px rgba(0, 240, 255, 0.08) inset,
+    0 14px 40px rgba(0, 0, 0, 0.6),
+    0 0 38px rgba(0, 240, 255, 0.22);
+}
+.comic-topic .comic-panel::before,
+.comic-topic .comic-panel::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--neon-cyan);
+  border-style: solid;
+  z-index: 3;
+}
+.comic-topic .comic-panel::before {
+  top: -2px;
+  left: -2px;
+  border-width: 2px 0 0 2px;
+}
+.comic-topic .comic-panel::after {
+  bottom: -2px;
+  right: -2px;
+  border-width: 0 2px 2px 0;
+}
+
+.comic-topic .comic-panel__illo {
+  margin: 0 -22px 22px;
+  padding: 14px 18px;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(0, 240, 255, 0.08), transparent 60%),
+    var(--neon-bg);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+  height: 160px;
+  position: relative;
+  overflow: hidden;
+}
+.comic-topic .comic-panel__illo .comic-illo {
+  width: 100%;
+  height: 100%;
+}
+.comic-topic .comic-panel__illo svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 0 4px rgba(0, 240, 255, 0.4));
+}
+
+.comic-topic .comic-panel__num {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: var(--neon-bg);
+  color: var(--neon-cyan);
+  font-family: "Major Mono Display", monospace;
+  font-size: 13px;
+  padding: 4px 10px;
+  border: 1px solid var(--neon-cyan);
+  letter-spacing: 0.15em;
+  z-index: 2;
+}
+
+.comic-topic .comic-panel__tag {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  color: var(--neon-magenta);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.comic-topic .comic-panel__tag::before {
+  content: "> ";
+  color: var(--neon-cyan);
+}
+
+.comic-topic .comic-panel__headline {
+  font-family: "Chakra Petch", sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.18;
+  margin: 0 0 18px;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  color: var(--neon-ink);
+}
+.comic-topic .comic-panel__headline .hl {
+  color: var(--neon-cyan);
+  background: linear-gradient(transparent 60%, rgba(0, 240, 255, 0.18) 60%);
+  padding: 0 2px;
+}
+
+.comic-topic .comic-panel__body {
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  flex: 1;
+  color: var(--neon-ink);
+  opacity: 0.92;
+}
+
+.comic-topic .comic-panel__body ul {
+  list-style: none;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 13.5px;
+  padding: 0;
+  margin: 0;
+}
+.comic-topic .comic-panel__body ul li {
+  padding: 7px 0;
+  border-bottom: 1px dashed rgba(0, 240, 255, 0.2);
+}
+.comic-topic .comic-panel__body ul li:last-child {
+  border-bottom: none;
+}
+.comic-topic .comic-panel__body ul li::before {
+  content: "[+] ";
+  color: var(--neon-cyan);
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.comic-topic .comic-takeaway {
+  margin: 20px 0 0;
+  padding: 12px 14px;
+  background: rgba(0, 240, 255, 0.05);
+  border-left: 2px solid var(--neon-yellow);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--neon-yellow);
+}
+.comic-topic .comic-takeaway::before {
+  content: "// ";
+  color: var(--neon-muted);
+}
+
+.comic-topic .comic-def {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  background: rgba(255, 240, 58, 0.06);
+  border-left: 2px solid var(--neon-yellow);
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--neon-ink);
+}
+.comic-topic .comic-def strong {
+  color: var(--neon-yellow);
+  font-weight: 700;
+}
+
+.comic-topic .comic-term-card {
+  background: var(--neon-bg);
+  border: 1px solid var(--neon-cyan);
+  padding: 14px 16px;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 14px;
+  line-height: 1.35;
+  margin: 14px 0;
+}
+.comic-topic .comic-term-card--center {
+  text-align: center;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--neon-cyan);
+}
+
+.comic-topic .comic-docs {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  margin: 14px 0;
+}
+.comic-topic .comic-doc {
+  flex: 1;
+  background: var(--neon-bg);
+  border: 1px solid var(--neon-cyan);
+  padding: 12px;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--neon-ink);
+}
+.comic-topic .comic-doc strong {
+  display: block;
+  font-family: "Chakra Petch", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 8px;
+  letter-spacing: 0.04em;
+  color: var(--neon-yellow);
+}
+.comic-topic .comic-docs > .comic-doc + .comic-doc {
+  position: relative;
+  margin-left: 24px;
+}
+.comic-topic .comic-docs > .comic-doc + .comic-doc::before {
+  content: "+";
+  position: absolute;
+  left: -22px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: "Major Mono Display", monospace;
+  font-size: 24px;
+  color: var(--neon-magenta);
+}
+
+.comic-topic .comic-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-family: "Chakra Petch", sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 14px 0;
+}
+.comic-topic .comic-chip {
+  padding: 4px 9px;
+  background: transparent;
+  color: var(--neon-cyan);
+  font-size: 13px;
+  border: 1px solid var(--neon-cyan);
+  letter-spacing: 0.06em;
+}
+.comic-topic .comic-chip:nth-child(2n) {
+  background: var(--neon-magenta);
+  color: var(--neon-bg);
+  border-color: var(--neon-magenta);
+}
+.comic-topic .comic-chip:nth-child(3n) {
+  background: var(--neon-yellow);
+  color: var(--neon-bg);
+  border-color: var(--neon-yellow);
+}
+
+.comic-topic .comic-closer {
+  margin-top: 64px;
+  text-align: center;
+  padding: 32px 20px 24px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.comic-topic .comic-closer.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+.comic-topic .comic-closer__line {
+  font-family: "Major Mono Display", monospace;
+  font-size: clamp(24px, 4.5vw, 44px);
+  line-height: 1;
+  margin: 0 0 20px;
+  text-transform: lowercase;
+  color: var(--neon-ink);
+  text-shadow: -2px 0 var(--neon-magenta), 2px 0 var(--neon-cyan);
+}
+.comic-topic .comic-closer__line em {
+  color: var(--neon-yellow);
+  font-style: normal;
+}
+.comic-topic .comic-closer__body {
+  font-family: "Chakra Petch", sans-serif;
+  color: var(--neon-ink);
+  opacity: 0.88;
+  max-width: 640px;
+  margin: 0 auto 22px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.comic-topic .comic-closer__steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  max-width: 540px;
+  margin: 24px auto 0;
+  text-align: left;
+}
+@media (min-width: 600px) {
+  .comic-topic .comic-closer__steps {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.comic-topic .comic-step {
+  border: 1px solid var(--neon-cyan);
+  padding: 14px 16px;
+  background: rgba(0, 240, 255, 0.04);
+}
+.comic-topic .comic-step__num {
+  font-family: "Major Mono Display", monospace;
+  font-size: 12px;
+  color: var(--neon-magenta);
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+  display: block;
+}
+.comic-topic .comic-step__head {
+  font-family: "Chakra Petch", sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--neon-yellow);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+}
+.comic-topic .comic-step__text {
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--neon-ink);
+  opacity: 0.85;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comic-topic .comic-panel,
+  .comic-topic .comic-closer {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
