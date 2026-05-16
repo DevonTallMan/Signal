@@ -2,8 +2,9 @@
 // Comic-panel SVG illustration.
 //
 // Inc 7.0 shipped a placeholder that names the panel slot it occupied.
-// Inc 7.1 adds the first real per-topic illustration set: six SVGs
-// authored for the CA 4.1 Computer Misuse Act topic, keyed cma-*.
+// Inc 7.1 added the first real per-topic illustration set: six SVGs
+// for the CA 4.1 Computer Misuse Act topic, keyed cma-*.
+// Inc 7.2 adds six more, for the CA 4.1 Equality Act topic, keyed eq-*.
 //
 // The unknown-panel fallback is preserved so the Inc 7.0
 // comic-format-preview stub (which uses DP-themed panel keys) still
@@ -15,15 +16,21 @@ interface Props {
 }
 const { panel } = Astro.props;
 
-const cmaPanels = new Set([
+const authoredPanels = new Set([
   "cma-boundary",
   "cma-five",
   "cma-unauth",
   "cma-computer",
   "cma-mens",
   "cma-origin",
+  "eq-nine",
+  "eq-forms",
+  "eq-pcp",
+  "eq-adjustments",
+  "eq-justify",
+  "eq-enforce",
 ]);
-const isPlaceholder = !cmaPanels.has(panel);
+const isPlaceholder = !authoredPanels.has(panel);
 ---
 <div class="comic-illo" data-panel={panel} aria-hidden="true">
   {panel === "cma-boundary" && (
@@ -260,6 +267,207 @@ const isPlaceholder = !cmaPanels.has(panel);
         <text x="0" y="34" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="7" opacity="0.8">+s3ZA</text>
       </g>
       <text x="14" y="135" fill="#00f0ff" font-family="monospace" font-size="9" opacity="0.7">&gt; TIMELINE :: PARLIAMENT_CLOSES_THE_GAP</text>
+    </svg>
+  )}
+  {panel === "eq-nine" && (
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <g stroke="rgba(0,240,255,0.18)" stroke-width="0.5">
+        <line x1="0" y1="14" x2="320" y2="14" />
+        <line x1="0" y1="126" x2="320" y2="126" />
+      </g>
+      {[
+        { x: 50, y: 38, label: "AGE", color: "#00f0ff" },
+        { x: 130, y: 38, label: "DIS", color: "#fff03a" },
+        { x: 210, y: 38, label: "GEND", color: "#ff2d70" },
+        { x: 50, y: 76, label: "M/CP", color: "#00ff88" },
+        { x: 130, y: 76, label: "P/M", color: "#00f0ff" },
+        { x: 210, y: 76, label: "RACE", color: "#fff03a" },
+        { x: 50, y: 114, label: "REL", color: "#ff2d70" },
+        { x: 130, y: 114, label: "SEX", color: "#00ff88" },
+        { x: 210, y: 114, label: "S/O", color: "#00f0ff" },
+      ].map(({ x, y, label, color }) => (
+        <g transform={`translate(${x}, ${y})`}>
+          <rect x="-26" y="-13" width="52" height="26" fill="#0d0f15" stroke={color} stroke-width="1.6" />
+          <text x="0" y="4" text-anchor="middle" fill={color} font-family="monospace" font-size="10" font-weight="700">{label}</text>
+        </g>
+      ))}
+      <g transform="translate(284, 76)">
+        <circle r="22" fill="#0d0f15" stroke="#ff2d70" stroke-width="2" />
+        <text x="0" y="-3" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="16" font-weight="700">9</text>
+        <text x="0" y="9" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="6" letter-spacing="1">PROTECTED</text>
+      </g>
+      <text x="14" y="135" fill="#00f0ff" font-family="monospace" font-size="9" opacity="0.7">&gt; s4 :: PROTECTED_CHARACTERISTICS</text>
+    </svg>
+  )}
+  {panel === "eq-forms" && (
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <g transform="translate(82, 46)">
+        <rect x="-60" y="-22" width="120" height="44" fill="#0d0f15" stroke="#00f0ff" stroke-width="1.8" />
+        <text x="0" y="-4" text-anchor="middle" fill="#00f0ff" font-family="monospace" font-size="11" font-weight="700">DIRECT</text>
+        <text x="0" y="12" text-anchor="middle" fill="#00f0ff" font-family="monospace" font-size="8" opacity="0.7">s13</text>
+      </g>
+      <g transform="translate(238, 46)">
+        <rect x="-60" y="-22" width="120" height="44" fill="#0d0f15" stroke="#fff03a" stroke-width="1.8" />
+        <text x="0" y="-4" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="11" font-weight="700">INDIRECT</text>
+        <text x="0" y="12" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="8" opacity="0.7">s19</text>
+      </g>
+      <g transform="translate(82, 102)">
+        <rect x="-60" y="-22" width="120" height="44" fill="#0d0f15" stroke="#ff2d70" stroke-width="1.8" />
+        <text x="0" y="-4" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="11" font-weight="700">HARASS</text>
+        <text x="0" y="12" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="8" opacity="0.7">s26</text>
+      </g>
+      <g transform="translate(238, 102)">
+        <rect x="-60" y="-22" width="120" height="44" fill="#0d0f15" stroke="#00ff88" stroke-width="1.8" />
+        <text x="0" y="-4" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="11" font-weight="700">VICTIMISE</text>
+        <text x="0" y="12" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="8" opacity="0.7">s27</text>
+      </g>
+      <g stroke="#ff9d3a" stroke-width="1" opacity="0.5" stroke-dasharray="2 2">
+        <line x1="160" y1="20" x2="160" y2="128" />
+        <line x1="20" y1="74" x2="300" y2="74" />
+      </g>
+    </svg>
+  )}
+  {panel === "eq-pcp" && (
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <g stroke="rgba(0,240,255,0.18)" stroke-width="0.5">
+        <line x1="0" y1="18" x2="320" y2="18" />
+        <line x1="0" y1="122" x2="320" y2="122" />
+      </g>
+      <g transform="translate(46, 70)" font-family="monospace" font-size="8" fill="#00f0ff">
+        <circle cx="0" cy="-22" r="6" fill="none" stroke="#00f0ff" stroke-width="1.4" />
+        <circle cx="0" cy="0" r="6" fill="none" stroke="#fff03a" stroke-width="1.4" />
+        <circle cx="0" cy="22" r="6" fill="none" stroke="#00ff88" stroke-width="1.4" />
+        <rect x="-6" y="-44" width="12" height="6" fill="none" stroke="#ff2d70" stroke-width="1.4" />
+        <text x="20" y="-19" fill="#00f0ff">YOUNG</text>
+        <text x="20" y="3" fill="#fff03a">OLDER</text>
+        <text x="20" y="25" fill="#00ff88">DISABLED</text>
+        <text x="20" y="-37" fill="#ff2d70">PROTECTED</text>
+      </g>
+      <g stroke="#00f0ff" stroke-width="1.4" fill="none" opacity="0.7">
+        <line x1="86" y1="70" x2="138" y2="50" />
+        <line x1="86" y1="70" x2="138" y2="90" />
+      </g>
+      <g transform="translate(160, 70)">
+        <polygon points="-22,-22 22,-22 12,8 12,22 -12,22 -12,8" fill="#0d0f15" stroke="#fff03a" stroke-width="2" />
+        <text x="0" y="-6" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="9" font-weight="700">PCP</text>
+        <text x="0" y="8" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="6" opacity="0.8">NEUTRAL</text>
+      </g>
+      <g stroke="#00ff88" stroke-width="1.4" fill="none" opacity="0.9">
+        <line x1="180" y1="60" x2="226" y2="48" />
+        <path d="M 226 48 L 220 46 M 226 48 L 222 53" />
+      </g>
+      <g stroke="#ff2d70" stroke-width="1.4" fill="none" stroke-dasharray="3 3">
+        <line x1="180" y1="80" x2="226" y2="92" />
+        <line x1="220" y1="86" x2="232" y2="98" />
+        <line x1="232" y1="86" x2="220" y2="98" />
+      </g>
+      <g transform="translate(252, 48)">
+        <circle r="6" fill="none" stroke="#00ff88" stroke-width="1.4" />
+        <text x="14" y="3" fill="#00ff88" font-family="monospace" font-size="8">PASSES</text>
+      </g>
+      <g transform="translate(252, 92)">
+        <circle r="6" fill="none" stroke="#ff2d70" stroke-width="1.4" />
+        <text x="14" y="3" fill="#ff2d70" font-family="monospace" font-size="8">BLOCKED</text>
+      </g>
+      <text x="14" y="135" fill="#00f0ff" font-family="monospace" font-size="9" opacity="0.7">&gt; s19 :: INDIRECT_DISCRIMINATION</text>
+    </svg>
+  )}
+  {panel === "eq-adjustments" && (
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <g stroke="rgba(0,240,255,0.18)" stroke-width="0.5">
+        <line x1="0" y1="34" x2="320" y2="34" />
+        <line x1="0" y1="106" x2="320" y2="106" />
+      </g>
+      <g transform="translate(38, 80)">
+        <circle r="11" fill="none" stroke="#00f0ff" stroke-width="1.8" />
+        <circle cx="0" cy="-3" r="4" fill="#00f0ff" />
+        <path d="M -6 4 Q 0 10 6 4" fill="none" stroke="#00f0ff" stroke-width="1.5" />
+        <text x="0" y="26" text-anchor="middle" fill="#00f0ff" font-family="monospace" font-size="8">USER</text>
+      </g>
+      <g stroke="#ff2d70" stroke-width="2" fill="none" opacity="0.9">
+        <path d="M 58 80 L 110 80" />
+        <line x1="110" y1="80" x2="110" y2="56" stroke-dasharray="3 3" />
+      </g>
+      <g transform="translate(124, 72)">
+        <rect x="-14" y="-10" width="28" height="20" fill="#0d0f15" stroke="#ff2d70" stroke-width="1.6" />
+        <text x="0" y="3" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="8" font-weight="700">STEP</text>
+      </g>
+      <text x="124" y="106" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="7" opacity="0.8">BARRIER</text>
+      <g stroke="#fff03a" stroke-width="2" fill="none">
+        <path d="M 156 76 L 200 76" />
+        <path d="M 200 76 L 192 72 M 200 76 L 192 80" />
+      </g>
+      <text x="178" y="68" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="8" letter-spacing="2">ADJUST</text>
+      <g transform="translate(238, 80)" stroke="#00ff88" stroke-width="1.8" fill="none">
+        <line x1="-22" y1="0" x2="-2" y2="-18" />
+        <line x1="-22" y1="0" x2="22" y2="0" />
+        <line x1="-2" y1="-18" x2="22" y2="-18" />
+        <line x1="22" y1="-18" x2="22" y2="0" />
+      </g>
+      <text x="238" y="106" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="7" opacity="0.9">RAMP :: ANTICIPATORY</text>
+      <text x="14" y="22" fill="#00f0ff" font-family="monospace" font-size="9" opacity="0.7">&gt; s20-22 :: REASONABLE_ADJUSTMENTS</text>
+    </svg>
+  )}
+  {panel === "eq-justify" && (
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <g transform="translate(160, 36)">
+        <circle r="10" fill="#0d0f15" stroke="#00f0ff" stroke-width="1.8" />
+        <line x1="-26" y1="0" x2="26" y2="0" stroke="#00f0ff" stroke-width="2" />
+      </g>
+      <g stroke="#00f0ff" stroke-width="1.6" fill="none">
+        <line x1="134" y1="36" x2="86" y2="78" />
+        <line x1="186" y1="36" x2="234" y2="78" />
+      </g>
+      <g transform="translate(86, 92)">
+        <rect x="-44" y="-14" width="88" height="28" fill="#0d0f15" stroke="#fff03a" stroke-width="1.8" />
+        <text x="0" y="-2" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="9" font-weight="700">LEGIT AIM</text>
+        <text x="0" y="10" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="6" opacity="0.8">REAL + SERIOUS</text>
+      </g>
+      <g transform="translate(234, 92)">
+        <rect x="-44" y="-14" width="88" height="28" fill="#0d0f15" stroke="#ff2d70" stroke-width="1.8" />
+        <text x="0" y="-2" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="9" font-weight="700">IMPACT</text>
+        <text x="0" y="10" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="6" opacity="0.8">DISADVANTAGE</text>
+      </g>
+      <g transform="translate(160, 124)">
+        <text x="0" y="0" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="9" letter-spacing="2" font-weight="700">PROPORTIONATE?</text>
+      </g>
+      <text x="14" y="22" fill="#00f0ff" font-family="monospace" font-size="9" opacity="0.7">&gt; OBJECTIVE_JUSTIFICATION</text>
+    </svg>
+  )}
+  {panel === "eq-enforce" && (
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <g stroke="rgba(0,240,255,0.18)" stroke-width="0.5">
+        <line x1="0" y1="34" x2="320" y2="34" />
+        <line x1="0" y1="106" x2="320" y2="106" />
+      </g>
+      <g transform="translate(60, 70)">
+        <rect x="-36" y="-22" width="72" height="44" fill="#0d0f15" stroke="#00f0ff" stroke-width="1.8" />
+        <text x="0" y="-4" text-anchor="middle" fill="#00f0ff" font-family="monospace" font-size="11" font-weight="700">EHRC</text>
+        <text x="0" y="10" text-anchor="middle" fill="#00f0ff" font-family="monospace" font-size="7" opacity="0.75">REGULATOR</text>
+      </g>
+      <g stroke="#fff03a" stroke-width="1.4" fill="none" stroke-dasharray="3 3" opacity="0.7">
+        <line x1="96" y1="62" x2="124" y2="50" />
+        <line x1="96" y1="78" x2="124" y2="90" />
+      </g>
+      <g transform="translate(160, 48)">
+        <rect x="-36" y="-14" width="72" height="28" fill="#0d0f15" stroke="#fff03a" stroke-width="1.8" />
+        <text x="0" y="-2" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="9" font-weight="700">EMP TRIB</text>
+        <text x="0" y="8" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="6" opacity="0.75">JOBS</text>
+      </g>
+      <g transform="translate(160, 92)">
+        <rect x="-36" y="-14" width="72" height="28" fill="#0d0f15" stroke="#ff2d70" stroke-width="1.8" />
+        <text x="0" y="-2" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="9" font-weight="700">CO COURT</text>
+        <text x="0" y="8" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="6" opacity="0.75">SERVICES s114</text>
+      </g>
+      <g stroke="#00ff88" stroke-width="1.4" fill="none">
+        <line x1="196" y1="48" x2="232" y2="62" />
+        <line x1="196" y1="92" x2="232" y2="78" />
+      </g>
+      <g transform="translate(260, 70)">
+        <polygon points="-22,-18 22,-18 22,12 0,22 -22,12" fill="#0d0f15" stroke="#00ff88" stroke-width="1.8" />
+        <text x="0" y="-2" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="9" font-weight="700">REMEDY</text>
+        <text x="0" y="9" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="6" opacity="0.75">DAMAGES</text>
+      </g>
     </svg>
   )}
   {isPlaceholder && (
