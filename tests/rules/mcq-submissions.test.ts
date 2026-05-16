@@ -255,17 +255,55 @@ describe("F: read paths", () => {
   });
 });
 
-// Group G: teacher cross-user read denied (the v1 boundary)
+// Group G: teacher cross-user reads ALLOWED (Sprint 7C Inc 7C.0)
+//
+// Inc 7B.0 originally held this boundary closed (Group G read as
+// "teacher cross-user read denied"). Inc 7C.0 widened the read
+// predicate to mirror drillRatings and activity sessions, so the
+// G1 test below now asserts ALLOWED rather than denied. Two new
+// tests added to assert that the widening does NOT grant teacher
+// write or delete capability.
 
-describe("G: teacher cross-user read denied", () => {
-  it("G1: allowlisted teacher CANNOT read another student's MCQ submission", async () => {
+describe("G: teacher cross-user reads ALLOWED (Sprint 7C widened)", () => {
+  it("G1: allowlisted teacher CAN read another student's MCQ submission", async () => {
     await testEnv.withSecurityRulesDisabled(async (ctx) => {
       await setDoc(doc(ctx.firestore(), mcqPath(STUDENT_A_UID)), validData());
     });
     const teacherCtx = testEnv
       .authenticatedContext(TEACHER_UID, { email: TEACHER_EMAIL })
       .firestore();
-    await assertFails(getDoc(doc(teacherCtx, mcqPath(STUDENT_A_UID))));
+    await assertSucceeds(getDoc(doc(teacherCtx, mcqPath(STUDENT_A_UID))));
+  });
+
+  it("G2: NON-allowlisted user with a non-teacher email still cannot cross-user read", async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), mcqPath(STUDENT_A_UID)), validData());
+    });
+    const nonTeacherCtx = testEnv
+      .authenticatedContext("non-teacher-uid-1", {
+        email: "not-on-allowlist@example.com",
+      })
+      .firestore();
+    await assertFails(getDoc(doc(nonTeacherCtx, mcqPath(STUDENT_A_UID))));
+  });
+
+  it("G3: allowlisted teacher CANNOT write to another student's mcqSubmissions", async () => {
+    const teacherCtx = testEnv
+      .authenticatedContext(TEACHER_UID, { email: TEACHER_EMAIL })
+      .firestore();
+    await assertFails(
+      setDoc(doc(teacherCtx, mcqPath(STUDENT_A_UID)), validData()),
+    );
+  });
+
+  it("G4: allowlisted teacher CANNOT delete another student's mcqSubmission", async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), mcqPath(STUDENT_A_UID)), validData());
+    });
+    const teacherCtx = testEnv
+      .authenticatedContext(TEACHER_UID, { email: TEACHER_EMAIL })
+      .firestore();
+    await assertFails(deleteDoc(doc(teacherCtx, mcqPath(STUDENT_A_UID))));
   });
 });
 
