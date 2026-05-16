@@ -64,6 +64,11 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
   const [results, setResults] = useState<ItemResult[]>([]);
   const [nextEarliestReviewDate, setNextEarliestReviewDate] = useState<Date | null | undefined>(undefined);
   const sessionStartedAtRef = useRef<number | null>(null);
+  // Tracks in-flight scheduler write promises so the test API's
+  // getCardState can await them before reading Firestore. The user
+  // path doesn't need this; only deterministic post-rate read-backs
+  // in Playwright specs do.
+  const pendingWritesRef = useRef<Set<Promise<unknown>>>(new Set());
   const [sessionDurationMs, setSessionDurationMs] = useState<number | null>(null);
   const [reloadCounter, setReloadCounter] = useState(0);
 
@@ -124,6 +129,11 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
         setReloadCounter((n) => n + 1);
       },
       async getDueCards(dateIso) {
+        // Drain any in-flight rate() writes before reading, so the
+        // result reflects the latest scheduler state. See pendingWritesRef.
+        if (pendingWritesRef.current.size > 0) {
+          await Promise.allSettled([...pendingWritesRef.current]);
+        }
         const db = getFirestore(app);
         const now = new Date(dateIso);
         const allStates = await getAllCardStates(db, user.uid, now);
@@ -136,6 +146,11 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
         }));
       },
       async getCardState(topicId, termId) {
+        // Drain any in-flight rate() writes before reading, so the
+        // result reflects the latest scheduler state. See pendingWritesRef.
+        if (pendingWritesRef.current.size > 0) {
+          await Promise.allSettled([...pendingWritesRef.current]);
+        }
         const db = getFirestore(app);
         const ref = doc(
           db,
@@ -195,7 +210,11 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
     // Without this, slow staging Firestore can push the phase=done
     // transition past the test timeout (surfaced repeatedly on PR
     // #134 and #135).
-    void (async () => {
+    //
+    // The write is tracked in pendingWritesRef so test code that
+    // reads back the saved state (via the test API's getCardState)
+    // can await it. User flows do not need this.
+    const writePromise = (async () => {
       try {
         const db = getFirestore(app);
         await saveDrillRatingWithScheduler(
@@ -210,6 +229,10 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
         console.warn("Scheduler rating save failed:", err);
       }
     })();
+    pendingWritesRef.current.add(writePromise);
+    void writePromise.finally(() => {
+      pendingWritesRef.current.delete(writePromise);
+    });
     const next = cursor + 1;
     if (next >= queue.length) {
       const start = sessionStartedAtRef.current;
