@@ -5,10 +5,47 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Sprint 7A Inc 7.0: teacher allowlist.
+    //
+    // Returns true if the authenticated request is from an allowlisted
+    // teacher email. Used to grant cross-user READ access on a strict
+    // subset of student data: profile, drillRatings, activity sessions
+    // and activity attempts. Teachers DO NOT have read access to
+    // /users/{uid}/submissions, because those documents carry NEI
+    // prose bodies in answerText. The prose-body boundary is the v1
+    // security line; see docs/sprint-7-scope.md §3.3 and Risk R1.
+    //
+    // Teachers also do not have any write access. All writes remain
+    // student-only.
+    //
+    // The allowlist is hardcoded server-side. A compromised client
+    // cannot read another user's data even if it claims to be a
+    // teacher. To add a teacher pre-pilot, append an email here and
+    // deploy to BOTH environments (Trap 12):
+    //   firebase deploy --only firestore:rules --project signal-staging-26b3e
+    //   firebase deploy --only firestore:rules --project mark-scheme-method-3efe9
+    //
+    // Pre-pilot TODO: replace the placeholder with Chris's and Dave's
+    // real emails before 21 September 2026. The placeholder string is
+    // intentionally never going to match a real Firebase auth token,
+    // so the rule set is safe to ship with the placeholder in place.
+    function isTeacher() {
+      return request.auth != null
+        && request.auth.token.email in [
+             "teacher-pilot-placeholder@example.com"
+           ];
+    }
+
     match /users/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null
+        && (request.auth.uid == userId || isTeacher());
 
       match /submissions/{submissionId} {
+        // Student-only. Teachers DO NOT read submission docs because
+        // they contain the NEI prose body in answerText. v1 holds the
+        // line at counts + timestamps via a future submissionsIndex
+        // collection (deferred). Widening this rule requires a
+        // Section 8 entry in docs/sprint-7-scope.md.
         allow read: if request.auth != null && request.auth.uid == userId;
         allow create: if request.auth != null
           && request.auth.uid == userId
@@ -25,7 +62,8 @@ service cloud.firestore {
       }
 
       match /drillRatings/{ratingId} {
-        allow read: if request.auth != null && request.auth.uid == userId;
+        allow read: if request.auth != null
+          && (request.auth.uid == userId || isTeacher());
         // Sprint 6 extends this block with optional spaced-return scheduler fields.
         // The five legacy fields remain required so existing saveDrillRating writes
         // pass; new fields (boxLevel, nextReviewDate, firstRatedAt, lastRatedAt,
@@ -61,7 +99,7 @@ service cloud.firestore {
 
       match /data/{dataKey}/sessions/{sessionId} {
         allow read: if request.auth != null
-          && request.auth.uid == userId
+          && (request.auth.uid == userId || isTeacher())
           && (dataKey == 'risk-classifier'
               || dataKey == 'sort-and-match'
               || dataKey == 'twin-tracks');
@@ -124,7 +162,7 @@ service cloud.firestore {
 
         match /attempts/{attemptId} {
           allow read: if request.auth != null
-            && request.auth.uid == userId
+            && (request.auth.uid == userId || isTeacher())
             && (dataKey == 'risk-classifier'
                 || dataKey == 'sort-and-match'
                 || dataKey == 'twin-tracks');
