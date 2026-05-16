@@ -18,7 +18,15 @@ const CMA_TOPIC_PATH = "/topics/4-1-2-computer-misuse";
 const MCQ_QUESTION_ID = "412-mcq-01";
 
 test.describe("MCQ runner smoke", () => {
-  test("signed-in student can submit an MCQ and see the correct verdict", async ({ page }) => {
+  // Marked fixme until the Sprint 7B Inc 7B.0 mcqSubmissions rules
+  // block (#138) is confirmed deployed to the staging Firestore
+  // project (signal-staging-26b3e). The Playwright suite runs against
+  // npm run dev, which routes Firebase calls to staging; until the
+  // rules deploy lands, every MCQ write returns permission-denied
+  // and the verdict assertion times out. See the deploy-note in #138
+  // and Trap 12 in docs/handover-2026-05-16.md. Once the deploy is
+  // confirmed live, remove the fixme and ship the test back.
+  test.fixme("signed-in student can submit an MCQ and see the correct verdict", async ({ page }) => {
     await signIn(page);
     await page.goto(CMA_TOPIC_PATH);
 
