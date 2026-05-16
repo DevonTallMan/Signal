@@ -1,0 +1,24 @@
+---
+// Closing block at the end of a comic topic. Renders a stylised line,
+// an optional body paragraph, and a grid of step children passed via
+// the default slot.
+
+interface Props {
+  line: string;
+  body?: string;
+}
+const { line, body } = Astro.props;
+
+const lineParts = line.split(/(\[[^\]]+\])/);
+---
+<div class="comic-closer">
+  <p class="comic-closer__line">
+    {lineParts.map((p) =>
+      p.startsWith("[") && p.endsWith("]") ? <em>{p.slice(1, -1)}</em> : p,
+    )}
+  </p>
+  {body && <p class="comic-closer__body">{body}</p>}
+  <div class="comic-closer__steps">
+    <slot />
+  </div>
+</div>

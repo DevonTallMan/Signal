@@ -7,6 +7,7 @@ import AssessmentBlock from "~/components/AssessmentBlock.astro";
 import DrillPanel from "~/components/DrillPanel.astro";
 import Breadcrumb from '~/components/Breadcrumb.astro';
 import type { Crumb } from '~/components/Breadcrumb.astro';
+import "~/styles/comic.css";
 
 export async function getStaticPaths() {
   const topics = await getCollection(
@@ -22,6 +23,7 @@ export async function getStaticPaths() {
 const { topic } = Astro.props;
 const { Content } = await render(topic);
 const area = await getEntry('contentAreas', topic.data.content_area);
+const isComic = topic.data.display_style === 'comic';
 
 const crumbs: Crumb[] = [
   { label: 'Home', href: '/' },
@@ -42,46 +44,92 @@ crumbs.push({ label: topic.data.title });
   title={topic.data.title}
   description={`Section ${topic.data.section_id}. ${topic.data.paper === 'method' ? 'Method.' : `Paper ${topic.data.paper}.`}`}
 >
-  <main class="container">
-    <Breadcrumb crumbs={crumbs} />
-    <div class="eyebrow">
-      {topic.data.paper === 'method' ? 'Method' : `Paper ${topic.data.paper}`}
-      {area && ` · ${area.data.display_code} ${area.data.title}`}
+  {isComic ? (
+    <div class="comic-topic">
+      <main>
+        <Breadcrumb crumbs={crumbs} />
+        <p class="comic-eyebrow">
+          {topic.data.paper === 'method' ? 'Method' : `Paper ${topic.data.paper}`}
+          {area && ` · ${area.data.display_code} ${area.data.title}`}
+        </p>
+        <h1>{topic.data.title}</h1>
+
+        <AuthorByline authorIds={topic.data.authors} />
+
+        <Content />
+
+        <p style="margin-top: 3rem;">
+          {area ? (
+            <a href={`/content-areas/${area.id}`}>
+              ← Back to {area.data.display_code} {area.data.title}
+            </a>
+          ) : (
+            <a href="/">← Back to home</a>
+          )}
+        </p>
+      </main>
     </div>
-    <h1>{topic.data.title}</h1>
+  ) : (
+    <main class="container">
+      <Breadcrumb crumbs={crumbs} />
+      <div class="eyebrow">
+        {topic.data.paper === 'method' ? 'Method' : `Paper ${topic.data.paper}`}
+        {area && ` · ${area.data.display_code} ${area.data.title}`}
+      </div>
+      <h1>{topic.data.title}</h1>
 
-    <AuthorByline authorIds={topic.data.authors} />
+      <AuthorByline authorIds={topic.data.authors} />
 
-    <TopicMeta
-      estimated_minutes={topic.data.estimated_minutes}
-      learning_outcomes={topic.data.learning_outcomes}
-      prerequisites={topic.data.prerequisites}
-      section_id={topic.data.section_id}
-      spec_version={topic.data.spec_version}
-    />
+      <TopicMeta
+        estimated_minutes={topic.data.estimated_minutes}
+        learning_outcomes={topic.data.learning_outcomes}
+        prerequisites={topic.data.prerequisites}
+        section_id={topic.data.section_id}
+        spec_version={topic.data.spec_version}
+      />
 
-    <article class="prose">
-      <Content />
-    </article>
+      <article class="prose">
+        <Content />
+      </article>
 
-    {topic.data.drill.length > 0 && (
-      <DrillPanel topicId={topic.id} items={topic.data.drill} />
-    )}
+      {topic.data.drill.length > 0 && (
+        <DrillPanel topicId={topic.id} items={topic.data.drill} />
+      )}
 
-    <div id="nei-assessment">
-      <AssessmentBlock topicId={topic.id} assessments={topic.data.assessments} />
-    </div>
+      <div id="nei-assessment">
+        <AssessmentBlock topicId={topic.id} assessments={topic.data.assessments} />
+      </div>
 
-    <p style="margin-top: var(--space-5);">
-      {
-        area ? (
+      <p style="margin-top: var(--space-5);">
+        {area ? (
           <a href={`/content-areas/${area.id}`}>
             ← Back to {area.data.display_code} {area.data.title}
           </a>
         ) : (
           <a href="/">← Back to home</a>
-        )
-      }
-    </p>
-  </main>
+        )}
+      </p>
+    </main>
+  )}
 </BaseLayout>
+
+{isComic && (
+  <script is:inline>
+    (function () {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in-view');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.18, rootMargin: '0px 0px -40px 0px' }
+      );
+      document
+        .querySelectorAll('.comic-topic .comic-panel, .comic-topic .comic-closer')
+        .forEach((el) => observer.observe(el));
+    })();
+  </script>
+)}

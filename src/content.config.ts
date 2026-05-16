@@ -79,6 +79,7 @@ const topics = defineCollection({
     content_area: z.string(), // slug reference
     paper: z.enum(['1', '2', 'method']),
     status: z.enum(['draft', 'review', 'published', 'archived']),
+    display_style: z.enum(['prose', 'comic']).default('prose'),
     spec_version: z.string().optional(),
     authors: z.array(z.string()).min(1),
     reviewers: z.array(z.string()).default([]),

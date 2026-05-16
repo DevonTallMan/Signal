@@ -1,0 +1,117 @@
+---
+title: Comic Format Preview
+section_id: "0.0.0"
+content_area: 4-1
+paper: "1"
+status: published
+display_style: comic
+spec_version: "2024-01"
+authors:
+  - chris-morris
+reviewers:
+  - chris-morris
+learning_outcomes: []
+prerequisites: []
+estimated_minutes: 5
+last_reviewed: 2026-05-16
+revision_notes: |
+  2026-05-16: Inc 7.0 scaffolding stub. Exercises every comic-* Markdoc
+  tag so build and visual inspection can confirm the platform plumbing
+  works before real content lands in Inc 7.1+. Not linked from any
+  landing-page tile. Direct URL only.
+assessments: []
+drill: []
+---
+
+Six panels, one closer, one of each body variant. The accompanying
+copy is placeholder. Real content lands per topic in Inc 7.1 onwards.
+
+{% panels %}
+
+{% panel num="01_SCOPE" eyebrow="WHERE THE LAW APPLIES" headline="If a system holds info about people, [DP applies]." illo="scope" %}
+- Booking system :: customer names
+- HR portal :: employee records
+- School tool :: pupil grades
+- Delivery app :: addresses, order history
+
+{% takeaway %}
+Almost every digital system stores some information about people. When it does, the DPA is one of the laws an organisation has to follow.
+{% /takeaway %}
+{% /panel %}
+
+{% panel num="02_DEF" eyebrow="DEFINITION CARD" headline="What [personal data] actually means." illo="regime" %}
+{% def %}
+**Personal data** is any information that relates to an identified or identifiable living person. A name plus an address counts. So does an IP address tied to an account, a photograph of a face, or a unique reference number that maps back to a real person.
+{% /def %}
+
+The bar is "identifiable", not just "identified". If you could work out who it refers to with reasonable effort, the data is personal.
+
+{% takeaway %}
+When in doubt, treat it as personal data and apply the safeguards.
+{% /takeaway %}
+{% /panel %}
+
+{% panel num="03_QUOTE" eyebrow="TERM CARD" headline="The data must be [accurate and complete]." illo="principles" %}
+{% term-card %}
+"Customer record. No name field. Address half-typed."
+{% /term-card %}
+
+Records like this cannot be trusted for any decision about the person they describe. Validation and verification techniques exist to stop them existing.
+
+{% takeaway %}
+Garbage in, garbage out. Bad data is a DPA accuracy breach before it is a business problem.
+{% /takeaway %}
+{% /panel %}
+
+{% panel num="04_LAW" eyebrow="DOCUMENT COMPARE" headline="One [regime], two documents." illo="actors" %}
+{% docs-compare %}
+{% doc title="UK GDPR" %}
+The rulebook. Defines the principles, the lawful bases, and the rights of data subjects.
+{% /doc %}
+{% doc title="DPA 2018" %}
+The UK Act. Implements UK GDPR in domestic law and adds specific UK provisions on top.
+{% /doc %}
+{% /docs-compare %}
+
+{% takeaway %}
+Name both when you write about a personal-data scenario. They function as one regime.
+{% /takeaway %}
+{% /panel %}
+
+{% panel num="05_RIGHTS" eyebrow="CHIP CLOUD" headline="Data subjects have [rights] over their own data." illo="rights" %}
+{% cloud %}
+Rights: {% chip %}access{% /chip %} {% chip %}rectify{% /chip %} {% chip %}erase{% /chip %} {% chip %}restrict{% /chip %} {% chip %}portability{% /chip %} {% chip %}object{% /chip %} {% chip %}no auto-decide{% /chip %}
+{% /cloud %}
+
+{% takeaway %}
+Articles 12 to 22 of UK GDPR enumerate the rights. Examiners reward students who can name the right that bites in a given scenario.
+{% /takeaway %}
+{% /panel %}
+
+{% panel num="06_FLOW" eyebrow="LIFECYCLE LIST" headline="The DPA covers the [whole life] of the data." illo="lawful-bases" %}
+{% def %}
+From the moment data is collected to the moment it is deleted, an organisation is the **controller** of that data and is responsible for handling it properly.
+{% /def %}
+
+- collect
+- store
+- use
+- share
+- analyse
+- delete
+
+{% takeaway %}
+Each stage carries DPA responsibilities. None of them is exempt.
+{% /takeaway %}
+{% /panel %}
+
+{% /panels %}
+
+{% closer line="name the law. [then] apply it." body="Working with data protection in any real scenario comes down to two moves, in this order." %}
+{% step num="STEP 01" head="Name the law" %}
+Identify when personal data is involved, and which Act applies. Usually the DPA and UK GDPR. Sometimes the Equality Act is also relevant.
+{% /step %}
+{% step num="STEP 02" head="Apply the principle" %}
+Explain which right or requirement is in play: consent, accuracy, privacy, security, or the controller's duty of care.
+{% /step %}
+{% /closer %}

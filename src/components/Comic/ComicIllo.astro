@@ -1,0 +1,60 @@
+---
+// Comic-panel SVG illustration.
+//
+// Inc 7.0 ships a placeholder that names the panel slot it occupies.
+// Inc 7.1+ will replace this with real per-panel SVGs authored to match
+// each legislation topic's section breaks.
+
+interface Props {
+  panel: string;
+}
+const { panel } = Astro.props;
+---
+<div class="comic-illo" data-panel={panel} aria-hidden="true">
+  <svg
+    viewBox="0 0 320 140"
+    xmlns="http://www.w3.org/2000/svg"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    <g stroke="rgba(0,240,255,0.18)" stroke-width="0.5">
+      <line x1="0" y1="35" x2="320" y2="35" />
+      <line x1="0" y1="105" x2="320" y2="105" />
+      <line x1="60" y1="0" x2="60" y2="140" />
+      <line x1="260" y1="0" x2="260" y2="140" />
+    </g>
+    <g stroke="#00f0ff" stroke-width="2.5" fill="none">
+      <path d="M 8 8 L 8 26 M 8 8 L 26 8" />
+      <path d="M 312 8 L 312 26 M 312 8 L 294 8" />
+      <path d="M 8 132 L 8 114 M 8 132 L 26 132" />
+      <path d="M 312 132 L 312 114 M 312 132 L 294 132" />
+    </g>
+    <rect
+      x="80"
+      y="50"
+      width="160"
+      height="40"
+      fill="none"
+      stroke="#ff2d70"
+      stroke-width="1.5"
+      stroke-dasharray="4 3"
+    />
+    <text
+      x="160"
+      y="75"
+      text-anchor="middle"
+      fill="#00f0ff"
+      font-family="monospace"
+      font-size="12"
+      letter-spacing="2"
+    >ILLO :: {panel}</text>
+    <text
+      x="160"
+      y="92"
+      text-anchor="middle"
+      fill="#fff03a"
+      font-family="monospace"
+      font-size="8"
+      opacity="0.7"
+    >PLACEHOLDER :: AUTHOR_IN_INC_7_1</text>
+  </svg>
+</div>

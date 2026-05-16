@@ -1,0 +1,12 @@
+---
+interface Props {
+  num: string;
+  head: string;
+}
+const { num, head } = Astro.props;
+---
+<div class="comic-step">
+  <span class="comic-step__num">{num}</span>
+  <div class="comic-step__head">{head}</div>
+  <p class="comic-step__text"><slot /></p>
+</div>

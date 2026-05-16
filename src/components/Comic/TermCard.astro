@@ -1,0 +1,9 @@
+---
+interface Props {
+  center?: boolean;
+}
+const { center = true } = Astro.props;
+---
+<div class={`comic-term-card${center ? " comic-term-card--center" : ""}`}>
+  <slot />
+</div>
