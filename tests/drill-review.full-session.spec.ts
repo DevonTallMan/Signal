@@ -98,20 +98,13 @@ test.describe("Drill review full session", () => {
     );
     await page.locator('[data-review-action="miss"]').click();
 
-    // Done state. The rate() function's "done" branch awaits an
-    // extra getAllCardStates query before setPhase("done") so it can
-    // populate nextEarliestReviewDate in the summary. On a slow
-    // staging Firestore that round-trip plus the wrapper write can
-    // exceed 5 seconds, so this timeout is wider than the other
-    // post-rate waits. Surfaced on PR #122 where two consecutive CI
-    // runs hit the 5s limit; previous PRs got lucky on timing.
     await page.waitForFunction(
       () => {
         const el = document.querySelector("[data-review-state]");
         return el?.getAttribute("data-review-state") === "done";
       },
       undefined,
-      { timeout: 15_000 },
+      { timeout: 5_000 },
     );
 
     const got = await page.locator("[data-review-got-count]").innerText();
