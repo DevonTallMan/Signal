@@ -1,0 +1,96 @@
+---
+// src/pages/teacher/export.astro
+//
+// Teacher data export endpoint. Same auth + allowlist gate as
+// /teacher; once data is loaded, triggers a download in the
+// requested format.
+//
+// URL patterns:
+//   /teacher/export              -> renders JSON and CSV buttons
+//   /teacher/export?format=json  -> auto-triggers JSON download
+//   /teacher/export?format=csv   -> auto-triggers CSV download
+//
+// Sprint 7A Inc 7.3.
+
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import TeacherExport from "../../components/Teacher/TeacherExport.tsx";
+import type { TopicMeta } from "../../components/Teacher/TeacherView.tsx";
+
+const topics = await getCollection(
+  "topics",
+  (t) => t.data.status === "published",
+);
+const topicCatalog: TopicMeta[] = topics
+  .map((t) => ({
+    id: t.id,
+    title: t.data.title,
+    sectionId: t.data.section_id,
+    contentArea: t.data.content_area,
+  }))
+  .sort((a, b) => a.sectionId.localeCompare(b.sectionId));
+
+const crumbs = [
+  { label: "Home", href: "/" },
+  { label: "Teacher", href: "/teacher" },
+  { label: "Export" },
+];
+---
+
+<BaseLayout
+  title="Teacher export"
+  description="Pilot teacher export: download cohort data as JSON or CSV."
+>
+  <main class="container">
+    <Breadcrumb crumbs={crumbs} />
+    <div class="eyebrow">Pilot · Teacher · Export</div>
+    <h1>Cohort data export</h1>
+    <p class="lede">
+      Download the cohort's drill, session and topic data as JSON or
+      CSV. The endpoint requires a signed-in teacher allowlist email.
+    </p>
+
+    <TeacherExport topics={topicCatalog} client:only="react" />
+  </main>
+</BaseLayout>
+
+<style>
+  .teacher {
+    margin-top: var(--space-4);
+  }
+  .teacher__signedin {
+    font-family: monospace;
+    color: var(--text-muted, #6a7090);
+    margin-bottom: var(--space-3);
+  }
+  .teacher__exports {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: var(--space-3) 0;
+  }
+  .teacher__export-button {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 8px 16px;
+    background: var(--bg-2, #f6f6f8);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .teacher__export-button:hover {
+    background: var(--bg-3, #ebebef);
+  }
+  .teacher__footer {
+    margin-top: var(--space-3);
+    font-size: 13px;
+    color: var(--text-muted, #6a7090);
+  }
+  .teacher__footer code {
+    font-family: monospace;
+    background: var(--bg-2, #f6f6f8);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+</style>
