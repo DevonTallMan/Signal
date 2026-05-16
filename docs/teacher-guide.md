@@ -240,6 +240,50 @@ If a student is confused or frustrated by the prompt, the right move
 is to tell them to dismiss it ("Start with new content") and carry on.
 The dismissal lasts 12 hours.
 
+### 4.6 MCQs in the topic assessment blocks
+
+From Sprint 7B onwards, the MCQ assessments embedded in each topic's
+assessment block are interactive. Until Sprint 7B they rendered as
+static placeholders saying "Interactive multiple-choice runner coming
+in a later release". They are now live.
+
+What a student sees on any Paper 1 topic page that has an MCQ:
+
+1. **A scoring summary above the MCQ list.** Hidden until at least
+   one MCQ on the topic has been attempted. Shows "you've attempted
+   N of M" while partial; shows "you got N of M correct" with a
+   colour-coded verdict bar once all MCQs on the topic are attempted.
+   The summary is a load-time snapshot; finishing an MCQ updates the
+   summary on the next page reload, not live.
+2. **Each MCQ as a question card.** Prompt, four options as radio
+   inputs, a Submit button. On submit, the student sees an inline
+   verdict (Correct / Incorrect), the feedback text from the topic's
+   frontmatter, and a "Try again" button.
+3. **"Try again" resets just that one MCQ.** It clears the local
+   selection and re-enables Submit. A fresh submit overwrites the
+   stored answer (the latest attempt is the one that counts).
+
+There is no separate "Quick Fire" route or cross-topic gauntlet in
+v1. MCQs live inside their topic pages, alongside the NEI prompt for
+that topic.
+
+Likely student questions and short answers:
+
+- **"Will retrying lower my score?"** No. The platform records the
+  latest answer per question. Retrying is encouraged.
+- **"How many MCQs are on a topic?"** One per Paper 1 topic in CA 4.1,
+  plus one per Section 5.1 topic. The summary line at the top of the
+  assessment block shows the count.
+- **"Can I see my MCQ history on the teacher dashboard?"** Not in v1.
+  Teachers do not see individual MCQ answers across the cohort. This
+  is a deliberate v1 security boundary; per-MCQ correctness across
+  students is reachable post-pilot if the writeup needs it.
+
+If a student reports the MCQ does not respond on click, the most
+likely cause is that they are not signed in. The component shows a
+"Sign in to answer this question" prompt in that case but the prompt
+is easy to miss. Direct them to the sign-in link in the nav.
+
 ---
 
 ## 5. The teacher dashboard
