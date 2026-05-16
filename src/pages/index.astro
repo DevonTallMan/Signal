@@ -19,6 +19,7 @@
 import LandingLayout from '~/layouts/LandingLayout.astro';
 import AnswerArcDemo from '~/components/AnswerArcDemo';
 import AuthNav from '~/components/AuthNav';
+import HomeReviewWidget from '~/components/DrillReview/HomeReviewWidget';
 import '~/styles/landing.css';
 ---
 
@@ -117,6 +118,8 @@ import '~/styles/landing.css';
     </section>
 
     <div class="section-divider"></div>
+
+    <HomeReviewWidget client:only="react" />
 
     <section class="section" id="papers">
       <div class="section-inner">
