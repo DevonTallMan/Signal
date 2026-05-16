@@ -1,13 +1,14 @@
 ---
 // src/components/AssessmentBlock.astro
 //
-// Replaces the old AssessmentPlaceholder. Iterates the topic's
-// assessments array and renders each one appropriately:
-//   - MCQ: still placeholder (interactive runner coming later)
+// Iterates the topic's assessments array and renders each one
+// appropriately:
+//   - MCQ: mounts the MCQRunner React island (Sprint 7B Inc 7B.1)
 //   - NEI: mounts an NEISubmission React island with the full
 //          question + mark scheme serialised from frontmatter
 
 import NEISubmission from './NEISubmission';
+import MCQRunner from './MCQRunner';
 
 type MCQValue = {
   id: string;
@@ -70,11 +71,17 @@ const neiCount = assessments.filter((a) => a.discriminant === 'nei').length;
           if (a.discriminant === 'mcq') {
             return (
               <div class="assessment-slot assessment-slot--mcq">
-                <div class="eyebrow">MCQ · {a.value.id}</div>
-                <p><strong>{a.value.prompt}</strong></p>
-                <p class="meta" style="color: var(--dim);">
-                  Interactive multiple-choice runner coming in a later release.
-                </p>
+                <MCQRunner
+                  client:load
+                  topicId={topicId}
+                  questionId={a.value.id}
+                  prompt={a.value.prompt}
+                  options={a.value.options}
+                  correctIndex={a.value.correct_index}
+                  feedbackCorrect={a.value.feedback_correct}
+                  feedbackIncorrect={a.value.feedback_incorrect}
+                  difficulty={a.value.difficulty}
+                />
               </div>
             );
           }
