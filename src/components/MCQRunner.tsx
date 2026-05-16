@@ -81,8 +81,19 @@ export default function MCQRunner(props: MCQRunnerProps) {
         }
       } catch (err) {
         if (cancelled) return;
-        const message = (err as { message?: string })?.message ?? "Read failed.";
-        setState({ kind: "error", message });
+        // Defensive: a read failure (typically a rules-denial because
+        // the mcqSubmissions block has not yet been deployed to
+        // staging, but in principle any transient Firestore error)
+        // should not block the student from attempting the question.
+        // Fall through to the "ready" state. If the underlying issue
+        // also blocks writes, the submit handler will surface the
+        // error then.
+        // eslint-disable-next-line no-console
+        console.warn(
+          "MCQ submission read failed; falling through to ready:",
+          err,
+        );
+        setState({ kind: "ready" });
       }
     })();
     return () => {
