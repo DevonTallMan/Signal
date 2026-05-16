@@ -247,3 +247,32 @@ Any subsequent modification to the questions or mark schemes from this point req
 **Audit trail.** This re-agreement is dated 2026-05-16 and applies BEFORE the pilot starts (Monday 21 September 2026). The pre-registered "before pilot data collection begins" bind is preserved: this is pre-pilot intervention extension, not post-data revision.
 
 The Sprint 6 build landed in PRs #112 (rules), #113 (scheduler logic), #114 (review surface), #115 (home-page widget + session-opener banner), and the PR landing this entry (`TerminologyDrill.rate()` wiring + this audit entry + Teacher's Guide paragraph). The mechanism is live from the merge of the wiring PR.
+
+**2026-05-16 (later same day), Chris Morris and Claude.** Sprint 7A: pilot visibility infrastructure landed. Section 3.1 data is now teacher-readable via the `/teacher` dashboard and downloadable via `/teacher/export`.
+
+**What changes for the pilot writeup.** Section 3.1 engagement metrics (cards rated, cards in queue, cards graduated, sessions started, sessions completed, last-seen timestamp; per-topic aggregates; per-student breakdowns) are now available to the pilot host during the pilot and to Chris in a structured JSON-or-CSV export after the pilot. The metrics themselves are unchanged; what changes is that they are visible without ad-hoc Firestore queries.
+
+**Security boundary held (named for the writeup).** The dashboard and export deliberately do NOT include NEI submission prose bodies, Sort & Match scenario-level responses, or Twin Tracks scenario-level responses. Server-side Firestore rules block cross-user reads of those documents in v1. The pilot writeup will therefore have:
+- Aggregate counts and timestamps for every engagement metric in Section 3.1 (full coverage)
+- NEI submission prose available only via direct Firestore inspection by Chris (the data subject pool that retained the original data-controller relationship), not via the export pipeline
+- Sort & Match and Twin Tracks attempt-level data available in the same shape (counts plus session metadata, no scenario-level responses cross-user)
+
+This is named here so the writeup discipline cannot quietly reinterpret what data was available. If post-pilot analysis needs prose-level reads, the decision to widen the rules will be logged in this Section 8 before any code change.
+
+**What does NOT change.**
+- Section 1 (purpose of the pilot)
+- Section 3.2 (performance metrics) — still measured via paper pre/post test, not via the dashboard
+- Section 3.3 (qualitative feedback) — still solicited from Dave's reflection, not via the dashboard
+- Section 4 (writeup discipline) — descriptive, non-causal, lead with limits
+- Section 5 (limits) — the empty-queue caveat from earlier today, plus the new "prose body not available cross-user" line above
+- Section 6 (roles and commitments)
+- Section 7 (decision rules)
+
+**Audit trail.** This entry is dated 2026-05-16 and applies BEFORE the pilot starts (Monday 21 September 2026). The pre-registered "before pilot data collection begins" bind is preserved: this is pre-pilot infrastructure, not post-data reframing. The Sprint 7A build landed in PRs #131 (rules + tests), #132 (`/teacher` route + cohort tab), #133 (per-topic + per-student tabs), #134 (`/teacher/export` JSON + CSV), and the PR landing this entry (Teacher's Guide section 5 + this audit entry).
+
+**Pre-pilot TODO.** The teacher allowlist in `firestore.rules` and `src/lib/teacher/allowlist.ts` currently contains a placeholder. Before 21 September 2026 Chris will:
+- Append Chris's and Dave's real teacher emails to both lists (one-line change in each file)
+- Deploy rules to BOTH staging and production (Trap 12)
+- Populate `src/lib/teacher/cohort.ts` with the 14 pilot student UIDs once they sign up
+
+None of these are pre-registered scope changes; they are operational fills inside the locked Sprint 7A design.
