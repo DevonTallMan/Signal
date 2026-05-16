@@ -188,6 +188,58 @@ A student's experience on each activity:
 The student never needs your help to navigate. If they hit a problem,
 they'll tell you.
 
+### 4.5 The review queue and the session-opener prompt
+
+From Sprint 6 onwards, Signal tracks which drill cards each student has
+already rated and brings those cards back on a spaced schedule: 1 day,
+3 days, 7 days, 21 days, 60 days. The spacing follows the standard
+Leitner pattern. A card the student rates correctly at each interval
+advances through the boxes and graduates from the active queue after a
+successful rating at the 60-day box.
+
+There are three surfaces students may see related to this:
+
+1. **A review-queue widget on the home page.** When the student has
+   cards due, the home page shows a small panel above the content
+   areas reading "N cards due" with a button linking to the review
+   page. The widget is hidden when no cards are due.
+2. **A soft session-opener prompt above the widget.** When the student
+   has cards due AND has not dismissed the prompt within the previous
+   12 hours, the home page also shows a banner asking "Start with N
+   reviews before new content?" with two options: start the reviews,
+   or dismiss and start with new content. Dismissing is recorded in
+   the browser's localStorage and the prompt is suppressed for 12
+   hours. The prompt is never mandatory; both choices remain available
+   at all times.
+3. **The `/review` page.** A dedicated page that pulls all due cards
+   across all topics into one continuous review session, using the
+   same cue / reveal / rate UX as the per-topic drill panels.
+
+For your Year 1 pilot, students arrive at session 1 with empty review
+queues. Cards enqueue during the first one or two sessions and start
+coming due in sessions 2 to 4. The review queue is therefore a
+late-pilot signal at best within the four-week window; its main
+intended effect is at the 6-month mark, not the 4-week mark. This is
+documented in the pre-registered evaluation plan as a known
+measurement-integrity caveat.
+
+Likely student questions and short answers:
+
+- **"Do I have to do the reviews?"** No. The widget and prompt are
+  optional. Skipping them does not affect access to new content.
+- **"Why is it asking me to do reviews?"** Because you rated some
+  drill cards last session, and the system spaces them out so you
+  re-encounter them when re-encounter is most efficient.
+- **"How long does it take?"** A typical review is one cue and a
+  rating, roughly 10 to 20 seconds per card.
+- **"What if I get it wrong?"** The card resets to the shortest
+  interval and comes back sooner. Getting things wrong on review is
+  the system working as intended.
+
+If a student is confused or frustrated by the prompt, the right move
+is to tell them to dismiss it ("Start with new content") and carry on.
+The dismissal lasts 12 hours.
+
 ---
 
 ## 5. What the pilot measures, and what it does not

@@ -119,6 +119,7 @@ This section is pre-registered so that the writeup cannot quietly omit it.
 - **It cannot tell you whether the post-test performance reflects mastery of the legislation framework or memory of specific scenarios seen during the pilot.** The pre- and post-tests use unseen scenarios to mitigate this, but memory effects cannot be fully ruled out.
 - **It cannot tell you whether platform performance generalises to a fully-CA-4.1-taught cohort.** The pilot cohort is Year 1 with DPA grounding plus patchy non-DPA exposure (confirmed by Dave Smith on 2026-05-14; see Section 8 methodological changes). Findings reflect that specific cohort context; cohorts that have completed CA 4.1 in lessons before encountering the platform may show different engagement and performance patterns.
 - **It cannot disentangle DPA-baseline reinforcement effects from CMA / Equality / IP introduction effects.** The pre/post test has 2 DPA + 1 CMA + 1 Equality + 1 IP per side, so per-legislation breakdowns would have N=14 per tier per pre/post side. That is too small a sample for confident sub-claim breakdowns. The headline pre/post delta will mix reinforcement on DPA with introduction-effect on the other three; the writeup will name this explicitly rather than report a single aggregate delta as if it were uniform.
+- **The pilot starts with an empty review queue.** The spaced-return mechanism shipped in Sprint 6 has no within-pilot history to act on at session 1. Cards enqueue during sessions 1 and 2 and start coming due in sessions 2 to 4. The mechanism's intended effect window is the 6-month mark, not the 4-week pilot window. Within-pilot retention signal from spaced retrieval is therefore weak; the headline finding for this surface within the pilot is uptake (whether students engage with the review queue at all), not retention improvement. See Section 8 methodological changes for the 2026-05-16 re-agreement that added this.
 
 Any claim made in the writeup or in subsequent communications that exceeds the data listed in Section 3 violates this pre-registered plan.
 
@@ -223,3 +224,26 @@ Status upgrades:
 - **Pre Q4 and Post Q4 (indirect-discrimination questions):** Dave was offered an explicit choice in the forwarding email (replace with simpler direct-discrimination questions, or accept floor scores as a documented pilot limit). His "doc reads fine" reply, in agreeing to the doc without modifications, implicitly accepts floor scores on the indirect-discrimination tier as a documented limit. This is recorded as a Section 5 limit by reference: per the Section 5 update of the same date, the pilot already commits to naming the uneven pre/post delta across legislation tiers, of which Q4 floor scores would be one expression.
 
 Any subsequent modification to the questions or mark schemes from this point requires explicit re-agreement under this Section 8.
+
+**2026-05-16, Chris Morris and Claude.** Pre-pilot intervention extended to include structured spaced retrieval (Sprint 6 mechanism). The substantive design choices are locked in `docs/sprint-6-scope.md` (PR #111).
+
+**What changes for the pilot.** The intervention is no longer "topic exposure plus drill rating with no return loop". It is "topic exposure plus drill rating with a Leitner-scheduled return loop bringing rated cards back at 1, 3, 7, 21, 60-day intervals". Cards graduate from the active queue after success at the 60-day box. Student agency is preserved: the surface is opt-in (home-page widget linking to `/review`) with a soft session-opener prompt that suggests but does not require reviewing before new content.
+
+**Empty-queue caveat (measurement integrity, named pre-pilot).** Year 1 students arrive at session 1 of the pilot with empty review queues. Cards enqueue during sessions 1 and 2 and start coming due in sessions 2 to 4. The within-pilot retention signal from the spaced-return mechanism is therefore genuinely weak: the mechanism's main effect is at the 6-month mark, not the 4-week pilot window. The mechanism's pilot contribution is mostly about whether students engage with the surface at all (uptake), not whether the spacing improves retention within four weeks.
+
+**Section 5 update.** One new limit added (already recorded in Section 5):
+
+- The pilot starts with an empty review queue. Within-pilot retention signal from the spaced-return mechanism is weak. The mechanism's intended effect window is the 6-month mark, not the 4-week pilot window.
+
+**What does NOT change.**
+
+- Pre/post test (`docs/pilot-pre-post-test.md`) is unchanged. The locked document from the 2026-05-14 re-agreement remains the measurement instrument.
+- Section 1 (purpose of the pilot) is unchanged.
+- The reframed measurement claim from 2026-05-14 (DPA reinforcement on a real baseline; CMA / Equality / IP mostly introduction-effect on partial-warm baselines) still holds.
+- Section 4 (writeup discipline) is unchanged: descriptive, non-causal, lead with limits, no retrospective threshold-setting.
+- Section 6 (roles and commitments) is unchanged.
+- Section 7 (decision rules) is unchanged.
+
+**Audit trail.** This re-agreement is dated 2026-05-16 and applies BEFORE the pilot starts (Monday 21 September 2026). The pre-registered "before pilot data collection begins" bind is preserved: this is pre-pilot intervention extension, not post-data revision.
+
+The Sprint 6 build landed in PRs #112 (rules), #113 (scheduler logic), #114 (review surface), #115 (home-page widget + session-opener banner), and the PR landing this entry (`TerminologyDrill.rate()` wiring + this audit entry + Teacher's Guide paragraph). The mechanism is live from the merge of the wiring PR.
