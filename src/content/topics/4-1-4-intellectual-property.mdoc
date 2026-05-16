@@ -4,6 +4,7 @@ section_id: "4.1.4"
 content_area: 4-1
 paper: "1"
 status: published
+display_style: comic
 spec_version: "2024-01"
 authors:
   - chris-morris
@@ -16,13 +17,22 @@ learning_outcomes:
   - Recognise that open-source software is copyrighted, not public domain, and that open-source licences are enforceable as copyright licences
 prerequisites: []
 estimated_minutes: 30
-last_reviewed: 2026-05-15
+last_reviewed: 2026-05-16
 revision_notes: |
   2026-05-15: Initial draft. Fourth Paper 1 topic in CA 4.1 (Inc 5.3),
   completing the legislation survey. Drill, MCQ and NEI calibrated against
   the Paper 1 legislation-recognition pattern. NEI is a commissioned-work
   copyright scenario, which is the most common day-to-day IP issue T-Level
   Digital graduates will encounter in early careers.
+  2026-05-16: Inc 7.3 cyberpunk-comic conversion. Prose body replaced
+  with six panels and a closer using the Inc 7.0 comic-* Markdoc tags.
+  Six bespoke per-panel SVGs authored in ComicIllo.astro (ip-regimes,
+  ip-automatic, ip-ownership, ip-assign, ip-software, ip-opensource).
+  With this increment all three remaining CA 4.1 legislation topics
+  (CMA, Equality, IP) run on the comic format; DP carries the
+  prose-with-illos treatment from PR #117. Assessment IDs (414-mcq-01,
+  414-nei-01) and all ten drill IDs (414-drill-01 to 414-drill-10)
+  unchanged. Learning outcomes unchanged.
 assessments:
   - discriminant: mcq
     value:
@@ -163,260 +173,103 @@ drill:
     answer: Copyrighted by the author and licensed on the terms of the open-source licence; not public domain, and use that breaches the licence terms is copyright infringement
 ---
 
-## Why this topic matters
+Six panels and a closer. IP is not one Act. The first move in any IP
+scenario is to identify which regime applies. The second is to apply
+the rule the regime sets.
 
-Intellectual property law is the legal frame around every creative or
-technical output that a digital business produces. Code, design assets,
-brand identity, written content, music in apps, training data for
-machine-learning models, and the look and feel of a user interface all
-sit inside one or more IP regimes. A Paper 1 scenario that involves
-copying, reusing, distributing, or commercially exploiting somebody
-else's creative or technical work usually points at IP law as the lead
-Act.
+{% panels %}
 
-The most common student error in this area is treating IP as a single
-unified Act. It is not. Several distinct regimes apply to different
-kinds of subject matter, and the first move in any IP scenario is to
-identify which regime is engaged.
+{% panel num="01_REGIMES" eyebrow="WHICH ACT APPLIES" headline="IP is [not one Act]." illo="ip-regimes" %}
+- copyright :: CDPA 1988 :: original creative works, including software
+- patents :: PA 1977 :: new inventions, must be registered
+- trade marks :: TMA 1994 :: signs used in trade, registered for 10y
+- designs :: RDA 1949 / CDPA Part III :: appearance of a product
+- database right :: 1997 regs :: substantial investment in a database
 
-## What IP actually is
+For Paper 1 most scenarios sit inside copyright. Trade marks land when the scenario is about a name, logo or brand identity. Patents land only when the scenario is explicit about a registered patent.
 
-UK intellectual property law is not one statute but a set of regimes,
-each with its own subject matter, governing statute, formal
-requirements and enforcement route.
+{% takeaway %}
+Name the regime first. The Name mark is the Act, not just "IP law".
+{% /takeaway %}
+{% /panel %}
 
-- **Copyright.** Protects original creative works. Governed by the
-  Copyright, Designs and Patents Act 1988. Arises automatically on
-  creation; no registration required.
-- **Patents.** Protect new inventions. Governed by the Patents Act
-  1977. Must be applied for and granted by the UK Intellectual
-  Property Office.
-- **Trade marks.** Protect signs (names, logos, slogans, certain
-  sounds) used in trade. Governed by the Trade Marks Act 1994. Must
-  be registered for full protection, although an "unregistered" common
-  law right exists through the tort of passing off.
-- **Designs.** Protect the appearance of a product. Governed by the
-  Registered Designs Act 1949 (for registered designs) and Part III
-  of the Copyright, Designs and Patents Act 1988 (for unregistered
-  design right).
-- **Database right.** A separate right in databases that involve
-  substantial investment, sitting alongside copyright. Governed by
-  the Copyright and Rights in Databases Regulations 1997.
+{% panel num="02_AUTOMATIC" eyebrow="HOW COPYRIGHT ARISES" headline="Copyright is [automatic] on creation." illo="ip-automatic" %}
+{% def %}
+Copyright arises the moment an original work is **fixed in a material form**: saved to disk, drawn on paper, recorded, or otherwise captured in a way that persists beyond the moment of creation. No registration, deposit, publication or marking is required. The © symbol is informative but legally optional.
+{% /def %}
 
-Most Paper 1 scenarios sit inside copyright or, less often, trade
-marks. The other regimes appear at the edges of the syllabus.
+Originality is a low bar. The work must originate with the author and involve some independent intellectual effort, but it does not need to be novel or artistically valuable.
 
-## Copyright in detail (CDPA 1988)
+{% takeaway %}
+"It was not registered" is never an answer to a copyright claim. Strong answers state this explicitly.
+{% /takeaway %}
+{% /panel %}
 
-Copyright is the dominant IP regime for digital scenarios because the
-Act treats computer software, databases and digital creative content
-as protectable works.
+{% panel num="03_OWNERSHIP" eyebrow="FIRST-OWNERSHIP RULE" headline="The [creator] owns it first." illo="ip-ownership" %}
+{% def %}
+Section 11 of the CDPA 1988 sets the first-ownership rule. The first owner of copyright is the **author** of the work, with one exception: where the work is created by an **employee in the course of employment**, the first owner is the **employer**.
+{% /def %}
 
-### What copyright protects
+For commissioned freelance work the freelancer is the first owner, even after payment. The commissioner gets only an implied licence to use the work for the purpose for which it was commissioned. This is the single most common IP mistake in small digital businesses and it appears regularly in Paper 1 scenarios.
 
-Section 1 of the CDPA 1988 lists the categories of work that copyright
-protects: original literary works, original dramatic works, original
-musical works, original artistic works, sound recordings, films,
-broadcasts, and the typographical arrangement of published editions.
-Software is treated as a literary work under section 3. Databases that
-meet the originality threshold are also literary works, in addition to
-the separate database right that sits alongside copyright.
+{% takeaway %}
+"They paid for it" does not transfer copyright. Strong answers name s11 and identify whether the creator was an employee or a freelancer.
+{% /takeaway %}
+{% /panel %}
 
-The threshold for "originality" in copyright is low. The work must
-originate with the author and involve a measure of independent
-intellectual effort, but it does not need to be novel in the patent
-sense or be artistically valuable.
+{% panel num="04_ASSIGN" eyebrow="HOW COPYRIGHT TRANSFERS" headline="Transfer needs [writing] + signature." illo="ip-assign" %}
+{% def %}
+Section 90 of the CDPA 1988 requires an **assignment of copyright to be in writing and signed by the assignor**. A verbal agreement plus payment is not enough. Licences can be granted on more flexible terms but only the written-and-signed assignment moves ownership.
+{% /def %}
 
-### How copyright arises
+Without an assignment, what the commissioner has is an implied licence covering the original purpose only. Section 16 restricted acts (copying, issuing to the public, communicating, adapting) outside that purpose are infringement.
 
-Copyright arises automatically the moment an original work is fixed in
-a material form (saved to disk, recorded, drawn on paper, or otherwise
-captured in a way that persists beyond the moment of creation). No
-registration, deposit, publication or marking is required for
-copyright to exist or be enforceable in the UK. The (c) symbol is
-informative for readers but legally optional.
+{% takeaway %}
+Spell out s11 and s90 together. The strongest commissioned-work answers reach both sections explicitly.
+{% /takeaway %}
+{% /panel %}
 
-### Who owns the copyright
+{% panel num="05_SOFTWARE" eyebrow="SOFTWARE-SPECIFIC" headline="Software is a [literary work]." illo="ip-software" %}
+Under s3 of the CDPA 1988 computer software is protected as a **literary work**. The same automatic-on-creation rule applies. The same s11 and s90 rules apply.
 
-Section 11 sets out the first-ownership rule. The first owner of
-copyright in a work is the author (the person who created the work),
-with one major exception: where the work is created by an employee in
-the course of their employment, the first owner is the employer.
+{% term-card %}
+s1(2)(c) PA 1977 :: programs for computers excluded "as such"
+{% /term-card %}
 
-For commissioned freelance work, the freelancer is the first owner of
-copyright in the work they created, even where they have been paid.
-The commissioner gets only an implied licence to use the work for the
-purpose for which it was commissioned, unless an express written
-assignment is in place. This is the single most common IP mistake in
-small digital businesses, and it appears regularly in Paper 1
-scenarios.
+Patents under the Patents Act 1977 protect new inventions, but s1(2)(c) excludes "programs for computers as such". A technical invention happening to be implemented in software can still be patentable, but the safe Paper 1 Name is "copyright under the CDPA 1988, not patents under the Patents Act 1977".
 
-### How copyright can be transferred or licensed
+{% takeaway %}
+For everyday software scenarios the regime is copyright. Patents only enter the picture when the question is explicit about a registered patent.
+{% /takeaway %}
+{% /panel %}
 
-Section 90 requires an assignment of copyright to be in writing and
-signed by the assignor. A verbal agreement plus payment is not enough.
-Licences can be granted on more flexible terms and can be exclusive or
-non-exclusive, but the underlying ownership only transfers in writing.
+{% panel num="06_OPENSOURCE" eyebrow="OPEN SOURCE" headline="Open source is [not public domain]." illo="ip-opensource" %}
+{% def %}
+Open-source software is **copyrighted** by its authors and **licensed** under terms that grant permission to use, modify and redistribute on specific conditions. Breaching the licence is copyright infringement under s16 just like any other unauthorised use.
+{% /def %}
 
-### What copyright protects against
+{% cloud %}
+Permissive: {% chip %}MIT{% /chip %} {% chip %}BSD{% /chip %} {% chip %}Apache 2.0{% /chip %}
+{% /cloud %}
 
-Section 16 sets out the acts restricted by copyright: copying the
-work, issuing copies to the public, renting or lending the work to the
-public, performing or playing the work in public, communicating the
-work to the public, and making an adaptation of the work. Doing any of
-these without licence amounts to primary infringement. Secondary
-infringement (such as importing or dealing with infringing copies for
-commercial purposes) is also actionable.
+{% cloud %}
+Copyleft: {% chip %}GPL{% /chip %} {% chip %}AGPL{% /chip %} {% chip %}LGPL{% /chip %}
+{% /cloud %}
 
-There are limited statutory exceptions ("fair dealing" for purposes
-such as research and private study, criticism and review, news
-reporting, quotation, parody and pastiche; plus specific exceptions
-for educational use and for backup copies of software) but these are
-narrower than students often assume.
+Permissive licences allow use in proprietary commercial products subject to lightweight conditions (preserve the copyright notice). Copyleft licences require derivative works to be released under the same licence. Shipping closed-source commercial code that incorporates GPL software without source release is copyright infringement.
 
-### Duration
+{% takeaway %}
+"It is open source" is not a defence. Strong answers cite the licence as a copyright licence and name the breach.
+{% /takeaway %}
+{% /panel %}
 
-For literary, dramatic, musical and artistic works, copyright lasts
-for the life of the author plus 70 years from the end of the calendar
-year in which the author died. Films, sound recordings and broadcasts
-have shorter rules.
+{% /panels %}
 
-## Patents (Patents Act 1977)
-
-The Patents Act 1977 protects new inventions through a registration
-system administered by the UK Intellectual Property Office. A
-patentable invention must be new, involve an inventive step over the
-prior art, be capable of industrial application, and not fall into one
-of the excluded categories under section 1(2). Patent protection
-lasts up to 20 years from filing, subject to renewal fees.
-
-The category most relevant to T-Level Digital is the exclusion of
-"programs for computers" under section 1(2)(c). A computer program
-"as such" is not patentable. However, the UK and European courts have
-developed a body of case law that allows patenting of inventions that
-happen to be implemented in software, provided the invention makes a
-technical contribution beyond the program itself (a faster image
-compression algorithm with a measurable hardware effect; a control
-system for a physical process). The "as such" qualifier does
-substantial work in this exclusion, and the answer to "is software
-patentable" is "usually no, sometimes yes, depending on the technical
-contribution".
-
-For Paper 1, the safe Name is "computer software is generally
-protected by copyright under the CDPA 1988, not by patents under the
-Patents Act 1977, because section 1(2)(c) excludes programs for
-computers as such from patentability". Software-and-patents nuance
-beyond that is unlikely to be tested.
-
-## Trade marks (Trade Marks Act 1994)
-
-The Trade Marks Act 1994 protects signs (names, logos, slogans and
-certain sounds or shapes) used in the course of trade. Registration
-with the UK Intellectual Property Office grants a 10-year protection
-that can be renewed indefinitely. Unregistered marks have a separate
-common law right enforceable through the tort of passing off, but the
-evidential burden is much higher than for registered marks.
-
-For digital scenarios, trade marks bite when a competitor uses a name
-or logo that is confusingly similar to a registered mark. Domain
-names, app store listings, social media handles and brand identities
-are typical trade-mark territory.
-
-## Other IP regimes (brief)
-
-- **Designs.** Protect the appearance of a product, registered or
-  unregistered. The registered design right under the Registered
-  Designs Act 1949 lasts up to 25 years; unregistered design right
-  under Part III of the CDPA 1988 lasts shorter.
-- **Database right.** A separate right under the Copyright and Rights
-  in Databases Regulations 1997. Protects the substantial investment
-  in obtaining, verifying or presenting the contents of a database.
-  Lasts 15 years from completion, renewed by substantial new
-  investment.
-- **Trade secrets.** Protected by a mix of common law (breach of
-  confidence) and the Trade Secrets (Enforcement, etc.) Regulations
-  2018. Distinct from copyright in that secrecy is the substance of
-  the protection rather than originality.
-
-## Open source and digital practice
-
-The single most common IP misunderstanding among new developers is the
-belief that "open source" means "no rules". It does not. Open-source
-software is copyrighted by its authors and is released to the public
-under a licence that grants permission to use, modify and redistribute
-the software on specific terms. The licence is enforceable as a
-copyright licence: using the software in a way that breaches the
-licence terms amounts to copyright infringement.
-
-The two broad families of open-source licence are:
-
-- **Permissive licences** (MIT, BSD, Apache 2.0). Allow use,
-  modification and redistribution including in proprietary commercial
-  products, subject to lightweight conditions like preserving the
-  copyright notice.
-- **Copyleft licences** (GPL, AGPL, LGPL to a degree). Require that
-  derivative works are also released under the same licence. The GPL
-  in particular requires source code of the derivative work to be
-  made available. Shipping a closed-source commercial product that
-  incorporates GPL software, without complying with the source-release
-  obligation, is copyright infringement.
-
-For Paper 1, the safe Name is "open-source software is copyrighted
-under the CDPA 1988 and licensed on terms that must be complied with;
-non-compliance is copyright infringement".
-
-## Enforcement and consequences
-
-IP rights are enforced through civil proceedings in the High Court (or
-the Intellectual Property Enterprise Court for lower-value claims).
-Available remedies include injunctions to stop further infringement,
-damages or an account of the infringer's profits, delivery up or
-destruction of infringing items, and orders to make a public statement
-correcting any misrepresentation in trade-mark or passing-off cases.
-
-Some IP offences are also criminal. Copyright piracy on a commercial
-scale (CDPA section 107) and unauthorised use of a registered trade
-mark on goods (Trade Marks Act section 92) can attract criminal
-prosecution, with penalties including imprisonment for the most
-serious cases. For the typical Paper 1 scenario, however, civil
-liability is the lead consequence.
-
-Beyond legal liability, IP disputes carry reputational consequences
-that are often more commercially damaging than the legal outcome.
-Public exposure of an open-source licence violation can destroy a
-company's standing with the developer community. Trade-mark disputes
-visibly play out in app store listings and search results. Copyright
-disputes with freelance creators often go public on social media.
-
-## What Paper 1 expects
-
-When a Paper 1 scenario shows somebody copying, reusing, distributing
-or commissioning creative or technical work, the path through the
-answer is:
-
-1. **Name the regime and the Act.** "Copyright under the Copyright,
-   Designs and Patents Act 1988" for almost every digital case
-   involving original creative or software content. Trade marks if the
-   scenario is about a name, logo or brand identity in trade. Patents
-   only where the scenario is explicit about a registered patent.
-
-2. **Explain the relevant rule.** State the test for protection (for
-   copyright, originality plus fixation; no registration required),
-   identify who owns the right (section 11 for copyright first
-   ownership, with the employee exception), and state what the right
-   protects against (section 16 restricted acts).
-
-3. **Apply the rule to the scenario.** Tie the test to the facts. The
-   strongest answers identify the work, name the rightsholder, name
-   the infringer, and identify the specific act of infringement. For
-   commissioned-work
-   scenarios, name the section 11 default and the section 90 written
-   assignment requirement.
-
-The recurring trap is the assumption that registration is required for
-copyright to exist, or that "open source" means "no rules". Both
-assumptions are wrong, and scenarios that turn on either are common.
-
-The worked examples in the Method section show this path running on
-past-paper questions. Once you have practised the assessment below,
-come back to those.
+{% closer line="name the regime. [then] apply the rule." body="Working with an IP scenario in Paper 1 comes down to two moves, in this order." %}
+{% step num="STEP 01" head="Name the regime" %}
+Copyright (CDPA 1988) for almost every digital case involving original creative or software content. Trade marks (TMA 1994) for a name, logo or brand identity in trade. Patents (PA 1977) only when the scenario names a registered patent.
+{% /step %}
+{% step num="STEP 02" head="Apply the section" %}
+Identify the work, the rightsholder and the infringing act. For commissioned-work scenarios reach s11 (first ownership) and s90 (written assignment) together. For open-source scenarios reach the licence terms and s16 restricted acts.
+{% /step %}
+{% /closer %}
