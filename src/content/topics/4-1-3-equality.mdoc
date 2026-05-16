@@ -4,6 +4,7 @@ section_id: "4.1.3"
 content_area: 4-1
 paper: "1"
 status: published
+display_style: comic
 spec_version: "2024-01"
 authors:
   - chris-morris
@@ -16,13 +17,19 @@ learning_outcomes:
   - Recognise the disability-specific duty to make reasonable adjustments and apply it to accessibility scenarios
 prerequisites: []
 estimated_minutes: 30
-last_reviewed: 2026-05-15
+last_reviewed: 2026-05-16
 revision_notes: |
   2026-05-15: Initial draft. Third Paper 1 topic in CA 4.1 (Inc 5.2).
   Drill, MCQ and NEI calibrated against the Paper 1 legislation-recognition
   pattern. NEI scenario built around indirect discrimination plus a parallel
   reasonable-adjustments duty, since the indirect-discrimination concept is
   where Paper 1 candidates most often floor out.
+  2026-05-16: Inc 7.2 cyberpunk-comic conversion. Prose body replaced
+  with six panels and a closer using the Inc 7.0 comic-* Markdoc tags.
+  Six bespoke per-panel SVGs authored in ComicIllo.astro (eq-nine,
+  eq-forms, eq-pcp, eq-adjustments, eq-justify, eq-enforce). Assessment
+  IDs (413-mcq-01, 413-nei-01) and all ten drill IDs (413-drill-01 to
+  413-drill-10) unchanged. Learning outcomes unchanged.
 assessments:
   - discriminant: mcq
     value:
@@ -170,212 +177,112 @@ drill:
     answer: The County Court, under section 114 of the Equality Act 2010
 ---
 
-## Why this topic matters
+Six panels and a closer. The Equality Act 2010 catches decisions and
+processes that disadvantage people on the grounds of a protected
+characteristic. Most Paper 1 slips happen when the bias is implicit
+in a technical choice rather than explicit in a decision-maker's words.
 
-The Equality Act 2010 is the Act that bites whenever a digital scenario
-involves a decision about a person, where that decision can be linked
-to one of the nine protected characteristics. That covers job adverts
-worded to exclude older applicants, recruitment AI trained on biased
-historical data, customer-service flows that fail older or disabled
-users, and access to goods and services delivered through digital
-products.
+{% panels %}
 
-Many of these scenarios will not look like "equality" cases at first
-glance because the bias is implicit in a technical choice rather than
-explicit in a decision-maker's words. Paper 1 rewards students who can
-see through the surface neutrality of an algorithm or a process and
-identify the protected characteristic that is being disadvantaged.
+{% panel num="01_NINE" eyebrow="WHERE THE LAW APPLIES" headline="The [nine] protected characteristics." illo="eq-nine" %}
+Section 4 of the Act lists nine. Every Equality answer starts here. The first move in any scenario is to identify which characteristic is engaged.
 
-## What the law actually is
+- age
+- disability
+- gender reassignment
+- marriage and civil partnership
+- pregnancy and maternity
+- race (includes colour, nationality, ethnic origin)
+- religion or belief (includes absence of belief)
+- sex
+- sexual orientation
 
-The Equality Act 2010 is the consolidating statute that replaced nine
-earlier pieces of UK anti-discrimination legislation, including the
-Race Relations Act 1976, the Sex Discrimination Act 1975, the
-Disability Discrimination Act 1995 and the Equal Pay Act 1970. The
-2010 Act brings these strands into one statute and adds protections
-that the earlier law did not contain.
+{% takeaway %}
+Name the characteristic first. If more than one is engaged, name the most central and flag the others.
+{% /takeaway %}
+{% /panel %}
 
-The Act covers protection in employment (Part 5), services and public
-functions (Part 3), premises (Part 4), education (Part 6) and
-associations (Part 7). For digital scenarios the most common parts
-engaged are employment (covering recruitment processes, AI screening,
-workplace systems and post-employment matters such as references) and
-services and public functions (any digital product
-offered to customers or the public).
+{% panel num="02_FORMS" eyebrow="PROHIBITED CONDUCT" headline="[Four ways] the Act bites." illo="eq-forms" %}
+{% term-card %}
+s13 DIRECT :: less favourable treatment because of a characteristic
+{% /term-card %}
 
-The Act also imposes the Public Sector Equality Duty under section 149.
-This duty requires public authorities (and bodies exercising public
-functions) to have due regard to eliminating discrimination, advancing
-equality of opportunity, and fostering good relations between people
-who share a protected characteristic and those who do not. The PSED is
-the reason equality impact assessments are routinely required when
-public bodies procure or build digital systems.
+{% term-card %}
+s19 INDIRECT :: a neutral PCP that disadvantages a group
+{% /term-card %}
 
-## The nine protected characteristics
+{% term-card %}
+s26 HARASSMENT :: unwanted conduct that violates dignity
+{% /term-card %}
 
-Section 4 of the Act lists nine protected characteristics. Memorising
-them as a set is the foundation of every Equality Act answer, because
-the first move in any scenario is to identify which characteristic is
-engaged.
+{% term-card %}
+s27 VICTIMISATION :: detriment for raising a protected complaint
+{% /term-card %}
 
-1. **Age**
-2. **Disability**
-3. **Gender reassignment**
-4. **Marriage and civil partnership**
-5. **Pregnancy and maternity**
-6. **Race**, defined to include colour, nationality and ethnic or
-   national origin
-7. **Religion or belief**, including the absence of religion or belief
-8. **Sex**
-9. **Sexual orientation**
+Direct also covers perception (the victim is thought to have the characteristic) and association (the victim is connected to someone who has it).
 
-Some characteristics have nuance. Age can be defined by a specific age
-or by an age range. Disability has a statutory definition under section
-6 that requires a physical or mental impairment with a substantial,
-long-term and adverse effect on normal day-to-day activities. Race
-covers nationality and ethnic origin as well as colour. Religion or
-belief covers a lack of religion or belief.
+{% takeaway %}
+Naming the form is the Explain mark. Most digital scenarios are indirect, but harassment and victimisation appear in workplace fact patterns.
+{% /takeaway %}
+{% /panel %}
 
-## The forms of prohibited conduct
+{% panel num="03_PCP" eyebrow="PROVISION, CRITERION OR PRACTICE" headline="Surface-neutral rules can still [discriminate]." illo="eq-pcp" %}
+{% def %}
+A **PCP** is any rule, criterion or practice that applies to everyone on its face but puts a group sharing a protected characteristic at a particular disadvantage. The bias is in the effect, not in the wording.
+{% /def %}
 
-The Act lists several distinct ways in which conduct can be unlawful.
-Recognising which one applies to a scenario is the second move after
-identifying the characteristic.
+Voice-recognition that fails regional accents. Recruitment AI trained on a historically male workforce. Smartphone-only identity checks that exclude older customers. Each is a PCP. Each is potentially unlawful under section 19 unless the party applying it can objectively justify it.
 
-### Direct discrimination (section 13)
+{% takeaway %}
+Spell out the PCP. Name the disadvantaged group. The strongest Paper 1 answers refuse to accept the defendant's framing that the rule is "neutral".
+{% /takeaway %}
+{% /panel %}
 
-A person treats another less favourably because of a protected
-characteristic. The "because of" is wide: it covers both characteristics
-the victim actually has and characteristics the victim is perceived
-to have, and it covers situations where the less favourable treatment
-arises because of someone the victim is associated with. Direct
-discrimination usually cannot be justified, with one important
-exception: direct age discrimination can be justified if the
-discrimination is a proportionate means of achieving a legitimate aim.
+{% panel num="04_ADJUSTMENTS" eyebrow="ANTICIPATORY DUTY" headline="Disability demands [active accommodation]." illo="eq-adjustments" %}
+{% def %}
+Sections 20 to 22 impose a positive duty to make **reasonable adjustments** where a provision, a physical feature or the absence of an auxiliary aid puts a disabled person at a substantial disadvantage. In services, the duty is anticipatory: owed before any disabled customer arrives, so the system must be designed with accessibility built in.
+{% /def %}
 
-### Indirect discrimination (section 19)
+For digital products the duty surfaces as alternative input methods (keyboard alongside mouse, text alongside voice), screen-reader support, contrast and font-scaling, and a non-digital fallback for users who cannot complete the digital flow at all. Failure to adjust is itself unlawful discrimination under section 21.
 
-A "provision, criterion or practice" (PCP) is applied to everyone, but
-it puts persons sharing a protected characteristic at a particular
-disadvantage compared with others, and the person to whom the PCP is
-applied is themselves disadvantaged. Indirect discrimination is the
-form that catches surface-neutral rules: dress codes that
-disproportionately affect women, fitness tests that disproportionately
-affect older workers, voice-recognition systems that disproportionately
-affect users with strong regional accents.
+{% takeaway %}
+"We will fix it if someone complains" does not satisfy the anticipatory duty. The fix has to be ready before the disadvantage hits.
+{% /takeaway %}
+{% /panel %}
 
-Indirect discrimination is defensible if the PCP is a proportionate
-means of achieving a legitimate aim. The burden of proving this falls
-on the party applying the PCP, and the test is whether the aim is real
-and serious, and whether the PCP is no more discriminatory than is
-necessary to achieve it. Convenience alone almost never meets the
-test.
+{% panel num="05_JUSTIFY" eyebrow="OBJECTIVE JUSTIFICATION" headline="When discrimination can be [defended]." illo="eq-justify" %}
+{% def %}
+A PCP that causes indirect discrimination can be lawful if the party applying it can show the PCP is a **proportionate means of achieving a legitimate aim**. The aim must be real and serious. The PCP must be no more discriminatory than necessary to achieve it.
+{% /def %}
 
-### Harassment (section 26)
+The burden sits on the party applying the PCP. Convenience almost never meets the test. Cost alone almost never meets the test. The same defence is uniquely available for direct age discrimination, which is the one exception to the rule that direct discrimination cannot be justified.
 
-Unwanted conduct related to a protected characteristic that has the
-purpose or effect of violating dignity or creating an intimidating,
-hostile, degrading, humiliating or offensive environment. Harassment
-does not require malice on the part of the perpetrator; the effect on
-the victim is what counts (assessed objectively given the
-circumstances).
+{% takeaway %}
+If a cheaper or less-restrictive alternative exists and would meet the same aim, the defence fails. Identify the alternative on the facts.
+{% /takeaway %}
+{% /panel %}
 
-### Victimisation (section 27)
+{% panel num="06_ENFORCE" eyebrow="ENFORCEMENT" headline="Who [enforces] the Act." illo="eq-enforce" %}
+The Equality and Human Rights Commission (EHRC) is the regulator. It investigates, issues unlawful-act notices and enters into agreements with bodies in breach.
 
-Subjecting a person to a detriment because they have done, or are
-suspected of doing, a protected act. Protected acts include bringing
-proceedings under the Act, giving evidence in such proceedings, making
-an allegation that someone has contravened the Act, and doing anything
-else for the purposes of or in connection with the Act.
-Victimisation can be committed by anyone in any capacity.
+{% cloud %}
+Routes: {% chip %}EHRC{% /chip %} {% chip %}Employment Tribunal{% /chip %} {% chip %}County Court s114{% /chip %} {% chip %}Judicial Review (PSED){% /chip %}
+{% /cloud %}
 
-## The disability-specific duty: reasonable adjustments
+Individuals bring their own claims. Employment claims go to the Employment Tribunal. Services and goods claims go to the County Court under section 114. Remedies include declarations, injunctions, orders to take specific steps and damages including damages for injury to feelings. There is no statutory cap on Equality Act damages.
 
-Sections 20 to 22 impose a positive duty on employers and service
-providers to make reasonable adjustments where a provision, a physical
-feature, or the absence of an auxiliary aid puts a disabled person at
-a substantial disadvantage compared to non-disabled people. The duty
-is anticipatory in the services context: it is owed before any
-specific disabled customer turns up, so the service must be designed
-with accessibility built in.
+{% takeaway %}
+The Public Sector Equality Duty (s149) is the basis for judicial review when public bodies procure or build digital systems without an equality impact assessment.
+{% /takeaway %}
+{% /panel %}
 
-Failure to comply with the reasonable adjustments duty is itself
-unlawful discrimination under section 21. For digital products this
-duty most often surfaces as a requirement to provide alternative
-input methods (text alongside voice, keyboard alongside mouse), to
-support screen readers, to meet contrast and font-scaling standards,
-and to offer a non-digital fallback for users who cannot complete the
-digital flow.
+{% /panels %}
 
-## Where the Act applies in digital scenarios
-
-For Paper 1, two parts of the Act are dominant.
-
-**Employment (Part 5).** Covers recruitment (job adverts, shortlisting,
-application processes, interview decisions), terms of employment,
-promotion,
-training, dismissal, and post-employment situations such as
-references. Algorithmic recruitment screening that filters CVs against
-historical hiring patterns is the textbook example: even when the
-algorithm is not given the protected characteristic as a feature, it
-can reproduce the bias of the historical data.
-
-**Services and public functions (Part 3).** Covers any service offered
-to the public or a section of the public, including services offered
-by digital products. This is where most consumer-facing digital
-discrimination cases sit. Banking, retail, customer service,
-ticketing, education platforms and government digital services all
-fall under Part 3.
-
-## Enforcement and consequences
-
-The Equality and Human Rights Commission (EHRC) is the regulator. It
-can carry out formal investigations, issue unlawful-act notices, enter
-into agreements with bodies that have breached the Act, and bring
-judicial review proceedings on questions of public-sector equality
-duty.
-
-Individuals affected by discrimination can also bring their own
-claims. Employment cases go to the Employment Tribunal. Services and
-goods cases go to the County Court under section 114. Remedies
-include declarations, injunctions requiring changes to processes or
-products, orders to take specific steps to remedy the discrimination,
-and damages including damages for injury to feelings (which have
-established bands). There is no statutory cap on Equality Act damages.
-
-For public bodies, breach of the Public Sector Equality Duty under
-section 149 is grounds for judicial review. Procurement decisions and
-major digital deployments by public bodies are routinely challenged on
-PSED grounds.
-
-## What Paper 1 expects
-
-When a Paper 1 scenario shows a decision, process or product that
-disadvantages a group, the path through the answer is:
-
-1. **Name the Act and the characteristic.** "The Equality Act 2010,
-   on the grounds of [age / disability / sex / race / ...]." Where the
-   scenario engages more than one characteristic, name the most central
-   one and note any others.
-
-2. **Explain the form of discrimination.** State whether the conduct
-   is direct (section 13), indirect (section 19), harassment (section
-   26), victimisation (section 27) or a failure to make reasonable
-   adjustments (section 21). Define the relevant test in your own
-   words.
-
-3. **Apply the test to the scenario.** Tie the elements of the
-   relevant section to the facts. For indirect discrimination, identify
-   the PCP and the disadvantaged group, and assess whether the
-   objective justification defence is plausible on the facts.
-
-The recurring trap is the surface-neutral algorithm or process. A
-process that does not mention a protected characteristic on its face
-can still be unlawful if it puts a group sharing that characteristic
-at a particular disadvantage. The strongest Paper 1 answers spell out
-the PCP, name the disadvantage and assess justification on its merits
-rather than accepting the defendant's framing.
-
-The worked examples in the Method section show this path running on
-past-paper questions. Once you have practised the assessment below,
-come back to those.
+{% closer line="name the characteristic. [then] name the form." body="Working with an Equality scenario in Paper 1 comes down to two moves, in this order." %}
+{% step num="STEP 01" head="Name the characteristic" %}
+Identify which of the nine is engaged. If more than one is in play, name the most central and flag the others. The Name mark goes to the Act and the characteristic together.
+{% /step %}
+{% step num="STEP 02" head="Name the form, then apply" %}
+Pin the conduct to s13 direct, s19 indirect, s26 harassment, s27 victimisation or s21 failure to make reasonable adjustments. State the elements of that section. Tie each element to a fact in the scenario. Assess any objective-justification defence on its merits.
+{% /step %}
+{% /closer %}
