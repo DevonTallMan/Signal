@@ -58,6 +58,20 @@ crumbs.push({ label: topic.data.title });
 
         <Content />
 
+        {topic.data.drill.length > 0 && (
+          <div class="comic-drill">
+            <div class="comic-divider"><span class="line"></span><span class="tag">DRILL</span><span class="line"></span></div>
+            <DrillPanel topicId={topic.id} items={topic.data.drill} />
+          </div>
+        )}
+
+        {topic.data.assessments.length > 0 && (
+          <div class="comic-assessment" id="nei-assessment">
+            <div class="comic-divider"><span class="line"></span><span class="tag">ASSESSMENT</span><span class="line"></span></div>
+            <AssessmentBlock topicId={topic.id} assessments={topic.data.assessments} />
+          </div>
+        )}
+
         <p style="margin-top: 3rem;">
           {area ? (
             <a href={`/content-areas/${area.id}`}>
