@@ -242,13 +242,100 @@ The dismissal lasts 12 hours.
 
 ---
 
-## 5. What the pilot measures, and what it does not
+## 5. The teacher dashboard
+
+From Sprint 7 onwards, Signal includes a pilot-host view at `/teacher`
+that shows cohort progress at a glance. Access is gated by a server-side
+allowlist: only the email address you've signed in with, when added to
+the allowlist, will be granted cross-cohort read access.
+
+### 5.1 What you can see
+
+`/teacher` has three tabs:
+
+1. **Cohort.** One row per student. Cards rated, cards still in the
+   review queue, cards graduated (reached the 60-day Leitner box),
+   sessions started, sessions completed, last seen (relative time).
+   This is the "is the cohort engaging?" view.
+2. **Per topic.** One row per published topic. Students engaged
+   (how many of the cohort have rated at least one card on the topic),
+   total ratings, pass rate, cards in queue, cards graduated. This is
+   the "which topic is the cohort struggling with?" view.
+3. **Per student.** Pick a student from the dropdown. See a per-topic
+   breakdown for just that student. Cards rated per topic, got versus
+   miss, last activity per topic. This is the "what is one specific
+   student doing?" view.
+
+Students are shown using anonymous labels (Student 01, Student 02,
+...) rather than names or email addresses. This is deliberate: the
+dashboard works for cohort-level decisions without exposing identity
+in screenshots or shared logs.
+
+### 5.2 What you cannot see
+
+The dashboard deliberately does NOT show:
+
+- **The text of NEI submissions.** Server rules block this for v1.
+  You see counts and timestamps for NEI activity, but not the prose
+  bodies students wrote. If we later decide that prose-body access is
+  needed for the pilot writeup, that decision will be logged in
+  Section 8 of the evaluation plan before any code change.
+- **Sort & Match or Twin Tracks scenario-level responses.** Same
+  reason: aggregate counts and session metadata only in v1.
+- **Anything write-side.** The dashboard is read-only. Teachers
+  cannot grade, modify, or intervene on student records.
+
+### 5.3 The export endpoint
+
+`/teacher/export` produces a downloadable cohort dataset for offline
+analysis. Two formats:
+
+- **JSON** (`/teacher/export?format=json`). Full nested dataset:
+  per-student drill ratings, sessions, plus the topic catalogue and
+  generation metadata. Use this for the post-pilot writeup; it
+  preserves enough event-level detail to re-derive anything.
+- **CSV** (`/teacher/export?format=csv`). One row per drill rating
+  event. Suitable for pivot tables in Excel, Sheets, or any
+  statistics tool.
+
+Visiting `/teacher/export` without a format query parameter shows
+both download buttons. Visiting with `?format=` auto-triggers the
+download.
+
+The export runs in the browser using your signed-in Firebase auth
+session. It is not a curl-friendly URL: there is no way to fetch the
+file from a script outside a logged-in browser. This is by design
+and matches the same allowlist-gated read path as the dashboard.
+
+### 5.4 When to look at it
+
+Three useful moments during a pilot week:
+
+- **The morning of a session.** Open the cohort tab to see who's
+  engaged since last session. Identifies students who may need a
+  nudge.
+- **Mid-session, if you have a screen handy.** The cohort view shows
+  near-real-time progress (data fetches refresh on page reload). If
+  you're curious how the room is going, this is the view.
+- **After the pilot.** Hit `/teacher/export?format=json` and
+  `/teacher/export?format=csv`. Both files contain the same cohort
+  data. Hand both to Chris alongside the marked pre-test and
+  post-test scripts.
+
+You do not have to use the dashboard during sessions to run the
+pilot well. The platform is designed so each student's surface is
+self-contained; the dashboard is a window into what the cohort is
+doing, not a control panel.
+
+---
+
+## 6. What the pilot measures, and what it does not
 
 This section is honest about what the pilot can and cannot show. The
 pre-registered evaluation plan (`docs/pilot-evaluation-plan.md`) is
 the authoritative document; this is the readable summary.
 
-### 5.1 What it measures
+### 6.1 What it measures
 
 - **Engagement.** Completion rate per session. Time on task per
   scenario. Number of scenarios attempted. Return rate across sessions.
@@ -257,7 +344,7 @@ the authoritative document; this is the readable summary.
 - **Qualitative feedback.** A short post-session survey for students
   and a written reflection from you.
 
-### 5.2 What it does not measure
+### 6.2 What it does not measure
 
 - **Causal learning gain from the platform.** The pilot has no control
   group. Any pre-to-post improvement may be due to your normal
@@ -276,9 +363,9 @@ from data that cannot demonstrate causation.
 
 ---
 
-## 6. What we need from you
+## 7. What we need from you
 
-### 6.1 Before the pilot starts
+### 7.1 Before the pilot starts
 
 - Sense-check the pre/post test questions in
   `docs/pilot-pre-post-test.md` for cohort-appropriate language and
@@ -293,7 +380,7 @@ from data that cannot demonstrate causation.
   discipline of the evaluation plan requires written evidence of date
   and cohort confirmation before we mark placeholders as confirmed.
 
-### 6.2 During the pilot
+### 7.2 During the pilot
 
 - Run sessions as described in Section 4.
 - Administer the pre-test and post-test on paper.
@@ -302,7 +389,7 @@ from data that cannot demonstrate causation.
 - Note anything that surprises you about cohort engagement — high or
   low.
 
-### 6.3 After the pilot
+### 7.3 After the pilot
 
 - Hand the marked pre-test and post-test scripts back to Chris with
   pseudonymous student IDs (no names; the Firestore data uses
@@ -314,7 +401,7 @@ from data that cannot demonstrate causation.
 
 ---
 
-## 7. What to flag to Chris
+## 8. What to flag to Chris
 
 During the pilot, please flag any of the following as they happen:
 
@@ -338,7 +425,7 @@ expectation; flag as you go and we'll batch into a post-pilot debrief.
 
 ---
 
-## 8. Brief glossary
+## 9. Brief glossary
 
 - **Answer Arc.** The three-component structure of an extended exam
   answer: Name, Explain, Impact.
@@ -363,7 +450,7 @@ expectation; flag as you go and we'll batch into a post-pilot debrief.
 
 ---
 
-## 9. Honest caveats
+## 10. Honest caveats
 
 - **Content has not been independently examiner-reviewed.** All
   scenarios, model answers, and mark schemes are author-generated.
