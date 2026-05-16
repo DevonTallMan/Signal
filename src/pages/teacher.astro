@@ -1,0 +1,73 @@
+---
+// src/pages/teacher.astro
+//
+// Teacher dashboard route. Static-built shell that mounts the
+// TeacherView React island. The island handles auth, allowlist check
+// and the cohort-data fetch client-side; this Astro page only
+// provides the page chrome.
+//
+// Sprint 7A Inc 7.1: cohort tab only. Per-topic and per-student
+// detail land in Inc 7.2. Export endpoint lands in Inc 7.3.
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import TeacherView from "../components/Teacher/TeacherView.tsx";
+
+const crumbs = [
+  { label: "Home", href: "/" },
+  { label: "Teacher" },
+];
+---
+
+<BaseLayout
+  title="Teacher dashboard"
+  description="Pilot teacher view: cohort progress at a glance."
+>
+  <main class="container">
+    <Breadcrumb crumbs={crumbs} />
+    <div class="eyebrow">Pilot · Teacher</div>
+    <h1>Teacher dashboard</h1>
+    <p class="lede">
+      Cohort progress at a glance. Reads run client-side and are
+      gated by the Firestore teacher allowlist.
+    </p>
+
+    <TeacherView client:only="react" />
+  </main>
+</BaseLayout>
+
+<style>
+  .teacher {
+    margin-top: var(--space-4);
+  }
+  .teacher__signedin {
+    font-family: monospace;
+    color: var(--text-muted, #6a7090);
+    margin-bottom: var(--space-3);
+  }
+  .teacher__table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--space-3);
+  }
+  .teacher__table th,
+  .teacher__table td {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  .teacher__table thead th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted, #6a7090);
+  }
+  .teacher__table tbody th {
+    font-weight: 600;
+  }
+  .teacher__footer {
+    margin-top: var(--space-3);
+    font-size: 14px;
+    color: var(--text-muted, #6a7090);
+  }
+</style>
