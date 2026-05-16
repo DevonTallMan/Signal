@@ -62,7 +62,7 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
   const [queue, setQueue] = useState<ReviewCard[]>([]);
   const [cursor, setCursor] = useState(0);
   const [results, setResults] = useState<ItemResult[]>([]);
-  const [nextEarliestReviewDate, setNextEarliestReviewDate] = useState<Date | null>(null);
+  const [nextEarliestReviewDate, setNextEarliestReviewDate] = useState<Date | null | undefined>(undefined);
   const sessionStartedAtRef = useRef<number | null>(null);
   const [sessionDurationMs, setSessionDurationMs] = useState<number | null>(null);
   const [reloadCounter, setReloadCounter] = useState(0);
@@ -205,22 +205,25 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
     if (next >= queue.length) {
       const start = sessionStartedAtRef.current;
       setSessionDurationMs(start === null ? null : Date.now() - start);
-      try {
-        const db = getFirestore(app);
-        const now = new Date();
-        const states = await getAllCardStates(db, user.uid, now);
-        const stillScheduled = states
-          .filter((s): s is CardState & { nextReviewDate: Timestamp } => s.nextReviewDate !== null)
-          .map((s) => s.nextReviewDate.toMillis());
-        if (stillScheduled.length > 0) {
-          setNextEarliestReviewDate(new Date(Math.min(...stillScheduled)));
-        } else {
+      setNextEarliestReviewDate(undefined);
+      setPhase("done");
+      void (async () => {
+        try {
+          const db = getFirestore(app);
+          const now = new Date();
+          const states = await getAllCardStates(db, user.uid, now);
+          const stillScheduled = states
+            .filter((s): s is CardState & { nextReviewDate: Timestamp } => s.nextReviewDate !== null)
+            .map((s) => s.nextReviewDate.toMillis());
+          if (stillScheduled.length > 0) {
+            setNextEarliestReviewDate(new Date(Math.min(...stillScheduled)));
+          } else {
+            setNextEarliestReviewDate(null);
+          }
+        } catch {
           setNextEarliestReviewDate(null);
         }
-      } catch {
-        setNextEarliestReviewDate(null);
-      }
-      setPhase("done");
+      })();
     } else {
       setCursor(next);
       setPhase("cue");
@@ -269,12 +272,25 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
           <span data-review-miss-count>{miss}</span> miss
           {durationLabel ? <> · {durationLabel}</> : null}
         </p>
-        {nextEarliestReviewDate ? (
-          <p className="review-summary__next">
+        {nextEarliestReviewDate === undefined ? (
+          <p
+            className="review-summary__next review-summary__next--loading"
+            data-review-next-state="loading"
+          >
+            Calculating next review…
+          </p>
+        ) : nextEarliestReviewDate ? (
+          <p
+            className="review-summary__next"
+            data-review-next-state="scheduled"
+          >
             Next review due {formatRelativeDate(nextEarliestReviewDate)}.
           </p>
         ) : (
-          <p className="review-summary__next">
+          <p
+            className="review-summary__next"
+            data-review-next-state="empty"
+          >
             No more cards scheduled. Visit a topic to add new ones.
           </p>
         )}
