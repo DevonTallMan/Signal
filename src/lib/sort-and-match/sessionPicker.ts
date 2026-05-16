@@ -11,6 +11,14 @@
 // (Sort & Match scenarios are not yet differentiated by difficulty or
 // content area). When the scenario pool grows beyond a single worked
 // example, we may extend this to balance by content area or difficulty.
+//
+// Interleaving deferral (2026-05-16): the Risk Classifier sessionPicker
+// switched to tier-interleaved ordering this date. Sort & Match
+// scenarios currently lack a content-area tier field and the pool is
+// too small (2 scenarios) for interleaving to be a real concern.
+// When the pool grows past ~4 scenarios across at least 2 content
+// areas, add a contentArea field to the Scenario type and apply the
+// same greedy interleaving pattern from risk-classifier/sessionPicker.ts.
 
 /**
  * Pick up to `desiredCount` scenarios from `available`, shuffled

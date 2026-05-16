@@ -14,6 +14,14 @@
 // one scenario in the pool today (Hospital Remote Access), the picker
 // returns N=1 against SESSION_LENGTH=3. Additional Twin Tracks scenarios
 // will be content-only PRs post-sprint.
+//
+// Interleaving deferral (2026-05-16): the Risk Classifier sessionPicker
+// switched to tier-interleaved ordering this date. Twin Tracks scenarios
+// currently lack a content-area tier field and the pool is too small
+// (2 scenarios) for interleaving to be a real concern. When the pool
+// grows past ~4 scenarios across at least 2 content areas, add a
+// contentArea field to the Scenario type and apply the same greedy
+// interleaving pattern from risk-classifier/sessionPicker.ts.
 
 /**
  * Pick up to `desiredCount` scenarios from `available`, shuffled

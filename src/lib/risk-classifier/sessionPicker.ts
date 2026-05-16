@@ -41,13 +41,23 @@ export function getAllScenarios(): Scenario[] {
 /**
  * Pick 5 scenarios for a single session.
  *
- * Algorithm: tier-balanced (one from each of the four tiers) plus one
- * wildcard. Within-session order is difficulty-progressive: clean first,
- * grey middle, edge last where possible.
+ * Selection: tier-balanced (one from each of the four tiers) plus one
+ * wildcard. Within-session order: tier-interleaved, so that no two
+ * adjacent scenarios share a legislation tier. This replaces the
+ * earlier difficulty-progressive order (clean -> grey -> edge) per
+ * the 2026-05-15 design conversation, which named blocked (same-tier
+ * adjacent) practice as a retention liability and interleaving as
+ * the higher-leverage cheap change. Roediger and Karpicke on spacing,
+ * Rohrer and Taylor on interleaving.
  *
- * Selection is deterministic by seed; passing a different seed gives a
- * different set. For Increment 5, the seed is the session ID, so each
- * Firestore session sees a different but reproducible set.
+ * A soft difficulty preference is preserved *within* a tier: when a
+ * tier contributes two scenarios (the doubled tier), the easier of
+ * the two is placed first. This keeps the within-tier progression
+ * intact without dominating the interleaving order.
+ *
+ * Selection is deterministic by seed; passing a different seed gives
+ * a different set. For Increment 5, the seed is the session ID, so
+ * each Firestore session sees a different but reproducible set.
  */
 export function pickSessionScenarios(seed: string): Scenario[] {
   // Group scenarios by tier
@@ -93,15 +103,77 @@ export function pickSessionScenarios(seed: string): Scenario[] {
     selected.push(remaining[wildcardIdx]);
   }
 
-  // Sort by difficulty: clean -> grey -> edge
+  return interleaveByTier(selected, seed, hashChar);
+}
+
+/**
+ * Greedy interleaving: at each position, pick a scenario from a tier
+ * that differs from the previous position's tier, preferring tiers
+ * with the most remaining scenarios (so the doubled tier gets placed
+ * with room to spread out). Within a tier, easier scenarios come
+ * before harder ones.
+ */
+function interleaveByTier(
+  scenarios: Scenario[],
+  seed: string,
+  hashChar: (s: string, salt: number) => number,
+): Scenario[] {
   const difficultyOrder: Record<Scenario["difficulty"], number> = {
     clean: 0,
     grey: 1,
     edge: 2,
   };
-  selected.sort(
-    (a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]
-  );
 
-  return selected;
+  // Bucket the input by tier and sort each bucket by difficulty so the
+  // soft within-tier easier-first preference is preserved when the
+  // greedy walk pulls from a tier.
+  const byTier: Record<Tier, Scenario[]> = {
+    "data-protection": [],
+    "computer-misuse": [],
+    equality: [],
+    "intellectual-property": [],
+  };
+  scenarios.forEach((s) => byTier[s.correctTier].push(s));
+  (Object.keys(byTier) as Tier[]).forEach((t) => {
+    byTier[t].sort(
+      (a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty],
+    );
+  });
+
+  const result: Scenario[] = [];
+  let lastTier: Tier | null = null;
+  const totalToPlace = scenarios.length;
+
+  while (result.length < totalToPlace) {
+    const tiersWithItems = (Object.keys(byTier) as Tier[]).filter(
+      (t) => byTier[t].length > 0,
+    );
+    // Prefer tiers different from the last placed tier. If only the
+    // last tier has items left (a degenerate state that should not be
+    // reachable for a 5-pool with at most one doubled tier), fall back
+    // to taking from it; the alternative is dropping items.
+    const candidates =
+      tiersWithItems.filter((t) => t !== lastTier).length > 0
+        ? tiersWithItems.filter((t) => t !== lastTier)
+        : tiersWithItems;
+
+    // Pick the tier with the most remaining items. This puts the
+    // doubled tier in early and pushes its second item naturally to a
+    // non-adjacent position later in the walk.
+    const maxCount = Math.max(...candidates.map((t) => byTier[t].length));
+    const topTiers = candidates
+      .filter((t) => byTier[t].length === maxCount)
+      .sort();
+
+    // Tiebreak deterministically by seed + position offset.
+    const pickIdx = hashChar(seed, result.length + 200) % topTiers.length;
+    const pickedTier = topTiers[pickIdx];
+
+    const scenario = byTier[pickedTier].shift();
+    if (!scenario) break;
+    result.push(scenario);
+    lastTier = pickedTier;
+  }
+
+  return result;
 }
