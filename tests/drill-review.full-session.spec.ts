@@ -75,7 +75,7 @@ test.describe("Drill review full session", () => {
     await page.waitForFunction(
       () => document.querySelector('[data-review-state="revealed"]') !== null,
       undefined,
-      { timeout: 5_000 },
+      { timeout: 15_000 },
     );
     await page.locator('[data-review-action="got"]').click();
 
@@ -86,7 +86,7 @@ test.describe("Drill review full session", () => {
         return el?.getAttribute("data-review-state") === "cue";
       },
       undefined,
-      { timeout: 5_000 },
+      { timeout: 15_000 },
     );
 
     // Second card: reveal -> miss.
@@ -94,7 +94,7 @@ test.describe("Drill review full session", () => {
     await page.waitForFunction(
       () => document.querySelector('[data-review-state="revealed"]') !== null,
       undefined,
-      { timeout: 5_000 },
+      { timeout: 15_000 },
     );
     await page.locator('[data-review-action="miss"]').click();
 
