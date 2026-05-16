@@ -81,17 +81,67 @@ describe("pickSessionScenarios", () => {
     });
   });
 
-  describe("difficulty ordering", () => {
-    it("sorts scenarios by difficulty: clean before grey before edge", () => {
+  describe("tier-interleaved ordering", () => {
+    it("no two adjacent scenarios share a tier (interleaving property)", () => {
+      // Spec change 2026-05-16: within-session ordering switched from
+      // difficulty-progressive (clean -> grey -> edge) to tier-interleaved.
+      // The pedagogical case for interleaving over blocking is in the
+      // 2026-05-15 design conversation; Rohrer and Taylor 2007 is the
+      // primary evidence anchor.
+      const result = pickSessionScenarios("any-seed");
+      for (let i = 1; i < result.length; i += 1) {
+        expect(result[i].correctTier).not.toBe(result[i - 1].correctTier);
+      }
+    });
+
+    it("interleaving holds across a sweep of seeds", () => {
+      // Stronger version of the above: with several seeds, the property
+      // must hold every time. Catches greedy-algorithm regressions where
+      // the doubled tier accidentally lands adjacent on certain seed
+      // patterns.
+      const seeds = [
+        "seed-a",
+        "seed-b",
+        "seed-c",
+        "seed-d",
+        "seed-e",
+        "seed-f",
+        "seed-g",
+        "seed-h",
+      ];
+      seeds.forEach((seed) => {
+        const result = pickSessionScenarios(seed);
+        for (let i = 1; i < result.length; i += 1) {
+          expect(result[i].correctTier).not.toBe(result[i - 1].correctTier);
+        }
+      });
+    });
+
+    it("within the doubled tier, the easier scenario appears before the harder one", () => {
+      // Soft within-tier difficulty preference preserved by the
+      // interleaver. The full-session sequence is no longer
+      // difficulty-sorted, but where a tier contributes two scenarios
+      // (the wildcard case), the easier of the two should still come
+      // first.
       const order: Record<Scenario["difficulty"], number> = {
         clean: 0,
         grey: 1,
         edge: 2,
       };
       const result = pickSessionScenarios("any-seed");
-      const difficulties = result.map((s) => order[s.difficulty]);
-      const sorted = [...difficulties].sort((a, b) => a - b);
-      expect(difficulties).toEqual(sorted);
+      const byTier: Record<string, Scenario[]> = {};
+      result.forEach((s) => {
+        (byTier[s.correctTier] ??= []).push(s);
+      });
+      const doubledTier = Object.keys(byTier).find(
+        (t) => byTier[t].length === 2,
+      );
+      expect(doubledTier).toBeDefined();
+      if (!doubledTier) return;
+      const [first, second] = byTier[doubledTier];
+      expect(order[first.difficulty]).toBeLessThanOrEqual(
+        order[second.difficulty],
+      );
     });
   });
 
