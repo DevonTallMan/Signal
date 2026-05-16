@@ -10,7 +10,14 @@
 // surfaces immediately.
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { doc, getDoc, getFirestore, Timestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getFirestore,
+  serverTimestamp,
+  setDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { useAuth } from "../../lib/useAuth";
 import { app } from "../../lib/firebase";
 import { getAllCardStates } from "../../lib/drillScheduler/queries";
@@ -146,6 +153,28 @@ export default function ReviewSession({ catalog }: ReviewSessionProps) {
             ? data.nextReviewDate.toDate().toISOString()
             : null;
         return { boxLevel, nextReviewDate };
+      },
+      async seedCardWithDueDate(topicId, termId, boxLevel, nextReviewDateIso) {
+        const db = getFirestore(app);
+        const compositeId = `${topicId}__${termId}`;
+        const ref = doc(db, "users", user.uid, "drillRatings", compositeId);
+        const nowTimestamp = Timestamp.now();
+        const data: Record<string, unknown> = {
+          topicId,
+          termId,
+          outcome: "got",
+          ratedAt: serverTimestamp(),
+          source: "signal",
+          boxLevel,
+          firstRatedAt: nowTimestamp,
+          lastRatedAt: nowTimestamp,
+          history: [],
+        };
+        if (nextReviewDateIso !== null) {
+          data.nextReviewDate = Timestamp.fromDate(new Date(nextReviewDateIso));
+        }
+        await setDoc(ref, data);
+        setReloadCounter((n) => n + 1);
       },
     });
     return () => unregisterDrillSchedulerTestApi();
