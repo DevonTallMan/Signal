@@ -4,7 +4,11 @@
 // Inc 7.0 shipped a placeholder that names the panel slot it occupied.
 // Inc 7.1 added the first real per-topic illustration set: six SVGs
 // for the CA 4.1 Computer Misuse Act topic, keyed cma-*.
-// Inc 7.2 adds six more, for the CA 4.1 Equality Act topic, keyed eq-*.
+// Inc 7.2 added six more, for the CA 4.1 Equality Act topic, keyed eq-*.
+// Inc 7.3 adds six more, for the CA 4.1 Intellectual Property topic,
+// keyed ip-*. With this increment all four CA 4.1 legislation topics
+// either run on the comic format (CMA, Equality, IP) or carry the
+// prose-with-illos treatment from PR #117 (Data Protection).
 //
 // The unknown-panel fallback is preserved so the Inc 7.0
 // comic-format-preview stub (which uses DP-themed panel keys) still
@@ -29,6 +33,12 @@ const authoredPanels = new Set([
   "eq-adjustments",
   "eq-justify",
   "eq-enforce",
+  "ip-regimes",
+  "ip-automatic",
+  "ip-ownership",
+  "ip-assign",
+  "ip-software",
+  "ip-opensource",
 ]);
 const isPlaceholder = !authoredPanels.has(panel);
 ---
@@ -468,6 +478,187 @@ const isPlaceholder = !authoredPanels.has(panel);
         <text x="0" y="-2" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="9" font-weight="700">REMEDY</text>
         <text x="0" y="9" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="6" opacity="0.75">DAMAGES</text>
       </g>
+    </svg>
+  )}
+  {panel === "ip-regimes" && (
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <g stroke="rgba(0,240,255,0.18)" stroke-width="0.5">
+        <line x1="0" y1="18" x2="320" y2="18" />
+        <line x1="0" y1="122" x2="320" y2="122" />
+      </g>
+      {[
+        { x: 40, label: "©", caption: "CDPA 88", color: "#00f0ff" },
+        { x: 100, label: "P", caption: "PA 77", color: "#fff03a" },
+        { x: 160, label: "™", caption: "TMA 94", color: "#ff2d70" },
+        { x: 220, label: "D", caption: "RDA 49", color: "#00ff88" },
+        { x: 280, label: "DB", caption: "REG 97", color: "#00f0ff" },
+      ].map(({ x, label, caption, color }) => (
+        <g transform={`translate(${x}, 70)`}>
+          <rect x="-22" y="-26" width="44" height="52" fill="#0d0f15" stroke={color} stroke-width="1.8" />
+          <text x="0" y="-2" text-anchor="middle" fill={color} font-family="monospace" font-size="18" font-weight="700">{label}</text>
+          <text x="0" y="20" text-anchor="middle" fill={color} font-family="monospace" font-size="7" letter-spacing="1" opacity="0.85">{caption}</text>
+        </g>
+      ))}
+      <text x="14" y="135" fill="#00f0ff" font-family="monospace" font-size="9" opacity="0.7">&gt; FIVE_REGIMES :: PICK_ONE</text>
+    </svg>
+  )}
+  {panel === "ip-automatic" && (
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <g stroke="rgba(0,240,255,0.18)" stroke-width="0.5">
+        <line x1="0" y1="34" x2="320" y2="34" />
+        <line x1="0" y1="106" x2="320" y2="106" />
+      </g>
+      <g transform="translate(64, 70)">
+        <rect x="-22" y="-20" width="44" height="40" fill="#0d0f15" stroke="#00f0ff" stroke-width="1.8" />
+        <line x1="-14" y1="-10" x2="14" y2="-10" stroke="#00f0ff" stroke-width="1" />
+        <line x1="-14" y1="-2" x2="14" y2="-2" stroke="#00f0ff" stroke-width="1" />
+        <line x1="-14" y1="6" x2="8" y2="6" stroke="#00f0ff" stroke-width="1" />
+        <text x="0" y="32" text-anchor="middle" fill="#00f0ff" font-family="monospace" font-size="8" letter-spacing="2">WORK</text>
+      </g>
+      <g stroke="#fff03a" stroke-width="2" fill="none">
+        <path d="M 96 70 L 156 70" />
+        <path d="M 156 70 L 148 64 M 156 70 L 148 76" />
+      </g>
+      <text x="126" y="60" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="8" letter-spacing="2">FIXED</text>
+      <g transform="translate(190, 70)">
+        <circle r="22" fill="#0d0f15" stroke="#00ff88" stroke-width="2.2" />
+        <text x="0" y="6" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="20" font-weight="700">©</text>
+        <text x="0" y="34" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="8" letter-spacing="2">PROTECTED</text>
+      </g>
+      <g transform="translate(266, 70)">
+        <rect x="-22" y="-22" width="44" height="44" fill="#0d0f15" stroke="#ff2d70" stroke-width="1.8" />
+        <text x="0" y="-2" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="8" font-weight="700">NO REG</text>
+        <text x="0" y="10" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="8" font-weight="700">NO ©</text>
+        <line x1="-18" y1="-18" x2="18" y2="18" stroke="#ff2d70" stroke-width="1.6" />
+      </g>
+      <text x="14" y="22" fill="#00f0ff" font-family="monospace" font-size="9" opacity="0.7">&gt; AUTOMATIC :: ON_CREATION</text>
+    </svg>
+  )}
+  {panel === "ip-ownership" && (
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <g transform="translate(58, 36)">
+        <circle r="9" fill="none" stroke="#00f0ff" stroke-width="1.6" />
+        <circle cx="0" cy="-2" r="3" fill="#00f0ff" />
+        <text x="22" y="3" fill="#00f0ff" font-family="monospace" font-size="9" font-weight="700">EMPLOYEE</text>
+      </g>
+      <g stroke="#fff03a" stroke-width="1.4" fill="none">
+        <path d="M 142 36 L 196 36" />
+        <path d="M 196 36 L 190 32 M 196 36 L 190 40" />
+      </g>
+      <g transform="translate(238, 36)">
+        <rect x="-32" y="-12" width="64" height="24" fill="#0d0f15" stroke="#fff03a" stroke-width="1.6" />
+        <text x="0" y="4" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="9" font-weight="700">EMPLOYER</text>
+      </g>
+      <g transform="translate(58, 76)">
+        <circle r="9" fill="none" stroke="#00ff88" stroke-width="1.6" />
+        <circle cx="0" cy="-2" r="3" fill="#00ff88" />
+        <text x="22" y="3" fill="#00ff88" font-family="monospace" font-size="9" font-weight="700">FREELANCER</text>
+      </g>
+      <g stroke="#00ff88" stroke-width="1.4" fill="none">
+        <path d="M 142 76 L 158 76" />
+        <path d="M 158 76 L 158 76 Q 168 76 158 76" />
+        <circle cx="158" cy="76" r="3" fill="#00ff88" />
+      </g>
+      <g transform="translate(238, 76)">
+        <rect x="-32" y="-12" width="64" height="24" fill="#0d0f15" stroke="#ff2d70" stroke-width="1.6" stroke-dasharray="3 2" />
+        <text x="0" y="-1" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="9" font-weight="700">CLIENT</text>
+        <text x="0" y="9" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="6" opacity="0.85">IMPLIED LICENCE ONLY</text>
+      </g>
+      <g transform="translate(58, 116)">
+        <circle r="9" fill="none" stroke="#fff03a" stroke-width="1.6" />
+        <circle cx="0" cy="-2" r="3" fill="#fff03a" />
+        <text x="22" y="3" fill="#fff03a" font-family="monospace" font-size="9" font-weight="700">AUTHOR</text>
+      </g>
+      <g stroke="#fff03a" stroke-width="1.4" fill="none">
+        <path d="M 142 116 L 196 116" />
+        <path d="M 196 116 L 190 112 M 196 116 L 190 120" />
+      </g>
+      <g transform="translate(238, 116)">
+        <text x="0" y="4" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="13" font-weight="700">©</text>
+      </g>
+    </svg>
+  )}
+  {panel === "ip-assign" && (
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <g transform="translate(74, 50)">
+        <rect x="-32" y="-22" width="64" height="44" fill="#0d0f15" stroke="#ff2d70" stroke-width="1.6" stroke-dasharray="3 3" />
+        <text x="0" y="-6" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="9" font-weight="700">VERBAL</text>
+        <text x="0" y="6" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="7" opacity="0.85">+ PAYMENT</text>
+        <line x1="-22" y1="-18" x2="22" y2="18" stroke="#ff2d70" stroke-width="2.4" />
+      </g>
+      <text x="74" y="92" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="8" letter-spacing="2">DOES NOT TRANSFER</text>
+      <g stroke="#fff03a" stroke-width="1.6" fill="none">
+        <path d="M 124 70 L 178 70" />
+        <path d="M 178 70 L 170 66 M 178 70 L 170 74" />
+      </g>
+      <text x="151" y="60" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="8" letter-spacing="2">s90</text>
+      <g transform="translate(228, 50)">
+        <rect x="-40" y="-22" width="80" height="44" fill="#0d0f15" stroke="#00ff88" stroke-width="1.8" />
+        <text x="0" y="-6" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="9" font-weight="700">WRITTEN</text>
+        <text x="0" y="6" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="7" opacity="0.85">+ SIGNATURE</text>
+        <path d="M -22 16 Q -14 12 -6 16 T 10 16 T 22 14" fill="none" stroke="#00ff88" stroke-width="1.2" />
+      </g>
+      <text x="228" y="92" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="8" letter-spacing="2">VALID ASSIGNMENT</text>
+      <text x="14" y="22" fill="#00f0ff" font-family="monospace" font-size="9" opacity="0.7">&gt; s90 :: COPYRIGHT_ASSIGNMENT</text>
+    </svg>
+  )}
+  {panel === "ip-software" && (
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <g stroke="rgba(0,240,255,0.18)" stroke-width="0.5">
+        <line x1="0" y1="34" x2="320" y2="34" />
+        <line x1="0" y1="106" x2="320" y2="106" />
+      </g>
+      <g transform="translate(74, 70)">
+        <rect x="-44" y="-28" width="88" height="56" fill="#0d0f15" stroke="#00ff88" stroke-width="1.8" />
+        <g font-family="monospace" font-size="6" fill="#00ff88" opacity="0.85">
+          <text x="-36" y="-16">function() {`{`}</text>
+          <text x="-32" y="-6">return x * 2;</text>
+          <text x="-36" y="4">{`}`}</text>
+        </g>
+        <text x="0" y="20" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="9" font-weight="700">© LITERARY</text>
+      </g>
+      <text x="74" y="124" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="7" letter-spacing="2">CDPA s3</text>
+      <g stroke="#fff03a" stroke-width="1.4" fill="none" stroke-dasharray="3 3">
+        <line x1="126" y1="70" x2="186" y2="70" />
+      </g>
+      <text x="156" y="60" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="8" letter-spacing="2">BUT</text>
+      <g transform="translate(238, 70)">
+        <rect x="-44" y="-28" width="88" height="56" fill="#0d0f15" stroke="#ff2d70" stroke-width="1.8" />
+        <text x="0" y="-4" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="11" font-weight="700">PATENT</text>
+        <text x="0" y="10" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="6" opacity="0.85">s1(2)(c) "AS SUCH"</text>
+        <line x1="-32" y1="-22" x2="32" y2="22" stroke="#ff2d70" stroke-width="2.2" />
+      </g>
+      <text x="238" y="124" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="7" letter-spacing="2">PA 1977</text>
+    </svg>
+  )}
+  {panel === "ip-opensource" && (
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <g transform="translate(60, 70)">
+        <rect x="-30" y="-22" width="60" height="44" fill="#0d0f15" stroke="#00f0ff" stroke-width="1.8" />
+        <text x="0" y="-2" text-anchor="middle" fill="#00f0ff" font-family="monospace" font-size="11" font-weight="700">OSS</text>
+        <text x="0" y="12" text-anchor="middle" fill="#00f0ff" font-family="monospace" font-size="7" opacity="0.85">© LICENSED</text>
+      </g>
+      <g stroke="#00f0ff" stroke-width="1.4" fill="none">
+        <line x1="92" y1="62" x2="138" y2="40" />
+        <line x1="92" y1="78" x2="138" y2="100" />
+      </g>
+      <g transform="translate(196, 40)">
+        <rect x="-58" y="-14" width="116" height="28" fill="#0d0f15" stroke="#00ff88" stroke-width="1.6" />
+        <text x="0" y="-2" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="9" font-weight="700">PERMISSIVE</text>
+        <text x="0" y="9" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="6" opacity="0.85">MIT :: BSD :: APACHE</text>
+      </g>
+      <g transform="translate(196, 100)">
+        <rect x="-58" y="-14" width="116" height="28" fill="#0d0f15" stroke="#fff03a" stroke-width="1.6" />
+        <text x="0" y="-2" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="9" font-weight="700">COPYLEFT</text>
+        <text x="0" y="9" text-anchor="middle" fill="#fff03a" font-family="monospace" font-size="6" opacity="0.85">GPL :: AGPL :: LGPL</text>
+      </g>
+      <g transform="translate(290, 70)">
+        <text x="0" y="-22" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="7" letter-spacing="2">BREACH</text>
+        <text x="0" y="-12" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="7" letter-spacing="2">=</text>
+        <text x="0" y="-2" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="7" letter-spacing="2">©</text>
+        <text x="0" y="8" text-anchor="middle" fill="#ff2d70" font-family="monospace" font-size="7" letter-spacing="2">INFRINGE</text>
+      </g>
+      <text x="14" y="22" fill="#00f0ff" font-family="monospace" font-size="9" opacity="0.7">&gt; OSS :: NOT_PUBLIC_DOMAIN</text>
     </svg>
   )}
   {isPlaceholder && (
