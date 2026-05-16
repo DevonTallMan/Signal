@@ -61,6 +61,41 @@ service cloud.firestore {
         allow update, delete: if false;
       }
 
+      match /mcqSubmissions/{submissionId} {
+        // Sprint 7B Inc 7B.0: per-question MCQ submission records.
+        // Student-only on both read and write paths. Teachers DO NOT
+        // read MCQ submissions in v1 — this mirrors the NEI prose
+        // boundary at /submissions. Widening this rule to grant
+        // teacher cross-user reads requires a Section 8 entry in
+        // docs/sprint-7b-scope.md.
+        //
+        // Upsert semantics: create and update both allowed under the
+        // same predicates. Re-attempting an MCQ overwrites the
+        // previous submission. No attempt history; the latest answer
+        // is the unit of measurement per scope §3.2.
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow create, update: if request.auth != null
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasAll([
+               'topicId', 'questionId', 'selectedIndex', 'correctIndex',
+               'isCorrect', 'submittedAt', 'source'
+             ])
+          && request.resource.data.source == 'signal'
+          && request.resource.data.topicId is string
+          && request.resource.data.questionId is string
+          && request.resource.data.selectedIndex is int
+          && request.resource.data.selectedIndex >= 0
+          && request.resource.data.selectedIndex <= 10
+          && request.resource.data.correctIndex is int
+          && request.resource.data.correctIndex >= 0
+          && request.resource.data.correctIndex <= 10
+          && request.resource.data.isCorrect is bool
+          && request.resource.data.isCorrect ==
+               (request.resource.data.selectedIndex == request.resource.data.correctIndex)
+          && request.resource.data.submittedAt is timestamp;
+        allow delete: if false;
+      }
+
       match /drillRatings/{ratingId} {
         allow read: if request.auth != null
           && (request.auth.uid == userId || isTeacher());
