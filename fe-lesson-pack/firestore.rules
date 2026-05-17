@@ -1,0 +1,25 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // A user can only read/write their own lessons.
+    match /users/{userId}/lessons/{lessonId} {
+      allow read, delete: if request.auth != null && request.auth.uid == userId;
+      // Writes happen through the Cloud Function (admin SDK bypasses rules).
+      // Client never writes lessons directly. Deny client writes here.
+      allow create, update: if false;
+    }
+
+    // Per-user daily usage counters. Written only by the function.
+    match /users/{userId}/usage/{day} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
+    }
+
+    // Default deny everything else.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
