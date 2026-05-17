@@ -1,0 +1,11 @@
+export default {
+  content: ["./index.html", "./src/**/*.{js,jsx}"],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"]
+      }
+    }
+  },
+  plugins: []
+};
